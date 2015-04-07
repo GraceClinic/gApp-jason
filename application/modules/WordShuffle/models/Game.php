@@ -256,10 +256,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             $this->SysMan->Logger->info('Game->_postSave(); rounds found: '.print_r($rounds,true));
             if(count($rounds) > 0){
                 // do nothing, rounds constructed from database
-//                for($x=0;$x<count($rounds);$x++){
-//                    $this->Rounds = new WordShuffle_Model_Round($rounds[$x]);
-//                    $this->Rounds[$x]->save();
-//                }
             }else{
                 for($x=0;$x<$this->roundsPerGame;$x++) {
                     $data = array(
@@ -291,7 +287,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         }else{
             $this->Board = new WordShuffle_Model_Board();
         }
-
 
     }
 

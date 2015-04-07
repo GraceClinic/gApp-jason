@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom Mapper Abstract
+ * Mapper abstract
  *
  * @package Common_Abstracts
  * @since   0.1
@@ -129,41 +129,61 @@ abstract class Common_Abstracts_Mapper
      * array of models.  In this manner, the model can use the result to set itself as appropriate or create an array
      * of models.
      *
-     * @param string|array|Zend_Db_Table_Select $where      - OPTIONAL where clause limiting search
-     * @param string|array                      $order      - OPTIONAL An SQL ORDER clause.
-     * @param int                               $count      - OPTIONAL An SQL LIMIT count.
-     * @param int                               $offset     - OPTIONAL An SQL LIMIT offset.
-     * @return array[]        - array of associative arrays representing models
+     * @param array $by - OPTIONAL criteria for limiting record set, if not set, _findAllBy is used
+     * @return array[] - array of associative arrays representing models
+     * @throws Exception
      */
-    // TODO: STOPPED HERE, transform parameters to one $by argument as an array replacing the default _findAllBy array
-    public function findAll($where = null,$order = null,$count = null,$offset = null)
+    public function findAll($by = null)
     {
         $addAnd = false;
+        $where = '';
 
-        if($where == null){
+        if($by == null) {
+            // set findAll criteria to default _findAllBy if not defined
+            $by = $this->_findAllBy;
+        }else{
+            for($i=0;$i<count($by);$i++){
+                // transform model properties to table fields
+                $field = $this->_swapForField($by[$i]);
+                if($field <> false){
+                    $by[$i] = $field;
+                }else{
+                    throw new Exception($this->_className.'->findAll() called with model property = '.$by[$i].
+                        '.  Property not found in Mapper map.');
+                }
+            }
+        }
+
+        if(count($by)>0){
+            // first element is the order by
+            $order = $by[0];
+
             // find all records based on foreign keys identified in _findAllBy
-            foreach($this->_findAllBy as $fk){
+            foreach ($by as $fk) {
                 $property = $this->_map[$fk];
-                if(isset($this->_model->$property)){
-                    if($addAnd){
-                        $where = $where.' And '.$fk.' = '.$this->_model->$property;
+                if (isset($this->_model->$property)) {
+                    if(is_int($this->_model->$property)){
+                        $value = $this->_model->$property;
                     }else{
-                        $where = $fk.' = '.$this->_model->$property;
+                        $value = "'".$this->_model->$property."'";
+                    }
+                    // TODO: need to change where clause to use quoteInto method otherwise injection attack possible on login
+                    if ($addAnd) {
+                        $where = $where . ' And ' . $fk . ' = ' . $value;
+                    } else {
+                        $where = $fk . ' = ' . $value;
                     }
                     $addAnd = true;
                 }
             }
         }else{
-            // if where clause or order clause contains reference to model properties, replace with field names
-            foreach($this->_map as $field=>$property){
-                $where = str_replace($property,$field,$where);
-                $order = str_replace($property,$field,$order);
-            }
-        };
+            throw new Exception($this->_className.'->findAll() called no criteria supplied in argument nor a default'.
+                ' defined in protected Mapper->_map variable.');
+        }
 
         $this->_model->SysMan->Logger->info($this->_className.'->findAll(); $where = '.$where);
 
-        $resultSet = $this->getDbTable()->fetchAll($where,$order,$count,$offset);
+        $resultSet = $this->getDbTable()->fetchAll($where,$order);
 
         $result   = array();
         // transform row set to an array of associative arrays representing the model
@@ -252,13 +272,13 @@ abstract class Common_Abstracts_Mapper
      * for a new insert to return the newly generated primary key.  This means you must insure that $pk is null
      * during insert operation so that this method will return the resulting primary key from the insert operation
      *
-     * @param   Custom_Model_DbTable_Abstract $targetTable    Table to receive model data as masked by $map
+     * @param   Common_Abstracts_DbTable $targetTable    Table to receive model data as masked by $map
      * @param   array   $map    Explicit map of model properties to table field names
      * @param   int     $pk     The primary key value for this save operation
      * @return  int The primary key of the the affected row
      * @throws  Exception
      */
-    public function saveToTable(Custom_Model_DbTable_Abstract $targetTable, array $map, $pk)
+    public function saveToTable(Common_Abstracts_DbTable $targetTable, array $map, $pk)
     {
         $data = $this->mapModel($map);
 
@@ -283,13 +303,9 @@ abstract class Common_Abstracts_Mapper
         return $pk;
     }
 
-//    protected function mapSwap($search, $ = null){
-//        if($target == 'FIELD'){
-//            return array_search($search,$this->_map);
-//        }else{
-//            return $this->_map[$search];
-//        }
-//    }
+    protected function _swapForField($prop){
+        return array_search($prop,$this->_map);
+    }
 
     /**
      * Shell method supporting Mapper->save() functionality.  Specific Mapper class can override this method in order

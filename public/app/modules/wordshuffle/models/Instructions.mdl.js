@@ -38,6 +38,12 @@
              * @public
              **/
             Object.defineProperty(self,'Pages',{get: getPages,set: setPages});
+            /**
+             * @property    WordShuffle_Models_Instructions#idGame      - primary key for game object
+             * @type        int
+             * @public
+             **/
+            Object.defineProperty(self,'idGame',{get: getIdGame,set: setIdGame});
 
             /*****************************************
              * PUBLIC METHODS declaration / definition
@@ -68,11 +74,18 @@
                 // this should be an array of Page objects
                 if (typeof pages === 'object'){
                     for(var key in pages){
-                        if (typeof pages[key] === 'object'){
+                        if (pages.hasOwnProperty(key) && typeof pages[key] === 'object'){
                             _Pages.push(new Page(pages[key]));
                         }
                     }
                 }
+            }
+            var _idGame;
+            function getIdGame(){
+                return _idGame;
+            }
+            function setIdGame(value){
+                _idGame = value;
             }
 
             /******************
@@ -84,7 +97,6 @@
              * CONSTRUCTOR LOGIC
              *******************/
             self.SysMan.Logger.entry('START Construct',self.constructor.name);
-            console.log(data);
 
             App_Common_Abstracts_Model.call(self,data);
 

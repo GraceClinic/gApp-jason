@@ -16,9 +16,15 @@ class WordShuffle_Model_Mapper_Instructions extends Common_Abstracts_Mapper
     // map table field name pointing to Game property
     protected $_map = array(
         'id'            => 'id',
+        'idGame'        => 'idGame',
         'title'         => 'title',
         'picture'       => 'picture',
     );
+
+    protected $_findAllBy = array(
+        'idGame'
+    );
+
     /** @var WordShuffle_Model_Instructions  $_model     Reference to the model associated with specific mapper, should be passed in constructor  */
     protected $_model;
 
@@ -36,15 +42,12 @@ class WordShuffle_Model_Mapper_Instructions extends Common_Abstracts_Mapper
     }
 
     /**
-     * @param string|array|Zend_Db_Table_Select $where      - OPTIONAL where clause limiting search
-     * @param string|array                      $order      - OPTIONAL An SQL ORDER clause.
-     * @param int                               $count      - OPTIONAL An SQL LIMIT count.
-     * @param int                               $offset     - OPTIONAL An SQL LIMIT offset.
+     * @param array $by - OPTIONAL criteria for limiting record set, if not set, _findAllBy is used
      * @return array[]      - array of Instruction objects complete with Pages property loaded
      * @throws Exception
      */
-    public function findAll($where = null,$order = null,$count = null,$offset = null){
-        $results = parent::findAll($where,$order,$count,$offset);
+    public function findAll($by = null){
+        $results = parent::findAll($by);
 
         if (count($results) > 0){
             for($i=0; $i<count($results); $i++){
@@ -87,10 +90,8 @@ class WordShuffle_Model_Mapper_Instructions extends Common_Abstracts_Mapper
         }
 
         if($id !== null){
-            $pageModel = new WordShuffle_Model_Page();
-            $where = $this->_db->quoteInto('idInstructions = ?',$id,'INTEGER');
-            $order = 'sequence ASC';
-            $pages = $pageModel->findAll($where,$order);
+            $pageModel = new WordShuffle_Model_Page(array('idInstructions'=>$this->_model->id));
+            $pages = $pageModel->findAll();
 
             $countIsRight = count($pages) > 0;
 

@@ -81,7 +81,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     private $_name = null;
     protected function setName($x){
         if($x !== null && $x !== '' && $this->SysMan->Session->playerName !== $x){
-            $this->_name = $x;
+            $this->_name = (string) $x;
             // for anonymous play, the session object maintains memory of changes, once logged in, changes written to session after save
             if($this->signInState < Common_Models_SysMan::SIGNED_IN){
                 $this->SysMan->Session->playerName = $this->_name;
@@ -142,7 +142,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     protected function getSignInState(){
         return $this->SysMan->Session->signInState;
     }
-    protected function setDefaultName($value){
+    protected function setDefaultName(){
         throw new Exception('WordShuffle_Models_Player setDefaultName not allowed!');
     }
     protected function getDefaultName(){
@@ -230,8 +230,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         switch($this->signInState){
             // get user's challenge information
             case Common_Models_SysMan::NAME_PENDING:
-                $where = $this->Mapper->quoteInto('name = ?',$this->name);
-                $players = $this->Mapper->findAll($where);
+                $players = $this->Mapper->findAll();
                 if(count($players) == 0){
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
                     $this->msg = '';
@@ -252,8 +251,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 }
                 break;
             case Common_Models_SysMan::NEW_SIGN_IN:
-                $where = $this->Mapper->quoteInto('name = ?',$this->name);
-                $players = $this->Mapper->findAll($where);
+                $players = $this->Mapper->findAll();
 
                 if(count($players) == 0){
                     // run save at Mapper level to retrieve new primary key

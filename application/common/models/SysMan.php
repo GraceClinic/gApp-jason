@@ -69,7 +69,7 @@ final class Common_Models_SysMan
      *
      * @param string $name
      * @param mixed  $value
-     * @return Custom_Model_Abstract
+     * @return Common_Abstracts_Model
      * @throws Exception
      */
     public function __set($name, $value)
@@ -154,7 +154,7 @@ final class Common_Models_SysMan
         return $this->_errMsg;
     }
 
-    protected function setSession($x)
+    protected function setSession()
     {
         throw new Exception('Attempt set Common_Models_SysMan->Session not allowed');
     }
@@ -169,7 +169,6 @@ final class Common_Models_SysMan
      * @param   array   associative array with keys identifying "text", "code", "type" necessary to build Common_Models_Msg object
      */
     protected function setMsg($msg){
-        $error = false;
 
         // assume over-write of current message array
         if(is_array($msg)){

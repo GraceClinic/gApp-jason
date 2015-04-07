@@ -24,6 +24,10 @@ class WordShuffle_Model_Mapper_Player extends WordShuffle_Model_Mapper_Abstract
         'modifyDate'        => 'modifyDate'
     );
 
+    protected $_findAllBy = array(
+        'name'
+    );
+
     public function find($id = null){
         $success = parent::find($id);
 
@@ -38,11 +42,11 @@ class WordShuffle_Model_Mapper_Player extends WordShuffle_Model_Mapper_Abstract
         return $success;
     }
 
-    public function findAll($where = null,$order = null,$count = null,$offset = null)
+    public function findAll($by = null)
     {
         // execute parent find procedure to get relevant data
         /** @var  array $results */
-        $results = parent::findAll($where, $order, $count, $offset);
+        $results = parent::findAll($by);
         $challenges = $this->findChallenges();
 
         // The Player object gets its "challenge" property from the dependent Challenge table

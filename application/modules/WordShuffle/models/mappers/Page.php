@@ -18,23 +18,23 @@ class WordShuffle_Model_Mapper_Page extends Common_Abstracts_Mapper
         'sequence'          => 'sequence'
     );
 
+    protected $_findAllBy = array(
+        'idInstructions'
+    );
 
     /**
      * Generic findAll implementation for a simple query for multiple records fitting the criteria.  If the model
      * has information stored in other tables, the method requires extension to handle that disparate information
      * and load it into the models.
      *
-     * @param string|array|Zend_Db_Table_Select $where      - OPTIONAL where clause limiting search
-     * @param string|array                      $order      - OPTIONAL An SQL ORDER clause.
-     * @param int                               $count      - OPTIONAL An SQL LIMIT count.
-     * @param int                               $offset     - OPTIONAL An SQL LIMIT offset.
+     * @param array $by - OPTIONAL criteria for limiting record set, if not set, _findAllBy is used
      * @return Common_Abstracts_Model[]        - array of models associated with this mapper
      */
-    public function findAll($where = null,$order = null,$count = null,$offset = null)
+    public function findAll($by = null)
     {
         // execute parent find procedure to get relevant data
         /** @var  WordShuffle_Model_Page[] $results */
-        $pages = parent::findAll($where,$order,$count,$offset);
+        $pages = parent::findAll($by);
 
         // process each page and retrieve the file contents for the body
         if(count($pages) > 0){
@@ -42,7 +42,6 @@ class WordShuffle_Model_Mapper_Page extends Common_Abstracts_Mapper
             for($i=0; $i<count($pages); $i++){
                 $pages[$i]['body'] = file_get_contents($pages[$i]['body'],FILE_USE_INCLUDE_PATH);
             }
-
         }
 
         return $pages;

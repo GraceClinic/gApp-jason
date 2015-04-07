@@ -9,6 +9,7 @@
  * @property    string      title           - instructions title
  * @property    string      picture         - location to picture associated with instructions
  * @property    WordShuffle_Model_Page[]        Pages  - array of instruction pages
+ * @property    int         idGame        - primary key for the game object
  * @property    WordShuffle_Model_Mapper_Instructions   Mapper
  */
 class WordShuffle_Model_Instructions extends Common_Abstracts_Model
@@ -56,6 +57,13 @@ class WordShuffle_Model_Instructions extends Common_Abstracts_Model
     }
     protected function getPages(){
         return $this->_Pages;
+    }
+    private $_idGame = null;
+    protected function setIdGame($value){
+        $this->_idGame = (int) $value;
+    }
+    protected function getIdGame(){
+        return $this->_idGame;
     }
 
     /************************************

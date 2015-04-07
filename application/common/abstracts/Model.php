@@ -257,23 +257,19 @@ abstract class Common_Abstracts_Model
     }
 
     /**
-     * Return an array records for the specific model as filtered by the provided id
+     * Return an array records for the specific model as filtered by the provided array of model properties.  The mapper
+     * method will concatenate the model properties using AND logic.  Anything more sophisticated must be created at
+     * the specific model.
      *
-     * @param string|array  $where          - where clause formed with model property name, if array then all element joined with AND; use Mapper->quoteInto to insure safe injection of value
-     * @param string|array  $order          - sort clause formed with model property name, if array, then sorted by sequence dictated in array
-     * @param int        $count
-     * @param int        $offset
+     * @param array  $by          - array of model properties to use as grouping criteria for the findAll method
      * @return array
      */
-    public function findAll($where = null,$order = null,$count = null,$offset = null)
+    public function findAll($by = null)
     {
-        $this->SysMan->Logger->info($this->_className.'->findAll() given $where = '.$where.'; $order = '.$order);
-        // execute findall based on model id if where clause not defined
-        if($where == null){
-            //$where = $this->Mapper->quoteInto('id = ?',$this->id,'INTEGER');
-        }
+        $this->SysMan->Logger->info($this->_className.'->findAll() given $by = '.$by);
+
         // todo: include validation criteria
-        return $this->Mapper->findAll($where,$order,$count,$offset);
+        return $this->Mapper->findAll($by);
     }
 
     /**
