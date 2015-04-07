@@ -1,0 +1,47 @@
+<div ng-controller="WordShuffle_Controllers_Welcome as Welcome">
+<h3>Hello Action!</h3>
+<div ng-repeat="todo in Welcome.Note.items" class="item">
+    <div><span ng-bind="todo.label"></span></div>
+    <div>- by <span ng-bind="todo.author"></span></div>
+</div>
+</div>
+<button ng-click="Welcome.findNote(2)">Get Note</button>
+<button ng-click="Welcome.saveNote({'name':'myName'})">Post Note</button>
+<button ng-click="Welcome.saveNote({'id':'2','name':'myNewName'})">Update Note</button>
+<button ng-click="Welcome.removeNote(2)">Delete Note</button>
+
+<style>
+    /* Header styling */
+    #Header
+    {
+        font:normal 36px bold;
+        font-family: Script,cursive;
+        background-color: #cfe0cf;
+        border:solid 2px #178615;
+        height:50px;
+        width:100%;
+    }
+    #Header .Left-Zone
+    {
+        width:30%;
+        text-align:left;
+        float:left;
+        color: #600d8e
+    }
+    #Header .Left-Zone span
+    {
+        padding:0px 0px 0px 0px;
+    }
+    #Header .Right-Zone
+    {
+        width:70%;
+        text-align:left;
+        float:left;
+        font:normal 28px bold;
+        font-family: Impact,sans-serif;
+    }
+    .item
+    {
+        padding: 10px;
+    }
+</style>

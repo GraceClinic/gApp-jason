@@ -1,0 +1,17 @@
+1) Install MySQL
+2) Install PHP
+3) Install Apache
+    a) configure virtual web server
+4) Install Zend
+5) Install GIT
+6) Install NodeJS and Bower
+    a) Create bower.json at root of project folder (not the public folder).  Run "bower init" from command line.
+    b) Create ".bowerrc" file at root of project folder to point to location of "bower_components" folder
+        {
+        "directory": "public/bower_components/"
+        }
+7) Bower Package installs (change to project root location - not public)
+    a) bower install angular --save
+    b) bower install angular-sanitize --save
+    c) bower install angular-bootstrap  --save (reference "http://angular-ui.github.io/bootstrap/" for usage)
+    d) bower install fontawesome --save

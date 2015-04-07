@@ -1,0 +1,50 @@
+/* position banner relative to div location in DOM */
+.app-common-directives-banner.banner-shell
+{
+    position: relative;
+}
+/* Styling for all Banner elements styling */
+.app-common-directives-banner.banner-anchor
+{
+    font:             normal 12px bold;
+    font-family:      Helvetica, Arial, sans-serif;
+    width:            90%;
+    margin-left:      5%;
+    margin-right:     5%;
+    border-radius:    20px;
+    background-color: palegoldenrod;
+    border-style:     solid;
+    border-width:     2px;
+    border-color:     olive;
+    position:         absolute;         /* insures div floats on top of other elements as opposed to pushing it down */
+    top:              0;
+    z-index:          100;
+    opacity:          1.0;
+    padding:          10px 0 10px 0;
+}
+.app-common-directives-banner.banner-msg
+{
+    width:             65%;
+    padding-left:      5%;
+    float:             left;
+}
+.app-common-directives-banner.banner-close
+{/* styling applied to the "close msg" (right) side of the banner */
+    width:              25%;
+    color:              red;
+    margin-right:       5%;
+    font-weight:        bold;
+    float:              right;
+    text-align:         right;
+    opacity:            0.7;
+    text-decoration:    none
+}
+.app-common-directives-banner.banner-close span:hover
+{/* styling applied to span text inside "close me" div */
+    color:              BlueViolet;
+    background-color:   yellow;
+    border-style:       solid;
+    border-width:       1px;
+    border-color:       red;
+    cursor:             pointer;
+}

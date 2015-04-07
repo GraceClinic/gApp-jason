@@ -1,0 +1,165 @@
+Please maintain the following conventions:
+
+1) Prefix all private variables and functions with "_".  This allows quick identification that the variable is private
+within the code.
+
+2) Javascript does not support constants.  In order to identify which variables are used as constants, name the
+constants all UPPERCASE with "_" between words.  This is also true for class properties intended to be constants.  The
+following are example code lines:
+    a) var THIS_IS_MY_CONSTANT = 16;
+    b) Object.defineProperty(self,"MY_NAME",{get:function(){return 'Jason'});
+
+3) Use "camel-case" with initial lower case for property names and function/method names (e.g. myFunctionName)
+
+4) Use "camel-case" with initial upper case for class names (e.g. MyClassName)
+
+5) Follow PHPDoc standards for documentation of PHP code
+    a) Wikipedia explains some here:  http://en.wikipedia.org/wiki/PHPDoc
+
+6) Follow JSDoc standards for documentation of Javascript code. This is not as straight forward due to the wrapping
+of RequireJS, but it is still doable.
+    a) Here is an explanation:  http://www.2ality.com/2011/08/jsdoc-intro.html
+
+7) For all folders, use lower case throughout.  For separate words within folder name name, use "-" (dash)
+as the separator.  For files that represent classes, use initial caps with camel case for separation of separate words.
+    a) Namespacing if VERY important!  It maintains clean code and avoids collisions.
+    b) The module folder and sub-folders contained therein create the name space and files are the actual class.
+    The class constructor names will use an "_" (underscore) to separate the folders and file and initial capital for
+    each separate word, identifying it as a class. For example, a file specifying a class located at
+        "my-module\models\my-package\MyModel.mdl.js"
+    would have a constructor therein named:
+        "MyModule_Models_MyPackage_MyModel"
+
+8) Every component (model, controller, directive, configuration) embodied within one file.  Keep files short, targeting
+one function.
+
+Javascript (see reference https://github.com/johnpapa/angularjs-styleguide):
+
+1) Define one component per file
+2) Wrap AngularJS components in an Immediately Invoked Function Expression (IIFE):
+
+    (function(){
+        << object description and angular encapsulation >>
+    })();
+
+    This protects global space from contamination
+3) Create all class objects as follows:
+
+    (function() {
+
+        var _q = {
+            propertyX: new Array(),
+            propertyY: new Array(),
+            propertyZ: new Array()
+        }
+
+        // provides for current count of "MyObj" instances, allows for indexing into prototype level properties
+        var _count = 0;
+
+        function nextId(){
+            return ++_count;
+        }
+
+        /************************
+        /* CONSTRUCTOR
+        /************************
+        function MyObj(){
+            // proxy the "this" keyword to avoid scope resolution issues
+            var self = this;
+
+            // declare private variables that service object properties under one variable
+            var _p = {
+                propertyA: '';
+                propertyB: '';
+                propertyC: '';
+            }
+
+            // absolute reference id for instances of this object
+            var _pk = nextId();
+
+            // create all object public properties
+            Object.defineProperty(self,'propertyA',{
+                get: getPropertyA,
+                set: setPropertyA
+            })
+            Object.defineProperty(self,'propertyB',{
+                get: getPropertyB,
+                set: setPropertyB
+            })
+            Object.defineProperty(self,'propertyC',{
+                get: getPropertyC,
+                set: setPropertyC
+            })
+
+            // create all object public methods
+            self.method1 = method1;
+            self.method2 = method2;
+            self.method3 = method3;
+
+            // code constructor logic
+
+            // call superclass if this object extends from another, pass arguments as required
+            // if this class extends the Model superclass then pass a data array of property values to set during construction
+            SuperClass.call(self,$data);
+
+            /************************
+            /* GETTERS AND SETTERS
+            /************************
+            // maintain getters and setters in a group
+            function getPropertyA(){
+                // code
+                return _p.propertyA;
+            }
+            function setPropertyA(x){
+                // code
+                _p.propertyA = x;
+            }
+
+            /************************
+            /* METHODS
+            /************************
+            // maintain all object methods in a group
+            function method1(arg){
+                // code
+            }
+
+            /************************
+            /* PRIVATE FUNCTIONS
+            /************************
+            // maintain private object functions in a group
+            function private1(arg){
+                // code
+            }
+
+            // most objects return itself for daisy chaining
+            return self;
+        }
+
+        // Inherit prototype functions from SuperClass as required
+        MyObj.prototype = Object.create(SuperClass.prototype);
+        // If extended, correct constructor which points to SuperClass constructor
+        MyObj.prototype.constructor = MyObj;
+
+        // Build prototype properties shared instances of MyObj, these are over-writable by subclasses
+        Object.defineProperty(MyObj.prototype,'propertyX',{
+            get: function(){
+                // code
+                return _q.propertyX[this.pk];
+            },
+            set: function(x){
+                // code
+                _q.propertyX[this.pk] = x;
+            }
+        });
+
+        // Build prototype methods shared by instances of MyObj, these are over-writable by subclasses
+        MyObj.prototype.methodX = function(args){
+            // code
+        }
+
+        // inject dependenciesObject
+        MyObj.$inject = [<<list of angularjs dependencies>>];
+
+        // attach it to angular
+        angular.module('MyApp').factory('MyApp.MyObj', MyObj);
+    })();

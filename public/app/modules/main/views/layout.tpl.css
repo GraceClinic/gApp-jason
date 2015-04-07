@@ -1,0 +1,61 @@
+/* Header styling */
+#HeaderBar
+{
+    font:normal 36px bold;
+    font-family: Script,cursive;
+    background-color: #c1d2e0;
+    border:solid 2px #303686;
+    width:100%;
+    overflow:hidden;
+}
+#HeaderBar .Left-Zone
+{
+    width:auto;
+    text-align:left;
+    float:left;
+    padding: 5px 5% 5px 5%;
+    color: #600d8e
+}
+
+#HeaderBar .Right-Zone
+{
+    width:auto;
+    text-align:left;
+    float:left;
+    padding: 5px 0 5px 0;
+    font:normal 28px bold;
+    font-family: Impact,sans-serif;
+}
+.Model.Menu
+{
+    list-style-type: none;
+    padding:0;
+    margin:0;
+}
+.Model.Menu.Item
+{
+    padding:0 10px 0 10px;
+    display:inline
+}
+.Model.Menu.Item a
+{
+    text-decoration:none;
+    color:mediumpurple
+}
+.Model.Menu.Item a:hover
+{
+    text-decoration:underline;
+    color:blue;
+}
+footer
+{
+    background-color: #c1d2e0;
+    height:50px;
+    border:solid 2px #303686;
+    clear:both;     /* clear any floating constraints to allow footer to display at bottom */
+}
+#copyright
+{
+    margin: 5px 30px 5px 30px;
+    float:left;
+}

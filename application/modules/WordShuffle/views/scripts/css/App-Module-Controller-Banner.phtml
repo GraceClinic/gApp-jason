@@ -1,0 +1,55 @@
+<style>
+/* Styling for all Banner elements styling */
+.Model.Banner
+    {
+        visibility:       hidden;
+        font:             normal 12px bold;
+        font-family:      Helvetica, Arial, sans-serif;
+        height:           20px;
+        width:            90%;
+        margin-left:      5%;
+        margin-right:     5%;
+        border-radius:    20px;
+        background-color: <?php echo $this->Module->TertiaryColor['lighten'][4]; ?>;
+        border-style:     solid;
+        border-width:     2px;
+        border-color:     <?php echo $this->Module->PrimaryColor['darken'][2]; ?>;
+        position:         absolute;
+        top:              55px;
+        z-index:          10;
+        opacity:          1.0;
+        padding:          12px 0px 10px 0px;
+    }
+#App-Module-Controller-Banner
+    {
+        background-color:   <?php echo $this->Module->TertiaryColor['lighten'][4]; ?>;
+        border-color:       <?php echo $this->Module->PrimaryColor['darken'][2]; ?>;
+    }
+#App-Module-Controller-Banner-Div-msg
+    {
+        width:             70%;
+        margin-left:       20px;
+        float:             left;
+    }
+#App-Module-Controller-Banner-Div-close
+    {/* styling applied to the "close msg" (right) side of the banner */
+        width:              20%;
+        color:              red;
+        margin-right:       20px;
+        margin-left:        0px;
+        font-weight:        bold;
+        float:              right;
+        text-align:         right;
+        opacity:            0.7;
+        text-decoration:    none
+    }
+#App-Module-Controller-Banner-Div-close span:hover
+    {/* styling applied to span text inside "close me" div */
+        color:              BlueViolet;
+        background-color:   <?php echo $this->Module->SecondaryColor['lighten'][2]; ?>;
+        border-style:       solid;
+        border-width:       1px;
+        border-color:       <?php echo $this->Module->PrimaryColor['darken'][3]; ?>;
+        cursor:             pointer;
+    }
+</style>

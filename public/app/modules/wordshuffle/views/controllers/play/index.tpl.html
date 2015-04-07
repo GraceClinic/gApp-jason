@@ -1,0 +1,120 @@
+<div id="controller-play">
+    <div id="play-game-board">
+        Gameboard<br>
+        this<br>
+        that<br>
+        other<br>
+    </div>
+    <div id="game-scoreboard">
+        <div class="game-scoreboard game-scoreboard-header" >
+            <div class="game-scoreboard left-side">Word</div>
+            <div class="game-scoreboard right-side">Score</div>
+        </div>
+        <div id="game-scoreboard-body">
+            <div class="game-scoreboard game-scoreboard-line">
+                <div class="game-scoreboard left-side">Jetty</div>
+                <div class="game-scoreboard right-side">20</div>
+            </div>
+            <div class="game-scoreboard game-scoreboard-line">
+                <div class="game-scoreboard left-side">Jar</div>
+                <div class="game-scoreboard right-side">15</div>
+            </div>
+            <div class="game-scoreboard game-scoreboard-line">
+                <div class="game-scoreboard left-side">Jetty</div>
+                <div class="game-scoreboard right-side">20</div>
+            </div>
+            <div class="game-scoreboard game-scoreboard-line">
+                <div class="game-scoreboard left-side">Jar</div>
+                <div class="game-scoreboard right-side">15</div>
+            </div>
+        </div>
+        <div class="game-scoreboard game-scoreboard-footer">
+            <div id="game-scoreboard-total-label" class="game-scoreboard left-side">Total = </div>
+            <div id="game-scoreboard-totalScore" class="game-scoreboard right-side"><span class="BoxMe">64</span></div>
+        </div>
+        <div class="game-scoreboard game-scoreboard-footer">
+            <div id="game-scoreboard-lastRound-label" class="game-scoreboard left-side">Last Round = </div>
+            <div id="game-scoreboard-lastRoundScore" class="game-scoreboard right-side"><span class="BoxMe">52</span></div>
+        </div>
+        <div class="game-scoreboard game-scoreboard-footer">
+            <div id="game-scoreboard-roundAvg-label" class="game-scoreboard left-side">Round Avg = </div>
+            <div id="game-scoreboard-roundAvg" class="game-scoreboard right-side"><span class="BoxMe">52</span></div>
+        </div>
+    </div>
+</div>
+<style>
+    #play-game-board
+    {
+        float: left;
+        width: 60%;
+        border-radius: 10px;
+        text-align:right;
+        background-color: #a99ac2;
+        padding: 20px 5% 20px 0;
+        box-sizing: border-box;
+    }
+    #controller-play
+    {
+        font: normal 20px, "Comic Sans", cursive;
+        padding: 20px 0 20px 0;
+        width: 100%;
+        overflow: hidden;   /* wrap div container around children */
+    }
+
+    /* scoreboard css */
+    #game-scoreboard
+    {
+        float: left;
+        width: 40%;
+        padding: 10px 5% 10px 5%;
+        box-sizing: border-box;
+    }
+    .game-scoreboard.game-scoreboard-header
+    {
+        overflow: hidden;
+        border-bottom: 1px solid #860505;
+    }
+    .game-scoreboard-header .game-scoreboard.left-side,.game-scoreboard.game-scoreboard-header .game-scoreboard.right-side
+    {
+        font: italic 24px bold;
+    }
+    #game-scoreboard .game-scoreboard.game-scoreboard-line
+    {
+        padding: 10px 10px 0 10px;
+        overflow: hidden;
+        border-bottom: 1px solid #860505;
+    }
+    #game-scoreboard .game-scoreboard.left-side
+    {
+        width: 45%;
+        float: left;
+        text-align: right;
+        padding: 0 5% 0 0
+    }
+    #game-scoreboard .game-scoreboard.right-side
+    {
+        width: 45%;
+        float: left;
+        padding: 0 0 0 5%
+    }
+    #game-scoreboard-body .game-scoreboard.game-scoreboard-line:nth-of-type(odd)
+    {
+        background-color: #cfe0cf;
+    }
+    #game-scoreboard-body .game-scoreboard.game-scoreboard-line:last-child
+    {
+        border-bottom: 6px double #860505;
+    }
+    .game-scoreboard.game-scoreboard-footer
+    {
+        padding: 10px 0 10px 0;
+        overflow: hidden;
+    }
+    .BoxMe
+    {
+        border: 4px solid blue;
+        background-color: white;
+        border-radius: 4px;
+        padding: 1px 4px 1px 4px;
+    }
+</style>

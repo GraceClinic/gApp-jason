@@ -1,0 +1,49 @@
+<div class="App_Log">
+    Here is the stack trace before the error:
+    <div class="App_Log Stack header">
+        <div class="App_Log Stack_entry date">DateTime</div>
+        <div class="App_Log Stack_entry type">Type</div>
+        <div class="App_Log Stack_entry source">Source</div>
+        <div class="App_Log Stack_entry text">Text</div>
+    </div>
+    <div ng-repeat="entry in Error.SysMan.Logger.stack" class="App_Log Stack shell">
+        <div ng-bind="entry.date" class="App_Log Stack_entry date"></div>
+        <div ng-bind="entry.type" class="App_Log Stack_entry type"></div>
+        <div ng-bind="entry.source" class="App_Log Stack_entry source"></div>
+        <div ng-bind="entry.text" class="App_Log Stack_entry text"></div>
+    </div>
+</div>
+<style>
+    .App_Log{
+        background-color: #e0db7d;
+    }
+    .App_Log.Stack{
+        width: 100%;
+        padding-left: 1%;
+        overflow: hidden;
+    }
+    .App_Log.Stack.header{
+        font-weight: bold;
+        border-bottom: 3px solid #622216
+    }
+    .App_Log.Stack.shell{
+        border-bottom: 1px solid #622216;
+    }
+    .App_Log.Stack_entry{
+        float: left;
+        padding-top: 5px;
+        padding-right: 5%;
+    }
+    .App_Log.Stack_entry.date{
+        width: 15%;
+    }
+    .App_Log.Stack_entry.type{
+        width: 10%;
+    }
+    .App_Log.Stack_entry.source{
+        width: 20%;
+    }
+    .App_Log.Stack_entry.text{
+        width: 40%;
+    }
+</style>

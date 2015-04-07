@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html ng-app="notesApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Word Shuffle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Word Shuffle Game">
+    <meta name="author" content="Jason Derouen">
+    <meta name="keywords" content="game">
+
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/css/normalize.css">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/css/main.css">
+    <script src="<?php echo $this->baseUrl();?>/js/lib/modernizr-2.6.2.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="<?php echo $this->baseUrl();?>/js/lib/jquery-1.9.1.min.js"><\/script>')</script>
+    <script
+        src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js">
+    </script>
+    <script src="<?php echo $this->baseUrl();?>/app/modules/WordShuffle/app.js"></script>
+</head>
+
+<!-- Different layouts can be attached to each module, this one is for the WordShuffle module.  -->
+<!-- Module defined here for instantiation by frontend -->
+<!-- Header Container -->
+<div id="Header">
+    <div class="Left-Zone">
+
+    </div>
+    <div class="Right-Zone">
+
+    </div>
+</div>
+<!-- Controller / Action content renders here -->
+<?php
+echo $this->layout()->content;
+?>
+
+<?php
+echo $this->render('footer.phtml');
+?>
+
+<style>
+    /* Header styling */
+    #Header
+    {
+        font:normal 36px bold;
+        font-family: Script,cursive;
+        background-color: #cfe0cf;
+        border:solid 2px #178615;
+        height:50px;
+        width:100%;
+    }
+    #Header .Left-Zone
+    {
+        width:30%;
+        text-align:left;
+        float:left;
+        color: #600d8e
+    }
+    #Header .Left-Zone span
+    {
+        padding:0px 0px 0px 0px;
+    }
+    #Header .Right-Zone
+    {
+        width:70%;
+        text-align:left;
+        float:left;
+        font:normal 28px bold;
+        font-family: Impact,sans-serif;
+    }
+</style>
+<!--Render styling block for Menu-->
+<?php
+echo $this->render('css/Model.Menu.phtml');
+?>

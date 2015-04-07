@@ -1,0 +1,80 @@
+<!-- Controller / Action content renders here -->
+<!-- File: chapter5/simple-angularjs-service/index.html -->
+<!DOCTYPE html>
+<html lang="en" ng-app="App">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Word Shuffle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Word Shuffle Game">
+    <meta name="author" content="Jason Derouen">
+    <meta name="keywords" content="game">
+
+    <link rel="stylesheet" href="vendor/css/normalize.css">
+    <link rel="stylesheet" href="vendor/css/main.css">
+    <!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"/>-->
+    <link href="vendor/css/bootstrap/3.1.1/bootstrap.min.css" rel="stylesheet"/>
+    <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.css">
+    <script src="vendor/lib/modernizr-2.6.2.min.js"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+    <script src="vendor/lib/jquery-1.9.1.min.js"></script>
+    <!-- TODO: this does not load from local when google is not available -->
+    <script>window.jQuery || document.write('<script src="vendor/lib/jquery-1.9.1.min.js"><\/script>')</script>
+    <script src="vendor/lib/angular.js"></script>
+    <script src="vendor/lib/angular-animate.js"></script>
+    <script src="vendor/lib/angular-ui-router.min.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="App.mod.js"></script>
+    <script src="app/configs/Routes.cfg.js"></script>
+    <script src="app/configs/Interceptor.cfg.js"></script>
+    <script src="app/modules/WordShuffle.mod.js"></script>
+    <script src="app/modules/Main.mod.js"></script>
+    <script src="app/common/models/SysMan.mdl.js"></script>
+    <script src="app/common/abstracts/Controller.ctrl.js"></script>
+    <script src="app/common/abstracts/Model.mdl.js"></script>
+    <script src="app/common/models/tools/Timer.mdl.js"></script>
+    <script src="app/common/models/tools/Logger.mdl.js"></script>
+    <script src="app/common/directives/Banner.drv.js"></script>
+    <script src="app/common/directives/SlideShow.drv.js"></script>
+    <script src="app/common/directives/utilities/Draggable.drv.js"></script>
+    <script src="app/modules/main/controllers/Error.js"></script>
+    <script src="app/modules/wordshuffle/models/Page.mdl.js"></script>
+    <script src="app/modules/wordshuffle/models/Player.mdl.js"></script>
+    <script src="app/modules/wordshuffle/models/Game.mdl.js"></script>
+    <script src="app/modules/wordshuffle/models/Instructions.mdl.js"></script>
+    <script src="app/modules/wordshuffle/models/Round.mdl.js"></script>
+    <script src="app/modules/wordshuffle/controllers/Welcome.ctrl.js"></script>
+    <script src="app/modules/wordshuffle/controllers/Setup.ctrl.js"></script>
+    <script src="app/modules/wordshuffle/controllers/Play.ctrl.js"></script>
+</head>
+<body>
+<div id="wrap">
+    <div ui-view id="App_Module"></div>
+</div>
+<style>
+    #wrap{
+        position: relative;
+        min-height: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    #App_Module{
+        width: 100%;
+        overflow: auto;
+    }
+    /*div[ui-view]{*/
+        /*height: 100%;*/
+    /*}*/
+    html, body{
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+</body>
+</html>
+

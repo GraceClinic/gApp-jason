@@ -1,0 +1,66 @@
+<!-- Controller / Action content renders here -->
+<div id="App-Module-Controller" class="Model Controller">
+    <div id="App-Module-Controller-Game-Board">
+        Gameboard<br>
+        this<br>
+        that<br>
+        other<br>
+    </div>
+    <div id="App-Module-Controller-Game-Scoreboard">
+        <div class="Model Game Scoreboard Header" >
+            <div class="Model Game Scoreboard LeftSide">Word</div>
+            <div class="Model Game Scoreboard RightSide">Score</div>
+        </div>
+        <div id="App-Module-Controller-Game-Scoreboard-Body">
+            <div class="Model Game Scoreboard Line">
+                <div class="Model Game Scoreboard LeftSide">Jetty</div>
+                <div class="Model Game Scoreboard RightSide">20</div>
+            </div>
+            <div class="Model Game Scoreboard Line">
+                <div class="Model Game Scoreboard LeftSide">Jar</div>
+                <div class="Model Game Scoreboard RightSide">15</div>
+            </div>
+            <div class="Model Game Scoreboard Line">
+                <div class="Model Game Scoreboard LeftSide">Jetty</div>
+                <div class="Model Game Scoreboard RightSide">20</div>
+            </div>
+            <div class="Model Game Scoreboard Line">
+                <div class="Model Game Scoreboard LeftSide">Jar</div>
+                <div class="Model Game Scoreboard RightSide">15</div>
+            </div>
+        </div>
+        <div class="Model Game Scoreboard Footer">
+            <div id="Scoreboard-Total-Label" class="Model Game Scoreboard LeftSide">Total = </div>
+            <div id="App-Module-Controller-Game-Scoreboard-TotalScore" class="Model Game Scoreboard RightSide"><span class="BoxMe">64</span></div>
+        </div>
+        <div class="Model Game Scoreboard Footer">
+            <div id="Scoreboard-LastRound-Label" class="Model Game Scoreboard LeftSide">Last Round = </div>
+            <div id="App-Module-Controller-Game-Scoreboard-LastRoundScore" class="Model Game Scoreboard RightSide"><span class="BoxMe">52</span></div>
+        </div>
+        <div class="Model Game Scoreboard Footer">
+            <div id="Scoreboard-RoundAvg-Label" class="Model Game Scoreboard LeftSide">Round Avg = </div>
+            <div id="App-Module-Controller-Game-Scoreboard-RoundAvg" class="Model Game Scoreboard RightSide"><span class="BoxMe">52</span></div>
+        </div>
+    </div>
+</div>
+<style>
+    #App-Module-Controller-Game-Board
+    {
+        float: left;
+        width: 45%;
+        text-align:right;
+        background-color:<?php echo $this->Module->PrimaryColor['darken'][2]; ?>;
+        padding: 20px 5% 20px 0px
+    }
+</style>
+
+<!-- Include pertinent style definitions from modular definition pages -->
+<?php
+echo $this->render('css/Model.Controller.phtml');
+?>
+<?php
+echo $this->render('css/App-Module-Controller-Banner.phtml');
+?>
+<?php
+echo $this->render('css/App-Module-Controller-Game-Scoreboard.phtml');
+?>

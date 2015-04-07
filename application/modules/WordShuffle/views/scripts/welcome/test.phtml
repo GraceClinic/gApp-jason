@@ -1,0 +1,12 @@
+<body ng-controller="MainCtrl as mainCtrl">
+<h1>Hello Servers!</h1>
+<div ng-repeat="todo in mainCtrl.items" class="item">
+    <div><span ng-bind="todo.label"></span></div>
+    <div>- by <span ng-bind="todo.author"></span></div>
+</div>
+</body>
+<style>
+    .item {
+        padding: 10px;
+    }
+</style>

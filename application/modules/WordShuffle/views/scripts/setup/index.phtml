@@ -1,0 +1,101 @@
+<!-- Controller / Action content renders here -->
+<div id="App-Module-Controller" class="Model Controller">
+    <form id="Setup-Form" action="/WordShuffle/Play/play" method="POST">
+        <input class="Secret" id="App-Module-Controller-Game-idGame" type="text" name="idGame" value="">
+        <div class="Form-Line">
+            <div class="Form-Line-Leftside">
+                <label for="playerName">Player:&nbsp;&nbsp;</label>
+            </div>
+            <div class="Form-Line-Rightside">
+                <input id="App-Module-Controller-Game-name" type="text" name="name" value="Enter a name">
+                &nbsp;
+            </div>
+        </div><br>
+        <div class="Form-Line">
+            <div class="Form-Line-Leftside">
+                <label for="secondsPerRound">Timer:&nbsp;&nbsp;</label>
+<!--                <input type="text" name="Timer">-->
+            </div>
+            <div class="Form-Line-Rightside">
+                <select id="App-Module-Controller-Game-secondsPerRound" name="secondsPerRound">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+                &nbsp;minutes
+            </div>
+        </div><br>
+        <div class="Form-Line">
+            <div class="Form-Line-Leftside">
+                <label for="totalRounds">Rounds:&nbsp;&nbsp;</label>
+<!--                <input type="text" name="Rounds">-->
+            </div>
+            <div class="Form-Line-Rightside">
+                <select id="App-Module-Controller-Game-rounds" name="roundsPerGame">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+                &nbsp;
+            </div>
+        </div><br>
+        <div class="Form-Line">
+            <div class="Form-Line-Leftside">
+                <label>&nbsp;</label>
+                <input id="Play" type="submit" value="Play">
+                &nbsp;&nbsp;
+            </div>
+            <div class="Form-Line-Rightside">
+                &nbsp;
+            </div>
+        </div>
+<!--            <input id="Play" type="submit" value="Play">-->
+    </form>
+</div>
+<style>
+    #Setup-Form
+    {
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 16pt;
+        width: 70%;
+        border-radius:    20px;
+<!--        background-color: --><?php //echo $this->Module->PrimaryColor['lighten'][3]; ?><!--;-->
+    }
+    .Form-Line
+    {
+        overflow: auto;  /*this "clears" the floated elements*/
+        margin-bottom: 10px;
+    }
+    .Secret
+    {
+        visibility: hidden;
+        z-index:    10;
+        position:   absolute;
+    }
+    .Form-Line-Leftside
+    {
+        float: left;
+        width: 50%;
+        text-align:right;
+    }
+    .Form-Line-Rightside
+    {
+        float: left;
+        width: 50%;
+        text-align:left;
+    }
+    #Play
+    {
+        padding:          5px 5px 5px 5px;
+    }
+
+
+</style>
+<!-- Include pertinent style definitions from modular definition pages -->
+<?php
+echo $this->render('css/Model.Controller.phtml');
+?>
+<?php
+echo $this->render('css/App-Module-Controller-Banner.phtml');
+?>

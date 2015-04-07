@@ -1,0 +1,77 @@
+/* Header styling */
+.fa{
+    color: blue;
+    font-size: 14pt;
+}
+#WordShuffle_Controller{
+    background-color: #d8f1ec;
+    overflow: hidden;
+    /*padding-bottom: 50px;   *//* don't overlap footer */
+}
+#HeaderBar
+{
+    font:normal 36px bold;
+    font-family: Script,cursive;
+    background-color: #cfe0cf;
+    border:solid 2px #178615;
+    width:100%;
+    overflow:hidden;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    box-sizing: border-box;
+}
+#HeaderBar .Left-Zone
+{
+    width:auto;
+    text-align:left;
+    float:left;
+    padding-left: 5%;
+    padding-right: 5%;
+    color: #600d8e;
+}
+#HeaderBar .Right-Zone
+{
+    width:auto;
+    text-align:left;
+    float:left;
+    font:normal 28px bold;
+    font-family: Impact,sans-serif;
+}
+.Model.Menu
+{
+    list-style-type: none;
+    padding:0;
+    margin:0;
+}
+.Model.Menu.Item
+{
+    padding:0 10px 0 10px;
+    display:inline
+}
+.Model.Menu.Item a
+{
+    text-decoration:none;
+    color:mediumpurple
+}
+.Model.Menu.Item a:hover
+{
+    text-decoration:underline;
+    color:blue;
+}
+#FooterBar
+{
+    width:100%;
+    /*position: absolute;         *//* move footer to the bottom of the page */
+    /*bottom: 0;*/
+    height: 50px;
+    background-color: #cfe0cf;
+    border:solid 2px #178615;
+    overflow:hidden;
+    clear:both;     /* clear any floating constraints to allow footer to display at bottom */
+    box-sizing: border-box;
+}
+#copyright
+{
+    padding: 10px 5% 10px 5%;
+    float:left;
+}
