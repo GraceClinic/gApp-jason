@@ -115,7 +115,7 @@ abstract class Common_Abstracts_Model
         }
     }
 
-    protected function setSysMan($x){
+    protected function setSysMan(){
         throw new Exception("Class ".get_class($this)." attempted to set SysMan, which is not allowed.");
     }
     protected function getSysMan(){
@@ -288,11 +288,13 @@ abstract class Common_Abstracts_Model
         $this->SysMan->Logger->info('START '.$this->_className.'->save() given model = '.print_r($this->toArray(),true));
 
         if (isset($this->id) && !is_null($this->id) && $this->id > 0) {
+            $this->SysMan->Logger->info('Save event is an update, fetch existing data.');
             /** @var Common_Abstracts_Model $old */
             $old = new $this->_className();
             $old->find($this->id);
             $success = $this->_preUpdate($old);
         } else {
+            $this->SysMan->Logger->info('Save event is an insert, create new record.');
             $success = $this->_preInsert();
         }
 
@@ -361,6 +363,8 @@ abstract class Common_Abstracts_Model
      */
     protected function _preUpdate($old)
     {
+        $this->SysMan->Logger->info($this->_className.'_preUpdate() not defined for id = '.$old->id);
+
         return true;
     }
 
@@ -414,6 +418,7 @@ abstract class Common_Abstracts_Model
             }
             // some properties excluded for transfer to frontend
             if($proceed){
+                // TODO: object types are not translating in toArray
                 if(is_object($this->$prop)) {
                     // recursively call toArray() for properties that are object types
                     if (method_exists($this->$prop, 'toArray')) {
@@ -496,8 +501,6 @@ abstract class Common_Abstracts_Model
     }
 
     private function processObject($obj){
-        $ret = '';
-
         if (method_exists($obj, 'toJSON')) {
             // convert properties that are objects to JSON strings
             $ret = $obj->toJSON();

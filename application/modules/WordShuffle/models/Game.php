@@ -255,23 +255,27 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             $rounds = $roundModel->findAll();
             $this->SysMan->Logger->info('Game->_postSave(); rounds found: '.print_r($rounds,true));
             if(count($rounds) > 0){
-                for($x=0;$x<count($rounds);$x++){
-                    $this->Rounds = new WordShuffle_Model_Round($rounds[$x]);
-                    $this->Rounds[$x]->save();
-                }
+                // do nothing, rounds constructed from database
+//                for($x=0;$x<count($rounds);$x++){
+//                    $this->Rounds = new WordShuffle_Model_Round($rounds[$x]);
+//                    $this->Rounds[$x]->save();
+//                }
             }else{
                 for($x=0;$x<$this->roundsPerGame;$x++) {
-                    $this->Rounds = new WordShuffle_Model_Round(array(
+                    $data = array(
                         'idGame' => $this->id,
                         'time' => $this->secondsPerRound
-                    ));
+                    );
+                    if($x==0) {
+                        $data['start'] = date('Y-m-d H:i:s');
+                    }
+                    $this->Rounds = new WordShuffle_Model_Round($data);
                     $this->Rounds[$x]->save();
                 }
             }
         }else{
-
+            // TODO:  save rounds
         }
-
 
         // set the session variable idPlayer to the results of the save operation
         if(!isset($session->idGame)){

@@ -36,7 +36,7 @@ abstract class Common_Abstracts_Mapper
             $this->_model = $model;
         }
 
-        $this->_model->SysMan->Logger->info($this->_className.'->construct()');
+//        $this->_model->SysMan->Logger->info($this->_className.'->construct()');
 
         $classArray = explode('_',$this->_className);
         // pop the model name from the class full name
@@ -201,6 +201,11 @@ abstract class Common_Abstracts_Mapper
 
         $this->_model->SysMan->Logger->info($this->_className.'->save() given table data = '.print_r($data,true));
 
+        // remove primary key field for insert and update operations (for insert it insures return of $pk, for update modifying primary key not allowed
+        if(isset($data[$targetTable->getPrimary()])){
+            unset($data[$targetTable->getPrimary()]);
+        }
+
         try {
             if (!is_null($pk) && $pk > 0) {
                 // if id property set, then this save operation is an update
@@ -213,10 +218,6 @@ abstract class Common_Abstracts_Mapper
                     $this->_className.'.save() method only accounts for one.  You will need to update the abstract or override.');
                 }
             } else {
-                // remove primary key field for insert operation to insure return of $pk
-                if(isset($data[$targetTable->getPrimary()])){
-                    unset($data[$targetTable->getPrimary()]);
-                }
 //                $pkArray = $targetTable->getPrimary();
 //                for($i=0;$i<=count($pkArray);$i++){
 //                    if(isset($data[$pkArray[$i]])){
@@ -241,6 +242,10 @@ abstract class Common_Abstracts_Mapper
         return $pk;
     }
 
+    public function delete(){
+        // TODO: define delete logic
+        return true;
+    }
     /**
      * Saves pertinent model properties to a specific database table as masked by the $map parameter.
      * !NOTE!: Zend_Db_Adapter_Abstract::Insert() requires that the primary key field be set to null
