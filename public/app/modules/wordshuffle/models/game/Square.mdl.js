@@ -1,67 +1,60 @@
 (function () {
 
     /**
+     * Model factory returning a <singleton or constructor> of the Model Square
      *
-     * @param App_Common_Abstracts_Model
-     * @returns {WordShuffle_Models_Round}
+     * @param {App_Common_Abstracts_Model}   App_Common_Abstracts_Model
+     * @returns {function(new:WordShuffle_Models_Game_Square)}
      * @constructor
      */
-    function WordShuffle_Models_RoundFactory(App_Common_Abstracts_Model) {
+    function WordShuffle_Models_Game_SquareFactory(App_Common_Abstracts_Model) {
         /**
-         * One round within a Word Shuffle game
+         * One playing square on the WordShuffle board
          *
          * @constructor
          * @extends     App_Common_Abstracts_Model
-         * @param       {array}     data            - data array for setting properties during instantiation
-         * @this        WordShuffle_Models_Round
-         * @returns     {function(new:WordShuffle_Models_Round)}
+         * @param       {Array}     data            - data array for setting properties during instantiation
+         * @this        WordShuffle_Models_Game_Square
+         * @returns     {WordShuffle_Models_Game_Square}
          */
-        function WordShuffle_Models_Round(data) {
+        function WordShuffle_Models_Game_Square(data) {
             // proxy the "this" keyword to avoid scope resolution issues
             var self = this;
-
-            // todo: set the URL address serving as backend api data source
-            self._rootURL = '';
 
             /********************************
              * MODEL PROPERTIES declarations
              ********************************/
+            // todo: use "ng_prop" live template to inject more model properties
             /**
-             * @property    WordShuffle_Models_Round#idGame      - id of the associated Game object
-             * @type        {int}
+             * @property    WordShuffle_Models_Game_Square#letter      - letter contained in square
+             * @type        string
              * @public
              **/
-            Object.defineProperty(self,'idGame',{get: getIdGame,set: setIdGame});
+            Object.defineProperty(self,'letter',{get: getLetter,set: setLetter});
             /**
-             * @property    WordShuffle_Models_Round#Time      - seconds to complete the round
-             * @type        {int}
+             * @property    WordShuffle_Models_Game_Square#row      - row index
+             * @type        int
              * @public
              **/
-            Object.defineProperty(self,'Time',{get: getTime,set: setTime});
+            Object.defineProperty(self,'row',{get: getRow,set: setRow});
             /**
-             * @property    WordShuffle_Models_Round#wordCount      - number of words created during round
-             * @type        {int}
+             * @property    WordShuffle_Models_Game_Square#col      - column index
+             * @type        int
              * @public
              **/
-            Object.defineProperty(self,'wordCount',{get: getWordCount,set: setWordCount});
+            Object.defineProperty(self,'col',{get: getCol,set: setCol});
             /**
-             * @property    WordShuffle_Models_Round#points      - number of points scored during the round
-             * @type        {int}
+             * @property    WordShuffle_Models_Game_Square#isSelected      - flags if square is selected
+             * @type        boolean
              * @public
              **/
-            Object.defineProperty(self,'points',{get: getPoints,set: setPoints});
+            Object.defineProperty(self,'isSelected',{get: getIsSelected,set: setIsSelected});
             /**
-             * @property    WordShuffle_Models_Round#start      - date / time started
-             * @type        {date}
+             * @property    WordShuffle_Models_Game_Square#callOnClick      - call back function link to the selection of the square
+             * @type        function()
              * @public
              **/
-            Object.defineProperty(self,'start',{get: getStart,set: setStart});
-            /**
-             * @property    WordShuffle_Models_Round#end      - date / time ended
-             * @type        {date}
-             * @public
-             **/
-            Object.defineProperty(self,'end',{get: getEnd,set: setEnd});
+            Object.defineProperty(self,'callOnClick',{get: getCallOnClick,set: setCallOnClick});
 
             /*****************************************
              * MODEL METHODS declaration / definition
@@ -71,69 +64,59 @@
             /**********************************
              /* GETTERS AND SETTERS definitions
              /*********************************/
-            var _idGame;
-            function getIdGame(){
-                return _idGame;
+            var _letter;
+            function getLetter(){
+                return _letter;
             }
-            function setIdGame(value){
-                _idGame = value;
+            function setLetter(value){
+                _letter = value;
             }
-            var _Time;
-            function getTime(){
-                return _Time;
+            var _row;
+            function getRow(){
+                return _row;
             }
-            function setTime(value){
-                _Time = value;
+            function setRow(value){
+                _row = value;
             }
-            var _wordCount;
-            function getWordCount(){
-                return _wordCount;
+            var _col;
+            function getCol(){
+                return _col;
             }
-            function setWordCount(value){
-                _wordCount = value;
+            function setCol(value){
+                _col = value;
             }
-            var _points;
-            function getPoints(){
-                return _points;
+            var _isSelected;
+            function getIsSelected(){
+                return _isSelected;
             }
-            function setPoints(value){
-                _points = value;
+            function setIsSelected(value){
+                _isSelected = value;
             }
-            var _start;
-            function getStart(){
-                return _start;
+            var _callOnClick;
+            function getCallOnClick(){
+                return _callOnClick;
             }
-            function setStart(value){
-                _start = value;
-            }
-            var _end;
-            function getEnd(){
-                return _end;
-            }
-            function setEnd(value){
-                _end = value;
+            function setCallOnClick(value){
+                // TODO: validate value is a function
+                _callOnClick = value;
             }
 
-            /******************
-             * PRIVATE FUNCTIONS
-             *******************/
-            // todo:  create any private functions that reside within the constructor 
 
+                // extend from the super class
             App_Common_Abstracts_Model.call(self, data);
 
             /*******************
              * CONSTRUCTOR LOGIC
              *******************/
-            // todo:  determine if model properties found on the frontend should be excluded from backend
-            self.excludeFromPost([]);
+            self.excludeFromPost(['callOnClick']);
 
             // most models return itself for daisy chaining
             return self;
         }
 
         // setup the inheritance chain
-        WordShuffle_Models_Round.prototype = Object.create(App_Common_Abstracts_Model.prototype);
-        WordShuffle_Models_Round.prototype.constructor = WordShuffle_Models_Round;
+        WordShuffle_Models_Game_Square.prototype = Object.create(App_Common_Abstracts_Model.prototype);
+        WordShuffle_Models_Game_Square.prototype.constructor = WordShuffle_Models_Game_Square;
 
         /*****************************************
          * PROTOTYPE CONSTANTS
@@ -160,7 +143,7 @@
          * @protected
          * @return   {boolean}
          */
-        WordShuffle_Models_Round.prototype._postFind = function( ){
+        WordShuffle_Models_Game_Square.prototype._postFind = function( ){
             // todo: determine if running logic after execution of the find() method
             return true;
         };
@@ -172,7 +155,7 @@
          * @protected
          * @return   {boolean}
          */
-        WordShuffle_Models_Round.prototype._postSave = function() {
+        WordShuffle_Models_Game_Square.prototype._postSave = function() {
             // todo: determine if _postSave() logic required, otherwise delete
             return true;
         };
@@ -185,7 +168,7 @@
          * @public
          * @return   {boolean}
          */
-        WordShuffle_Models_Round.prototype._preDispatch = function () {
+        WordShuffle_Models_Game_Square.prototype._preDispatch = function () {
             // todo: determine if pre-dispatch logic required, otherwise delete
             return true;
         };
@@ -197,7 +180,7 @@
          * @public
          * @return   {boolean}
          */
-        WordShuffle_Models_Round.prototype._postDispatch = function () {
+        WordShuffle_Models_Game_Square.prototype._postDispatch = function () {
             return true;
         };
 
@@ -211,10 +194,12 @@
         // todo: create private functions shared amongst all class instances
 
         // return constructor for dependency injection and extension of class, prefix with "new" if it should be a singleton
-        return WordShuffle_Models_Round;
+        return WordShuffle_Models_Game_Square;
     }
 
-    WordShuffle_Models_RoundFactory.$inject = ['App_Common_Abstracts_Model'];
+    // todo: inject dependenciesObject
+    WordShuffle_Models_Game_SquareFactory.$inject = ['App_Common_Abstracts_Model'];
 
-    angular.module('App_WordShuffle').factory('WordShuffle_Models_Round', WordShuffle_Models_RoundFactory);
+    // todo: register model with Angularjs application for dependency injection as required
+    angular.module('App_WordShuffle').factory('WordShuffle_Models_Game_Square', WordShuffle_Models_Game_SquareFactory);
 })();

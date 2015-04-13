@@ -41,12 +41,6 @@ angular.module('App')
                 console.log('Load template for action = ',param.action);
                 return 'app/modules/'+param.module+'/views/controllers/'+param.controller+'/'+param.action+'.tpl.html';
             }
-        })
-        .state('home',{
-            url: '/',
-            templateUrl: function(){
-                return '/m/wordshuffle/welcome/index';
-            }
         });
 
     console.log('App.routes END');

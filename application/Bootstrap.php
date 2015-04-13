@@ -92,6 +92,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         // make the session handler available to all function who need it
         Zend_Registry::set('session', $session);
+        Common_Models_SysMan::getInstance()->Logger->info('Zend session started');
+
+        if($session->idPlayer == 0){
+            Common_Models_SysMan::getInstance()->Logger->info('Zend session does not exists, created and initialized');
+        }else{
+            Common_Models_SysMan::getInstance()->Logger->info('Zend session exists, session object: '.
+                print_r(Common_Models_SysMan::getInstance()->Session->toArray(),true));
+        }
 
 //
 //        // if user identified, maintain session variables, otherwise initialize session variables

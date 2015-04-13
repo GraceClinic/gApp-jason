@@ -16,6 +16,7 @@
  * @property    WordShuffle_Model_Round[]       Rounds          array of Round objects
  * @property    int         Board
  * @property    string      status          - status of game as one of the constants: NEW_GAME, IN_PROGRESS, COMPLETED, and ABANDONED
+ * @property    array       Squares         - game squares
  * @property    WordShuffle_Model_Mapper_Game Mapper    - explicitly define Mapper
  */
 class WordShuffle_Model_Game extends Common_Abstracts_Model
@@ -27,6 +28,8 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     const IN_PROGRESS = 'InProgress';
     const COMPLETED = 'Completed';
     const ABANDONED = 'Abandoned';
+    const ROWS = 5;
+    const COLS = 5;
 
     // variable serving class properties
     private
@@ -39,6 +42,8 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         $_points = 0,
         $_start = null,
         $_end = null;
+
+    // TODO:  Perhaps override _construct and determine if appropriate to set property, if not remove property from data array
 
     /**
      * Initialize Game model after construction.  Set properties to default values and determine properties to exclude
@@ -53,7 +58,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         // Game id should always agree with session variable, set this explicitly to address any post mangling
         $this->id = $this->SysMan->Session->idGame;
 
-        // TODO: check sign-in state and adjust accordingly, currently frontend is maintaining game state after sign-out
         // if id not set, play is anonymous, store temp data within session variables
         if($this->id == 0){
             $this->secondsPerRound = $this->SysMan->Session->secondsPerRound;
@@ -157,6 +161,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             if(count($x) == $this->SysMan->Session->roundsPerGame){
                 // if each element is a Round object simply set the value
                 foreach($x as $round){
+
                     if($round instanceof WordShuffle_Model_Round){
                         // make sure idGame agrees with session
                         if($this->SysMan->Session->idGame == $round->idGame){
@@ -167,7 +172,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
                             break;
                         }
                     }else{
-                        $this->Rounds[] = new WordShuffle_Model_Round($round);
+                        $this->_Rounds[] = new WordShuffle_Model_Round($round);
                     }
                 }
             }else{
@@ -192,6 +197,35 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         return $this->_Board;
     }
 
+    private $_Squares = null;
+    protected function setSquares($value){
+        $this->_Squares = $value;
+        $this->SysMan->Logger->info('Game->setSquares; $value = '.print_r($value,true));
+        if(count($this->_Squares) !== 0){
+            $this->SysMan->Session->Squares = array();
+            $squares = array();
+            foreach($this->_Squares as $row){
+                $newRow = array();
+                foreach($row as $square){
+                    $newRow[] = $square->toArray();
+                }
+                $squares = $newRow;
+            }
+            $this->SysMan->Session->Squares = $squares;
+        }
+
+    }
+    protected function getSquares(){
+        if($this->_Squares == null){
+            if(count($this->SysMan->Session->Squares) !== 0){
+                foreach($this->SysMan->Session->Squares as $square){
+                    $this->_Squares[] = new WordShuffle_Model_Game_Square($square);
+                }
+            }
+        }
+        return $this->_Squares;
+    }
+
     private $_status = null;
     protected function setStatus($value){
         $options = array(self::NEW_GAME,self::IN_PROGRESS,self::COMPLETED,self::ABANDONED);
@@ -205,6 +239,8 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     protected function getStatus(){
         return $this->_status;
     }
+
+
     
     /*
      * New Game object requires creation of the associated Round objects that will be used during the Game
@@ -253,7 +289,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
                 'idGame' => $this->id
             ));
             $rounds = $roundModel->findAll();
-            $this->SysMan->Logger->info('Game->_postSave(); rounds found: '.print_r($rounds,true));
             if(count($rounds) > 0){
                 // do nothing, rounds constructed from database
             }else{
@@ -267,6 +302,24 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
                     }
                     $this->Rounds = new WordShuffle_Model_Round($data);
                     $this->Rounds[$x]->save();
+
+                    // initialize game squares for sending to front end
+                    $squares = array();
+                    for($i=1;$i<=self::ROWS;$i++){
+                        $row = array();
+                        for($j=1;$j<=self::COLS;$j++){
+                            $row[] = new WordShuffle_Model_Game_Square(array(
+                                'letter'        =>  $this->_randomLetter(),
+                                'row'           =>  $i,
+                                'col'           =>  $j,
+                                'isSelected'    =>  false
+                            ));
+                        }
+                        $squares[] = $row;
+                    }
+                    $this->SysMan->Logger->info('Game->_postSave(); squares created');
+                    $this->Squares = $squares;
+
                 }
             }
         }else{
@@ -297,6 +350,67 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
 
     protected function _validateModel(){
         // todo: validate game state
-        return true;
+        $success = true;
+
+        if(count($this->Rounds) > 0){
+            if($this->Rounds[0]->idGame !== $this->id){
+                $success = false;
+                $this->SysMan->Logger->err('Round object passed references a Game id that is not correct.');
+            }
+        }
+        return $success;
     }
+
+    /**
+     * Generates a random letter based on frequency distribution of letters
+     *
+     * @private
+     * @return string
+     */
+    private function _randomLetter()
+    {
+        // create map for relative frequency of the first letters of a word, ref http://en.wikipedia.org/wiki/Letter_frequency
+        $map = array(
+            'A' => 11.602,       // frequency of A = 11.602%
+            'B' => 4.702,
+            'C' => 3.511,
+            'D' => 2.67,
+            'E' => 2.007,
+            'F' => 3.779,
+            'G' => 1.95,
+            'H' => 7.232,
+            'I' => 6.286,
+            'J' => 0.597,
+            'K' => 0.59,
+            'L' => 2.705,
+            'M' => 4.374,
+            'N' => 2.365,
+            'O' => 6.264,
+            'P' => 2.545,
+            'Q' => 0.173,
+            'R' => 1.653,
+            'S' => 7.755,
+            'T' => 16.671,
+            'U' => 1.487,
+            'V' => 0.649,
+            'W' => 6.753,
+            'X' => 0.037,
+            'Y' => 1.62,
+            'Z' => 0.034
+        );
+
+        $random = (float)rand()/(float)getrandmax()*100;
+
+        $return = 0;
+        $sum = 0;
+        foreach($map as $letter=>$value){
+            $sum = $sum + $value;
+            if($random<$sum){
+                $return = $letter;
+                break;
+            }
+        }
+        return (string)$return;
+    }
+
 }

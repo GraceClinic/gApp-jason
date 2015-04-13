@@ -112,7 +112,7 @@ abstract class Common_Abstracts_Mapper
             $model = $model->toArray(false);
             $model = $this->mapModel($this->_map,$model);
             $this->_model->SysMan->Logger->info($this->_className.'->find() success, set model from '.print_r($model,true));
-            $this->setFromArray($model);
+            $this->_model->setFromArray($model);
             $success = true;
         }elseif($count == 0){
             $success = false;
@@ -377,38 +377,6 @@ abstract class Common_Abstracts_Mapper
         }
 
         return $ret;
-    }
-
-    /**
-     *Populate model from an associative array
-     *
-     * @param array $data
-     * @throws Exception    - expectation is to set model properties
-     */
-    public function setFromArray(array $data)
-    {
-        $success = false;
-
-        foreach ($data as $key => $value) {
-            $method = 'get' . ucfirst($key);
-            if (method_exists($this->_model, $method)) {
-                try {
-                    $this->_model->$key = $value;
-                    $success = true;
-                }
-                catch (Exception $e) {
-                    // ripple it up
-                    throw $e;
-                }
-            }
-        }
-
-        if(!$success){
-            throw new Exception('Attempt to set model from array yielded no properties set.  The mapper was '.$this->_className.
-                ', values to set were the following:  ('.implode(',',$data));
-        }
-
-
     }
 
     /**

@@ -220,7 +220,7 @@ final class Common_Models_SysMan
     {
         Zend_Session::start();
 
-        $session = new Zend_Session_Namespace('e4');
+        $session = new Zend_Session_Namespace('gapp');
 
         // if user identified, maintain session variables, otherwise initialize session variables
         if (!isset($session->idPlayer)) {
@@ -237,6 +237,7 @@ final class Common_Models_SysMan
             $session->roundAvg = 0;
             $session->signInState = 0;
             $session->Rounds = Array();
+            $session->Squares = Array();
         }
 
         return $session;

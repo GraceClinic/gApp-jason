@@ -392,9 +392,26 @@ abstract class Common_Abstracts_Model
      */
     public function setFromArray(array $data)
     {
-        // route to Mapper function
-        $this->Mapper->setFromArray($data);
-    }
+        $success = false;
+
+        foreach ($data as $key => $value) {
+            $method = 'get' . ucfirst($key);
+            if (method_exists($this, $method)) {
+                try {
+                    $this->$key = $value;
+                    $success = true;
+                }
+                catch (Exception $e) {
+                    // ripple it up
+                    throw $e;
+                }
+            }
+        }
+
+        if(!$success){
+            throw new Exception('Attempt to set model from array yielded no properties set for model '.$this->_className.
+                '; values to set were the following:  ('.implode(',',$data));
+        }    }
 
     /**
      * Return an array of model properties.

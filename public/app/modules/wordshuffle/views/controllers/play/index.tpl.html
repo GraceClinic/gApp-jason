@@ -1,9 +1,13 @@
 <div id="controller-play">
     <div id="play-game-board">
-        Gameboard<br>
-        this<br>
-        that<br>
-        other<br>
+        <div class="play-game-row"
+            ng-repeat="gameRow in Play.Game.Squares"
+        >
+            <wordshuffle-directives-game-square
+                ng-repeat="square in gameRow"
+                square="square"
+            ></wordshuffle-directives-game-square>
+        </div>
     </div>
     <div id="game-scoreboard">
         <div class="game-scoreboard game-scoreboard-header" >
@@ -50,12 +54,20 @@
         border-radius: 10px;
         text-align:right;
         background-color: #a99ac2;
-        padding: 20px 5% 20px 0;
+        padding: 20px 5% 20px 5%;
         box-sizing: border-box;
+        height: auto;
+        display: table;
+    }
+    .play-game-row
+    {
+        width:      100%;
+        display: table-row;
+        overflow: hidden;
     }
     #controller-play
     {
-        font: normal 20px, "Comic Sans", cursive;
+        font: 20px normal, "Comic Sans", cursive;
         padding: 20px 0 20px 0;
         width: 100%;
         overflow: hidden;   /* wrap div container around children */

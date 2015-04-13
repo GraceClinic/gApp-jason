@@ -1,17 +1,18 @@
 (function () {
 
     /**
-     * Model factory returning a <singleton or constructor> of the Model ${Name}
+     * Model factory returning a single instance of WordShuffle_Models_Game
      *
      * @param {App_Common_Abstracts_Model}      Model      - superclass
      * @param {App_Common_Models_Tools_Timer}   Timer       - Timer object for tracking game
-     * @param {function(WordShuffle_Models_Round)}        Round       - Round object that create the game
+     * @param {function(WordShuffle_Models_Game_Round)}         Round       - Round object that create the game
+     * @param {function(WordShuffle_Models_Game_Square)}        Square      - game square object contructor
      * @returns {WordShuffle_Models_Game}
      * @constructor
      */
-    function Game_Factory(Model,Timer,Round) {
+    function Game_Factory(Model,Timer,Round,Square) {
         /**
-         * << Short description for model >>
+         * WordShuffle game
          *
          * @class       WordShuffle_Models_Game
          * @extends     {App_Common_Abstracts_Model}
@@ -65,7 +66,7 @@
              */
             Object.defineProperty(self,"end",{get: getEnd,set: setEnd});
             /**
-             * @property    {WordShuffle_Models_Round[]}    Rounds
+             * @property    {WordShuffle_Models_Game_Round[]}    Rounds
              */
             Object.defineProperty(self,"Rounds",{get: getRounds,set: setRounds});
             /**
@@ -74,7 +75,12 @@
              * @public
              **/
             Object.defineProperty(self,'roundAvg',{get: getRoundAvg,set: setRoundAvg});
-
+            /**
+             * @property    WordShuffle_Models_Game#Squares      - array of game squares
+             * @type        WordShuffle_Models_Game_Square[]
+             * @public
+             **/
+            Object.defineProperty(self,'Squares',{get: getSquares,set: setSquares});
 
             /*****************************************
              * Public Methods declaration / definition
@@ -84,6 +90,10 @@
             // The above maintains a clean class definition, promoting readability and maintainability.  Follow
             // with the any constructor logic.  This is what should be done during instantiation of the controller.
 
+            Object.defineProperty(WordShuffle_Models_Game.prototype,"ROWS",{value: 5, writable: false});
+            Object.defineProperty(WordShuffle_Models_Game.prototype,"COLS",{value: 5, writable: false});
+            
+            
             /**********************************
              /* GETTERS AND SETTERS definitions
              /*********************************/
@@ -181,13 +191,75 @@
             function setRoundAvg(value){
                 _roundAvg = value;
             }
+            var _Squares = [];
+            function getSquares(){
+                // TODO: default configuration should establish at construct if Game object does not contain actual Square values
+                var row = [];
+                if(_Squares.length == 0){
+                    for(var i=1;i<=self.ROWS;i++){
+                        row = [];
+                        for(var j=1;j<=self.COLS;j++){
+                            row.push(
+                                new Square({
+                                        letter:         'X',
+                                        row:            i,
+                                        col:            j,
+                                        isSelected:     false,
+                                        callOnClick:    self.buildWord
+                                    }
+                                )
+                            );
+                        }
+                        _Squares.push(row);
+                    }
+                }
+                return _Squares;
+            }
+            function setSquares(value){
+                self.SysMan.Logger.entry('setSquares(), value = ',self.constructor.name);
+                console.log(value);
+
+                var squaresNotDefined = _Squares.length == 0;
+
+                var row = [];
+                if(value.length == self.ROWS){
+                    if(value[0].length == self.COLS){
+                        for(var i=1;i<=self.ROWS;i++){
+                            row = [];
+                            for(var j=1;j<=self.COLS;j++){
+                                var sqData = value[i-1][j-1];
+                                if(squaresNotDefined){
+                                    row.push(new Square(sqData))
+                                }else{
+                                    _Squares[sqData['Row']-1][sqData['Col']-1].setFromArray(sqData);
+                                }
+                            }
+                            if(squaresNotDefined){
+                                _Squares.push(row);
+                            }
+                        }
+                    }
+                }
+            }
+
+            /**
+             * Notification from square regarding user selection.
+             *
+             * @method   buildWord
+             * @public
+             * @param    {WordShuffle_Models_Game_Square}   Square  - game square object initiating call
+             */
+            self.buildWord = function(Square){
+                console.log('Game.buildWord; letter = ',Square.letter);
+            };
+
 
             /************************
              * CONSTRUCTOR LOGIC
              ************************/
             Model.call(self,data);
 
-            self.excludeFromPost(['idPlayer','Timer','Board','points','start','end','roundAvg']);
+            self.excludeFromPost(['idPlayer','Timer','Board','points','start','end','roundAvg','Squares']);
 
             // most models return itself for daisy chaining
             return self;
@@ -235,7 +307,12 @@
     }
 
     // inject dependenciesObject
-    Game_Factory.$inject = ['App_Common_Abstracts_Model','App_Common_Models_Tools_Timer', 'WordShuffle_Models_Round'];
+    Game_Factory.$inject = [
+        'App_Common_Abstracts_Model',
+        'App_Common_Models_Tools_Timer',
+        'WordShuffle_Models_Game_Round',
+        'WordShuffle_Models_Game_Square'
+    ];
 
     // register model with Angularjs application for dependency injection as required
     angular.module('App_WordShuffle').factory('WordShuffle_Models_Game', Game_Factory);

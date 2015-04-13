@@ -26,21 +26,6 @@ class WordShuffle_Model_Round extends WordShuffle_Model_Abstract
         $_start = null,
         $_end = null;
 
-    /**
-     * Initialize Round model after construction.  Set properties to default values and determine properties to exclude
-     * from JSON array that passes to frontend.
-     *
-     */
-    protected function init()
-    {
-//        // exclude instructions property from JSON array, frontend does not require
-//        $this->excludeFromJSON();
-
-        if($this->start == null){
-            $this->start = date('Y-m-d H:i:s');
-        }
-
-    }
 
     protected function setIdGame($x){
         $this->_idGame = (int) $x;

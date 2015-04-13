@@ -5,6 +5,8 @@
      *
      * @class
      * @param   {App_Common_Abstracts_Controller}  Controller
+     * @param   {WordShuffle_Models_Game}  Game         - singleton Game object, only one game active per player
+     * @param   {WordShuffle_Models_Player}  Player     - singleton Player object, only one player across controllers
      * @returns {WordShuffle_Controllers_Play}
      */
     function WordShuffle_Controllers_PlayController(Controller,Game,Player) {
@@ -28,6 +30,18 @@
              * Public Properties declarations
              ********************************/
             // todo: use "ng_prop" live template to attach properties to this controller
+            /**
+             * @property    WordShuffle_Controllers_Play#Game      - active game object
+             * @type        WordShuffle_Models_Game
+             * @public
+             **/
+            Object.defineProperty(self,'Game',{get: getGame,set: setGame});
+            /**
+             * @property    WordShuffle_Controllers_Play#Player      - player object
+             * @type        WordShuffle_Models_Player
+             * @public
+             **/
+            Object.defineProperty(self,'Player',{get: getPlayer,set: setPlayer});
 
             /**********************************************
              * Controller Actions declarations / definition
@@ -52,7 +66,18 @@
             /*********************************
              * GETTERS AND SETTERS definitions
              ********************************/
-            // todo: move getters and setters generated from the "mp" template to this location
+            function getGame(){
+                return Game;
+            }
+            function setGame(){
+                self.SysMan.Logger.entry('Game.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+            }
+            function getPlayer(){
+                return Player;
+            }
+            function setPlayer(){
+                self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+            }
 
             /*******************
              * CONSTRUCTOR LOGIC

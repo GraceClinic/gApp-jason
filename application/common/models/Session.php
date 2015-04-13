@@ -18,6 +18,7 @@
  * @property int        secondsPerRound *SESSION* stored seconds per round
  * @property int        idChallenge     *SESSION* primary key indexing challenge question
  * @property    int         signInState        - tracks the current sign-in state of the player
+ * @property    array         Squares          - game squares for active round
  */
 class Common_Models_Session
 {
@@ -78,7 +79,12 @@ class Common_Models_Session
         return
             '....       Session  Data       .... ' . PHP_EOL .
             'idPlayer:     ' . $this->idPlayer . PHP_EOL .
+            'playerName:     ' . $this->playerName . PHP_EOL .
+            'idChallenge:     ' . $this->idChallenge . PHP_EOL .
+            'roundsPerGame:     ' . $this->roundsPerGame . PHP_EOL .
+            'secondsPerRound:     ' . $this->secondsPerRound . PHP_EOL .
             'idGame:       ' . $this->idGame . PHP_EOL .
+            'signInState:     ' . $this->signInState . PHP_EOL .
             'Msg:          ' . $this->msg . PHP_EOL;
     }
 
@@ -151,7 +157,18 @@ class Common_Models_Session
     protected function getSignInState(){
         return (int) $this->_Session->signInState;
     }
-
+    protected function setSquares($value){
+        $this->_Session->Squares = $value;
+    }
+    protected function getSquares(){
+        return $this->_Session->Squares;
+    }
+    protected function setRounds($value){
+        $this->_Session->Rounds = $value;
+    }
+    protected function getRounds(){
+        return $this->_Session->Rounds;
+    }
     protected function setMsg($msg)
     {
         //Append to the message field
@@ -169,5 +186,21 @@ class Common_Models_Session
 
         return $msg;
     }
+
+    public function toArray(){
+        $ret = Array(
+            'idPlayer'=>    $this->idPlayer,
+            'idChallenge'=> $this->idChallenge,
+            'roundsPerGame'=>   $this->roundsPerGame,
+            'secondsPerRound'=> $this->secondsPerRound,
+            'idGame'=>  $this->idGame,
+            'signInState'=> $this->signInState,
+            'Squares'=>  $this->Squares,
+            'Rounds'=>  $this->Rounds,
+            'Msg'=> $this->msg
+        );
+
+        return $ret;
+}
 
 }

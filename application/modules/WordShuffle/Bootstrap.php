@@ -9,7 +9,7 @@ class WordShuffle_Bootstrap extends Zend_Application_Module_Bootstrap
         // It is necessary to manually add all of the new components as they are created in the application architecture
         $nameSpaceToPath = array(
 //            Example of Game package contained under module
-//            'Model_Game'    => 'models/Game'
+            'Model_Game'    => 'models/Game'
         );
 
         $autoLoaderResource = $this->getResourceLoader();
@@ -22,8 +22,9 @@ class WordShuffle_Bootstrap extends Zend_Application_Module_Bootstrap
 
         // now loop through and load the mapper and DbTable for each of the model components
         foreach($nameSpaceToPath as $ns => $path) {
-            $autoLoaderResource->addResourceType('mapper',$path.'/mappers',$ns.'_Mapper');
-            $autoLoaderResource->addResourceType('DbTable',$path.'/DbTable',$ns.'_DbTable');
+            $autoLoaderResource->addResourceType($ns,$path,$ns);
+            $autoLoaderResource->addResourceType($ns.'_Mapper',$path.'/mappers',$ns.'_Mapper');
+            $autoLoaderResource->addResourceType($ns.'_DbTable',$path.'/DbTable',$ns.'_DbTable');
         }
 
         return $autoLoaderResource;

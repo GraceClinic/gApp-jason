@@ -75,7 +75,7 @@
             self.playGame = function(){
                 if(self.Player.saveIsPending){
                     self.Player.save();
-                };
+                }
                 self.Game.roundsPerGame = self.Player.roundsPerGame;
                 self.Game.secondsPerRound = self.Player.secondsPerRound;
                 self.Game.idPlayer = self.Player.id;
@@ -117,7 +117,7 @@
             function getPlayer(){
                 return Player;
             }
-            function setPlayer(value){
+            function setPlayer(){
                 self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
             }
             var _showSecret = false;

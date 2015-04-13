@@ -72,13 +72,12 @@
             }
             var _DOM = null;
             function getDOM(){
-                if(!_DOM){
-                    // DOM object identified by id Tag
-                    _DOM = $('#'+self.idTag);
-                    if(_DOM.length == 0){
-                        _DOM = null;
-                    }
+                // DOM object identified by id Tag
+                _DOM = $('#'+self.idTag);
+                if(_DOM.length == 0){
+                    _DOM = null;
                 }
+
                 return _DOM;
             }
             function setDOM(value){
@@ -127,8 +126,9 @@
                     }
                 }else{
                     var _msg = 'Model.setFromArray() operation failed for object = ' + self.constructor.name +
-                        '.  Expected JS object mapping property to value, but it was not.';
+                        '.  Expected JS object mapping property to value, but it was not.  The value follows:';
                     SysMan.Logger.entry(_msg,'App_Common_Abstracts_Model',SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.MODEL_GET_ERROR);
+                    console.log(propArray);
                 }
 
             };
@@ -601,7 +601,7 @@
             }
             return _properties[this.uid];
         }
-        function setProperties(value){
+        function setProperties(){
             this.SysMan.Logger.entry(
                 'Set of "properties" not allowed!',
                 this.constructor.name,
@@ -697,6 +697,10 @@
 
         function _processArray(arr,scrubExcludes){
             var _tmp = [];
+            if(self.constructor.name == 'WordShuffle_Models_Game'){
+                console.log(arr);
+                console.log(Object.prototype.toString.call(arr[0]));
+            }
             for(var j=0;j<arr.length;j++){
                 if(arr[j] instanceof App_Common_Abstracts_Model){
                     _tmp.push(arr[j].toJSON(scrubExcludes));

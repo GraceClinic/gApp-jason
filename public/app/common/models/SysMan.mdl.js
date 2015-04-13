@@ -1,6 +1,6 @@
 (function () {
 
-    function App_Common_Models_SysManFactory(Logger,$state,Timer,$http) {
+    function App_Common_Models_SysManFactory(Logger,$state,Timer,$http,$window) {
         /**
          * Singleton system state manager for the entire application.  Provides messaging across controllers and models.
          * Maintains access to Logger and controls error routing.  Also maintains global application timer for reference
@@ -96,6 +96,17 @@
                     }
                 }
             };
+            /**
+             * restart the application
+             *
+             * @method   restart
+             * @public
+             */
+            self.restart = function(){
+                $state.go('module.controller.action',{"module":"wordshuffle","controller":"welcome","action":"index"});
+                $window.location.reload();
+            };
+
 
             /**********************************
              /* GETTERS AND SETTERS definitions
@@ -103,7 +114,7 @@
             function getLog(){
                 return Logger;
             }
-            function setLog(value){
+            function setLog(){
                 Logger.entry('SysMan.Log.set() NOT ALLOWED!  Why did you do it?',self.constructor.name,Logger.ERROR,Logger.ERRNO.APP_ERROR);
             }
             var _error = false;
@@ -274,7 +285,13 @@
     }
 
     // todo: inject dependenciesObject
-    App_Common_Models_SysManFactory.$inject = ['App_Common_Models_Tools_Logger','$state','App_Common_Models_Tools_Timer','$http'];
+    App_Common_Models_SysManFactory.$inject = [
+        'App_Common_Models_Tools_Logger',
+        '$state',
+        'App_Common_Models_Tools_Timer',
+        '$http',
+        '$window'
+    ];
 
     // todo: register model with Angularjs application for dependency injection as required
     angular.module('App').factory('App_Common_Models_SysMan', App_Common_Models_SysManFactory);

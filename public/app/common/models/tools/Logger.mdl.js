@@ -132,7 +132,7 @@
             function setMode(value){
                 _mode = value;
             }
-            var _output;
+            var _output = this.OUTPUT.CONSOLE;
             function getOutput(){
                 return _output;
             }
@@ -141,7 +141,7 @@
                 var _outputName = '';
 
                 for(var key in self.OUTPUT){
-                    if(value == this.OUTPUT[key]){
+                    if(value == self.OUTPUT[key]){
                         _wrongValue = false;
                         _outputName = key;
                     }
@@ -315,8 +315,11 @@
             if(type < this.mode){
                 if(this.output == this.OUTPUT.CONSOLE){
                     console.log(_typeName + ':  ' + text + ' (source = ' + source + ')');
+                }else{
+                    // todo:  write to log file
                 }
-                // todo:  write to log file
+            }else{
+                // ignore
             }
 
             // set error flag if log entry is type ERROR

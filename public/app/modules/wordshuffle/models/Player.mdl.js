@@ -4,6 +4,7 @@
      * Player factory returns a singleton instance of the Player object.  All controllers get the same object.
      *
      * @param {App_Common_Abstracts_Model}   Model
+     * @param {object}      $state
      * @returns {WordShuffle_Models_Player}
      * @constructor
      */
@@ -112,11 +113,9 @@
              * Runs logic after login() method returns from backend
              *
              * @method  _postLogin
-             * @param success
              * @protected
-             * @param    {boolean}  success     - results from backend logout process
              */
-            self._postLogin = function(success){
+            self._postLogin = function(){
                 if(self.signInState == self.SysMan.SIGNED_IN){
                     // clear secret field
                     self.secret = '';
@@ -134,6 +133,7 @@
             self.logout = function(){
                 _resetFlags();
                 self.relay('logout');
+                self.SysMan.restart();
             };
 
             /**

@@ -45,8 +45,10 @@
     <script src="app/modules/wordshuffle/models/Page.mdl.js"></script>
     <script src="app/modules/wordshuffle/models/Player.mdl.js"></script>
     <script src="app/modules/wordshuffle/models/Game.mdl.js"></script>
+    <script src="app/modules/wordshuffle/models/game/Square.mdl.js"></script>
+    <script src="app/modules/wordshuffle/directives/game/Square.drv.js"></script>
     <script src="app/modules/wordshuffle/models/Instructions.mdl.js"></script>
-    <script src="app/modules/wordshuffle/models/Round.mdl.js"></script>
+    <script src="app/modules/wordshuffle/models/game/Round.mdl.js"></script>
     <script src="app/modules/wordshuffle/controllers/Welcome.ctrl.js"></script>
     <script src="app/modules/wordshuffle/controllers/Setup.ctrl.js"></script>
     <script src="app/modules/wordshuffle/controllers/Play.ctrl.js"></script>
@@ -55,7 +57,7 @@
 <div id="wrap">
     <div ui-view id="App_Module"></div>
 </div>
-<style>
+<style scoped="">
     #wrap{
         position: relative;
         min-height: 100%;
