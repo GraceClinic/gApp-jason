@@ -25,34 +25,24 @@
              * @param   {Object}    scope           - reference to angular directive scope
              * @param   {WordShuffle_Models_Game_Square}    scope.square    - game square
              * @param   {Object}    element         - the DOM element attached to directive
-             * @param   {Object}    attributes      - the actual attributes values passed within the directive DOM element
              */
             function controller(scope, element) {
                 scope.square.idTag = 'wordshuffle-models-game-square-' + scope.square.row + '-' + scope.square.col;
 
                 var _intervalId = $interval(_wait, 100);
 
-                var _waitFlag = true;
-
                 function _wait(){
                     if(scope.square.DOM !== null){
-                        if(_waitFlag){
-                            console.log('square '+scope.square.idTag+' waiting');
-                            console.log('scope.square.DOM.width() = ',scope.square.DOM.width());
-                        }
                         var _width = scope.square.DOM.width();
                         // wait until element width is defined and other elements have populated and consumed row width
                         if(typeof _width === 'undefined'){
                             // do nothing until width is defined
-                            _waitFlag = true;
                         }else{
                             // as soon width defined, adjust height
                             _updateHeight();
 
                             // change interval callback to update slide page, reflect directive dwell time
                             $interval.cancel(_intervalId);
-
-                            _waitFlag = false;
                         }
                     }
                 }

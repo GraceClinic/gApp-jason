@@ -313,8 +313,6 @@
 
             self.excludeFromPost(['defaultName','challenges','saveIsPending']);
 
-            self.find();
-
             // most models return itself for daisy chaining
             return self;
         }
@@ -373,7 +371,6 @@
          */
         WordShuffle_Models_Player.prototype._preDispatch = function(){
             // clear any current Player messages, then run superclass save
-            console.log('player._preDispatch');
             this.msg = [];
             return true;
         };

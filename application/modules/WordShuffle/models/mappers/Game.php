@@ -23,7 +23,7 @@ class WordShuffle_Model_Mapper_Game extends WordShuffle_Model_Mapper_Abstract
         'end'               => 'end',
         'points'            => 'points',
         'roundAvg'          => 'roundAvg',
-        'status'            => 'status'
+        'status'            => 'state'
     );
 
     public function abandonUncompletedGames(){

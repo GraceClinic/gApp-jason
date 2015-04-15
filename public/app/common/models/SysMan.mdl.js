@@ -107,7 +107,6 @@
                 $window.location.reload();
             };
 
-
             /**********************************
              /* GETTERS AND SETTERS definitions
              /*********************************/
@@ -169,7 +168,6 @@
             }
             function setState(value){
                 // log changes to "state" for debug purposes
-                self.Logger.entry('SetState() = ' + JSON.stringify(value),self.constructor.name);
                 for(var $key in value){
                     if(!$key in ['module','controller','action']){
                         var _msg = 'APP ERROR:  Attempt to set App.state to non-compliant value.  Expected ' +
@@ -181,6 +179,7 @@
                         _state[$key] = value[$key];
                     }
                 }
+                self.Logger.entry('New SysMan.state = ' + JSON.stringify(_state),self.constructor.name);
             }
 
             /******************
@@ -239,6 +238,7 @@
             /*******************
              * CONSTRUCTOR LOGIC
              *******************/
+            Logger.entry('START App_Common_Models_SysMan.construct()',self.constructor.name);
             Logger.mode = Logger.MODE.DEBUG;          // output all log entries
             Logger.output = Logger.OUTPUT.CONSOLE;    // set output to console
             self.Timer.trip = 1000;                    // timer trips every second unless another resource changes it
@@ -246,7 +246,7 @@
             // register _routeError with Logger so that it will trigger SysMan to service the error
             Logger.callOnError(_routeError.bind(self));
 
-            Logger.entry('Constructor END',self.constructor.name,Logger.TYPE.INFO);
+            Logger.entry('END App_Common_Models_SysMan.construct()',self.constructor.name);
 
             // most models return itself for daisy chaining
             return self;

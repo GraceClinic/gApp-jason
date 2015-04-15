@@ -10,7 +10,7 @@
     function BannerDirective(Logger,$interval){
 
         function Banner(){
-            Logger.entry('Constructor START','App_Common_Directives_Banner');
+            Logger.entry('START App_Common_Directives_Banner.construct()','App_Common_Directives_Banner');
             var self = this;
 
             self.restrict = 'E'; // match on element name only
@@ -99,7 +99,7 @@
                 });
             }
 
-            Logger.entry('Constructor END','App_Common_Directives_Banner');
+            Logger.entry('END App_Common_Directives_Banner.construct()','App_Common_Directives_Banner');
 
             return self;
         }

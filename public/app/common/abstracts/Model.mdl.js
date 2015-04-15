@@ -108,11 +108,15 @@
                         // set property if it exists anywhere in prototype chain, hasOwnProperty only checks the object itself
                         if($key in self){
                             // use self reference in order to execute setter method, call using bracket notation within object scope
-                            self[$key] = propArray[$key];
+                            if(self[$key] !== null){
+                                self[$key] = propArray[$key];
+                            }
                         }else{
                             // check for lower case version of property
                             if(_lcFirst($key) in self){
-                                self[_lcFirst($key)] = propArray[$key];
+                                if(self[_lcFirst($key)] !== null){
+                                    self[_lcFirst($key)] = propArray[$key];
+                                }
                             }else{
                                 // log non-existent property
                                 SysMan.Logger.entry(
@@ -136,7 +140,7 @@
             /************************
              * CONSTRUCTOR LOGIC
              ************************/
-            SysMan.Logger.entry('START Abstract construct() called from ' + self.constructor.name,'App_Common_Abstracts_Model');
+            SysMan.Logger.entry('START ' + self.constructor.name+'.construct()','App_Common_Abstracts_Model');
             
             self.excludeFromPost(['uid','idTag','DOM','properties','x','y','height','width','SysMan']);
 
@@ -144,7 +148,7 @@
                 self.setFromArray(data);
             }
 
-            SysMan.Logger.entry('END Abstract construct() called from ' + self.constructor.name,'App_Common_Abstracts_Model');
+            SysMan.Logger.entry('END ' + self.constructor.name+'.construct()','App_Common_Abstracts_Model');
 
             // most models return itself for daisy chaining
             return self;
@@ -315,14 +319,12 @@
             var self = this;
             var _url = self._rootURL;
 
-            var _action = "index";
+            SysMan.Logger.entry('START '+self.constructor.name+'.find()','App_Common_Abstracts_Model');
+
             if(self.id > 0){
                 _url = _url + 'id/' + self.id;
-                _action = "get";
             }
 
-            // record new SysMan.state action and associated model status
-            self.SysMan.state = {'action': _action};
             self.status = self.PRE_DISPATCH;
 
             if(self._preDispatch()){
@@ -349,6 +351,8 @@
                 self.status = self.READY;
             }
 
+            SysMan.Logger.entry('END '+self.constructor.name+'.find()','App_Common_Abstracts_Model');
+
         };
 
         /**
@@ -374,15 +378,10 @@
                     model:  self.toJSON(true)
                 }
             };
-            self.SysMan.Logger.entry(self.constructor.name + '.save() start','App_Common_Abstracts_Model');
+            self.SysMan.Logger.entry('START ' + self.constructor.name + '.save()','App_Common_Abstracts_Model');
 
-            var _type = 'create';
-            if(_request.data.model.id){
-                _type = 'update';
-            }
 
-            // record new SysMan.state action and associated model status
-            self.SysMan.state = {'action': "put." + _type};
+            // record associated model status
             self.status = self.PRE_DISPATCH;
 
             if(self._preDispatch()) {
@@ -405,6 +404,8 @@
             }else{
                 self.status = self.READY;
             }
+
+            self.SysMan.Logger.entry('END ' + self.constructor.name + '.save()','App_Common_Abstracts_Model');
 
         };
 
@@ -437,8 +438,9 @@
                 }
             };
 
-            // record new SysMan.state action and associated model status
-            self.SysMan.state = {'action': "post." + method};
+            self.SysMan.Logger.entry('START ' + self.constructor.name + '.relay() for method = '+method,'App_Common_Abstracts_Model');
+
+            // record associated model status
             self.status = self.PRE_DISPATCH;
 
             if(self._preDispatch()) {
@@ -471,6 +473,8 @@
             }else{
                 self.status = self.READY;
             }
+
+            self.SysMan.Logger.entry('END ' + self.constructor.name + '.relay() for method = '+method,'App_Common_Abstracts_Model');
 
         };
 
@@ -635,7 +639,7 @@
             return _status[this.uid];
         }
         function setStatus(value){
-            this.SysMan.Logger.entry("Model.setStatus() = " + value, this.constructor.name);
+            this.SysMan.Logger.entry(this.constructor.name + ".setStatus() = " + value, this.constructor.name);
             _status[this.uid] = value;
         }
 

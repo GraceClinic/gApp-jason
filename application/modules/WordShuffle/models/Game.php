@@ -15,7 +15,7 @@
  * @property    datetime    end             date time current game ended
  * @property    WordShuffle_Model_Round[]       Rounds          array of Round objects
  * @property    int         Board
- * @property    string      status          - status of game as one of the constants: NEW_GAME, IN_PROGRESS, COMPLETED, and ABANDONED
+ * @property    string      state          - state of game as one of the constants: NEW_GAME, IN_PROGRESS, COMPLETED, and ABANDONED
  * @property    array       Squares         - game squares
  * @property    WordShuffle_Model_Mapper_Game Mapper    - explicitly define Mapper
  */
@@ -52,8 +52,8 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
      */
     protected function init()
     {
-        // exclude instructions property from JSON array, frontend does not require
-        $this->excludeFromJSON(array('status'));
+        // exclude from frontend response
+        //$this->excludeFromJSON(array('state'));
 
         // Game id should always agree with session variable, set this explicitly to address any post mangling
         $this->id = $this->SysMan->Session->idGame;
@@ -200,7 +200,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     private $_Squares = null;
     protected function setSquares($value){
         $this->_Squares = $value;
-        $this->SysMan->Logger->info('Game->setSquares; $value = '.print_r($value,true));
         if(count($this->_Squares) !== 0){
             $this->SysMan->Session->Squares = array();
             $squares = array();
@@ -226,18 +225,18 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         return $this->_Squares;
     }
 
-    private $_status = null;
-    protected function setStatus($value){
+    private $_state = null;
+    protected function setState($value){
         $options = array(self::NEW_GAME,self::IN_PROGRESS,self::COMPLETED,self::ABANDONED);
-
+        $this->SysMan->Logger->info('Game.setState = '.$value);
         if(in_array($value,$options)){
-            $this->_status = (string) $value;
+            $this->_state = (string) $value;
         }else{
-            throw new Exception($this->className.'->setStatus to disallowed value = '.$value);
+            throw new Exception($this->className.'->setState to disallowed value = '.$value);
         }
     }
-    protected function getStatus(){
-        return $this->_status;
+    protected function getState(){
+        return $this->_state;
     }
 
 
@@ -257,10 +256,10 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             $this->SysMan->Session->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
 
             // todo: update mapper to save information to session variables if state is anonymous, maybe variables always write to that location
-            // need to track game status, start, end
+            // need to track game state, start, end
         }else{
             $this->start = date("Y-m-d H:i:s");
-            $this->status = self::IN_PROGRESS;
+            $this->state = self::IN_PROGRESS;
             $this->points = 0;
             $this->roundAvg = 0;
         }
@@ -323,7 +322,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
                 }
             }
         }else{
-            // TODO:  save rounds
+            // TODO:  save rounds as update
         }
 
         // set the session variable idPlayer to the results of the save operation
@@ -332,6 +331,9 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         }elseif($session->idGame <> $this->id){
             throw new Exception('Session variable idGame does not match database records.');
         }
+
+        $this->SysMan->Logger->info('END Game->_postSave()');
+
     }
 
     public function buildBoard($rows=null,$cols=null){

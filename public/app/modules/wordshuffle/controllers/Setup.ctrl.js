@@ -7,9 +7,10 @@
      * @param   {App_Common_Abstracts_Controller}  Controller
      * @param   {WordShuffle_Models_Game}  Game         - singleton Game object, only one game active per player
      * @param   {WordShuffle_Models_Player}  Player     - singleton Player object, only one player across controllers
+     * @param   {object}    $scope      - reference to angularjs controller scope
      * @returns {WordShuffle_Controllers_Setup}
      */
-    function WordShuffle_Controllers_SetupController(Controller,Game,Player) {
+    function WordShuffle_Controllers_SetupController($scope,Controller,Game,Player) {
 
         /**
          * Controls authentication and setup of game defaults for next play.
@@ -20,6 +21,7 @@
          */
         function WordShuffle_Controllers_Setup() {
             var self = this;		// required alias to address resolution to immediate scope
+            self._isActionController = true;
 
             /********************************
              * Public Properties declarations
@@ -60,6 +62,7 @@
              */
             self.indexAction = function(){
                 // todo: define any parameters and then code action logic
+                self.Player.find();
             };
 
             /**********************************************
@@ -75,12 +78,15 @@
             self.playGame = function(){
                 if(self.Player.saveIsPending){
                     self.Player.save();
+                    self.Player.saveIsPending = false;
                 }
-                self.Game.roundsPerGame = self.Player.roundsPerGame;
-                self.Game.secondsPerRound = self.Player.secondsPerRound;
-                self.Game.idPlayer = self.Player.id;
-                self.Game.save();
-                self.goToState('wordshuffle','play','index');
+                //self.Game.roundsPerGame = self.Player.roundsPerGame;
+                //self.Game.secondsPerRound = self.Player.secondsPerRound;
+                //self.Game.idPlayer = self.Player.id;
+                //self.Game.save();
+
+                // routing to play controller / play action will start the game
+                self.goToState('wordshuffle','play','play');
             };
             /**
              * Toggles display of secret fields when the Player is signed-in
@@ -137,6 +143,7 @@
              * CONSTRUCTOR LOGIC
              *******************/
             Controller.call(self);
+            self.scope = $scope;
 
         }
 
@@ -150,7 +157,7 @@
     }
 
     // todo:  inject other dependencies into the controller factory, and itemize in factory function above
-    WordShuffle_Controllers_SetupController.$inject = ['App_Common_Abstracts_Controller','WordShuffle_Models_Game','WordShuffle_Models_Player'];
+    WordShuffle_Controllers_SetupController.$inject = ['$scope','App_Common_Abstracts_Controller','WordShuffle_Models_Game','WordShuffle_Models_Player'];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Setup', WordShuffle_Controllers_SetupController);
 })();

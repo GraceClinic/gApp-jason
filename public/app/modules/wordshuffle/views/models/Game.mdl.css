@@ -1,0 +1,100 @@
+#models-game
+{
+    font: 20px normal, "Comic Sans", cursive;
+    padding: 20px 1% 20px 1%;
+    width: 100%;
+    overflow: hidden;   /* wrap div container around children */
+    position:relative;
+}
+#models-game-board
+{
+    float: left;
+    width: 60%;
+    border-radius: 10px;
+    text-align:right;
+    background-color: #a99ac2;
+    padding: 20px 5% 20px 5%;
+    box-sizing: border-box;
+    height: auto;
+    display: table;
+}
+.models-game-row
+{
+    width:      100%;
+    display: table-row;
+    overflow: hidden;
+}
+
+#models-game-overlay
+{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(128,128,128,0.5);
+    z-index: 100;
+}
+#models-game-overlay button
+{
+    position: relative;
+    top: 20%;
+    left: 25%;
+    border: solid 3px green;
+}
+/* scoreboard css */
+#models-game-scoreboard
+{
+    float: left;
+    width: 40%;
+    padding: 10px 5% 10px 5%;
+    box-sizing: border-box;
+}
+.models-game-scoreboard.models-game-scoreboard-header
+{
+    overflow: hidden;
+    border-bottom: 1px solid #860505;
+}
+.models-game-scoreboard-header .models-game-scoreboard.left-side,.models-game-scoreboard.models-game-scoreboard-header .models-game-scoreboard.right-side
+{
+    font: italic 24px bold;
+}
+#models-game-scoreboard .models-game-scoreboard.models-game-scoreboard-line
+{
+    padding: 10px 10px 0 10px;
+    overflow: hidden;
+    border-bottom: 1px solid #860505;
+}
+#models-game-scoreboard .models-game-scoreboard.left-side
+{
+    width: 45%;
+    float: left;
+    text-align: right;
+    padding: 0 5% 0 0
+}
+#models-game-scoreboard .models-game-scoreboard.right-side
+{
+    width: 45%;
+    float: left;
+    padding: 0 0 0 5%
+}
+#models-game-scoreboard-body .models-game-scoreboard.models-game-scoreboard-line:nth-of-type(odd)
+{
+    background-color: #cfe0cf;
+}
+#models-game-scoreboard-body .models-game-scoreboard.models-game-scoreboard-line:last-child
+{
+    border-bottom: 6px double #860505;
+}
+.models-game-scoreboard.models-game-scoreboard-footer
+{
+    padding: 10px 0 10px 0;
+    overflow: hidden;
+}
+.models-game-scoreboard-box
+{
+    border: 4px solid blue;
+    background-color: white;
+    border-radius: 4px;
+    padding: 1px 4px 1px 4px;
+}

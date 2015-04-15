@@ -81,6 +81,12 @@
              * @public
              **/
             Object.defineProperty(self,'Squares',{get: getSquares,set: setSquares});
+            /**
+             * @property    WordShuffle_Models_Game#state      - tracks game state as COMPLETED, IN_PROGRESS, or ABANDONED
+             * @type        string
+             * @public
+             **/
+            Object.defineProperty(self,'state',{get: getState,set: setState});
 
             /*****************************************
              * Public Methods declaration / definition
@@ -241,6 +247,24 @@
                     }
                 }
             }
+            var _state;
+            function getState(){
+                return _state;
+            }
+            function setState(value){
+                if(!value==null){
+                    var _validValues = [self.IN_PROGRESS, self.COMPLETED, self.ABANDONED];
+                    if(_validValues.indexOf(value)>=0){
+                        _state = value;
+                    }else{
+                        self.SysMan.Logger.entry(
+                            'Game.setState called with improper argument = '+value,
+                            self.constructor.name,
+                            self.SysMan.Logger.TYPE.ERROR
+                        );
+                    }
+                }
+            }
 
             /**
              * Notification from square regarding user selection.
@@ -259,7 +283,22 @@
              ************************/
             Model.call(self,data);
 
-            self.excludeFromPost(['idPlayer','Timer','Board','points','start','end','roundAvg','Squares']);
+            self.excludeFromPost([
+                'idPlayer',
+                'Timer',
+                'Board',
+                'points',
+                'start',
+                'end',
+                'roundAvg',
+                'Squares',
+                'state',
+                'IN_PROGRESS',
+                'COMPLETED',
+                'ABANDONED',
+                'ROWS',
+                'COLS'
+            ]);
 
             // most models return itself for daisy chaining
             return self;
@@ -268,6 +307,11 @@
         // setup the inheritance chain
         WordShuffle_Models_Game.prototype = Object.create(Model.prototype);
         WordShuffle_Models_Game.prototype.constructor = WordShuffle_Models_Game;
+        
+        Object.defineProperty(WordShuffle_Models_Game.prototype,"IN_PROGRESS",{value: 'InProgress', writable: false});
+        Object.defineProperty(WordShuffle_Models_Game.prototype,"COMPLETED",{value: 'Completed', writable: false});
+        Object.defineProperty(WordShuffle_Models_Game.prototype,"ABANDONED",{value: 'Abandoned', writable: false});
+                        
 
         /*****************************************
          * PROTOTYPE PUBLIC PROPERTIES DECLARATION

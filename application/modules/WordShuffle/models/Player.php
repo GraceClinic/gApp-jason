@@ -209,7 +209,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
 
         $signedIn = $this->signInState == Common_Models_SysMan::SIGNED_IN;
 
-        // only execute find operation when signed, otherwise play is anonymous
+        // only execute find operation when signed-in, otherwise play is anonymous
         if($signedIn){
             parent::find($id);
         }

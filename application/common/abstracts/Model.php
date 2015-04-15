@@ -52,10 +52,15 @@ abstract class Common_Abstracts_Model
 
         //Populate model if needed
         if(isset($data)) {
+            // array passed, set model properties accordingly
             if(is_array($data)) {
                 $this->setFromArray($data);
-            }elseif(is_object($data)){
-                $this->setFromArray((array) $data);
+            // object passed, set model properties accordingly
+            }elseif(is_object($data)) {
+                $this->setFromArray((array)$data);
+            // integer passed, execute find based on value
+            }elseif(is_integer((int)$data) && (int)$data !== 0){
+                $this->find((int)$data);
             }else{
                 throw new Exception(
                     'Unrecognized parameter passed during instantiation of '.$this->_className
@@ -69,7 +74,7 @@ abstract class Common_Abstracts_Model
 
         $this->init();
 
-        $this->SysMan->Logger->info('END '.$this->_className.'->construct(), data = '.print_r($this->toArray(),true));
+        $this->SysMan->Logger->info('END '.$this->_className.'->construct(), model = '.print_r($this->toArray(),true));
 
     }
 
@@ -92,11 +97,14 @@ abstract class Common_Abstracts_Model
     public function __set($name, $value)
     {
         $method = 'set' . ucfirst($name);
-        if (method_exists($this, $method)) {
-            return $this->$method($value);
-        } else { // else choose error handler. Throw Exception, Log it, or message user
-            throw new Exception("No Setter defined for ".$name.".");
+        if(isset($value)){
+//            $this->SysMan->Logger->info($this->_className.'->__set(); $name = '.$name.'; isset($value) = '.isset($value));
+            if (!method_exists($this, $method)) {
+                // else choose error handler. Throw Exception, Log it, or message user
+                throw new Exception("No Setter defined for " . $name . ".");
+            }
         }
+        return $this->$method($value);
     }
     /**
      * Magic get function
@@ -438,7 +446,7 @@ abstract class Common_Abstracts_Model
                         // convert properties that are objects to JSON strings
                         $ret[$prop] = $this->$prop->toArray($scrubExcludes);
                         if (!$ret || $ret == '' || is_null($ret)) {
-                            $ret = "-- no data --";
+                            $ret = "";
                         }
                     } else {
                         // objects without toArray() method, simply copy as is

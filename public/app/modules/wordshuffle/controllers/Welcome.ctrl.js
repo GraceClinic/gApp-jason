@@ -5,13 +5,13 @@
      * Welcome controller factory spawning a controller object
      *
      * @constructor
-     * @param   {function(new:App_Common_Abstracts_Controller)}     Controller
+     * @param   {App_Common_Abstracts_Controller}     Controller
      * @param   {function(new:WordShuffle_Models_Instructions)}     Instructions
+     * @param   {object}    $scope      - reference to angularjs controller scope
      * @returns {WordShuffle_Controllers_Welcome}
      */
-    function WelcomeController(Controller,Instructions){
+    function WelcomeController($scope,Controller,Instructions){
 
-        var _count = 0;
         /**
          * Presents game instructions to the user
          *
@@ -22,6 +22,7 @@
         function WordShuffle_Controllers_Welcome(){
 
             var self = this;
+            self._isActionController = true;
 
             // define all of the action methods, these actions are accessible through URL routes
             self.indexAction = function(){
@@ -57,12 +58,11 @@
              ***************************/
 
             Controller.call(self);
+            self.scope = $scope;
 
-            self.SysMan.Logger.entry('Constructor START',self.constructor.name);
             self.msg = 'Welcome to WordShuffle!';
             self.msg = "Please read the instructions and learn more about this exciting game!";
 
-            self.SysMan.Logger.entry('Constructor END',self.constructor.name);
         }
         // inherit prototype functions from superclass Controller
         WordShuffle_Controllers_Welcome.prototype = Object.create(Controller.prototype);
@@ -74,6 +74,7 @@
 
     // inject dependenciesObject
     WelcomeController.$inject = [
+        '$scope',
         'App_Common_Abstracts_Controller',
         'WordShuffle_Models_Instructions'
     ];

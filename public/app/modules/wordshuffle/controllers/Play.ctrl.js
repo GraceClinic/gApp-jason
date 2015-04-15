@@ -7,9 +7,10 @@
      * @param   {App_Common_Abstracts_Controller}  Controller
      * @param   {WordShuffle_Models_Game}  Game         - singleton Game object, only one game active per player
      * @param   {WordShuffle_Models_Player}  Player     - singleton Player object, only one player across controllers
+     * @param   {object}    $scope      - reference to angularjs controller scope
      * @returns {WordShuffle_Controllers_Play}
      */
-    function WordShuffle_Controllers_PlayController(Controller,Game,Player) {
+    function WordShuffle_Controllers_PlayController($scope,Controller,Game,Player) {
 
         /**
          * Defines state control from the Play side of the site.
@@ -20,6 +21,7 @@
          */
         function WordShuffle_Controllers_Play() {
             var self = this;		// required alias to address resolution to immediate scope
+            self._isActionController = true;
 
             /*****************
              * Public CONSTANTS
@@ -55,7 +57,28 @@
              */
             self.indexAction = function(){
                 // todo: define any parameters and then code action logic
-                console.log('Play.index() action');
+                console.log('Play.index() action, Game.state = '+Game.state+'; Game.IN_PROGRESS = '+Game.IN_PROGRESS);
+                if(Game.state == Game.IN_PROGRESS){
+                    self.goToState('wordshuffle','play','play');
+                }
+            };
+
+            /**
+             * Game in play
+             *
+             * @method   playAction
+             * @public
+             */
+            self.playAction = function(){
+                // todo: define any parameters and then code action logic
+                console.log('Play.play() action');
+                if(Game.state !== Game.IN_PROGRESS){
+                    self.Game.roundsPerGame = self.Player.roundsPerGame;
+                    self.Game.secondsPerRound = self.Player.secondsPerRound;
+                    self.Game.idPlayer = self.Player.id;
+                    self.Game.save();
+                }
+
             };
 
             /**********************************************
@@ -83,6 +106,7 @@
              * CONSTRUCTOR LOGIC
              *******************/
             Controller.call(self);
+            self.scope = $scope;
 
             // todo: add constructor logic
 
@@ -98,7 +122,7 @@
     }
 
     // todo:  inject other dependencies into the controller factory, and itemize in factory function above
-    WordShuffle_Controllers_PlayController.$inject = ['App_Common_Abstracts_Controller','WordShuffle_Models_Game','WordShuffle_Models_Player'];
+    WordShuffle_Controllers_PlayController.$inject = ['$scope','App_Common_Abstracts_Controller','WordShuffle_Models_Game','WordShuffle_Models_Player'];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Play', WordShuffle_Controllers_PlayController);
 })();

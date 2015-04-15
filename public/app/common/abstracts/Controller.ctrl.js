@@ -9,10 +9,11 @@
     /**
      *
      * @param {App_Common_Models_SysMan} SysMan
-     * @param $stateParams
-     * @param $state
+     * @param $stateParams  - ui.router state parameters from URL:  module, controller, action
+     * @param $state        - ui.router state variable for routing to new state
+     * @param $rootScope    - link to angularjs root scope for listening to state changes
      */
-    function App_Common_Abstracts_ControllerFactory(SysMan,$stateParams,$state){
+    function App_Common_Abstracts_ControllerFactory(SysMan,$stateParams,$state,$rootScope){
         // private variables serving prototype
         var _paramPresent = ($stateParams !== null) && ($stateParams instanceof Object);
 
@@ -26,6 +27,19 @@
          */
         function App_Common_Abstracts_Controller(){
             var self = this;
+            /**
+             * Identifies controller is responsible for watching URL parameters and executing specific action as
+             * specified by the parameters.
+             *
+             * @type {boolean}
+             * @protected
+             */
+            self._isActionController;
+
+            // register listener to rootScope for reacting to state changes and store to clean up function for trash collection
+            var _cleanUp = $rootScope.$on('$stateChangeSuccess', function(event,toState,toParams,fromState,fromParams){
+                self.processStateChange(toParams,fromParams,false);
+            });
 
             // private class variables
             var _constructorSet = self.constructor.name !== 'Controller' && self.constructor.name !== 'Object';
@@ -39,6 +53,12 @@
              * @public
              */
             Object.defineProperty(self,'msg',{get: getMsg,set: setMsg});
+            /**
+             * @property    App_Common_Abstracts_Controller#scope      - reference to specific controller's scope
+             * @type        object
+             * @public
+             **/
+            Object.defineProperty(self,'scope',{get: getScope,set: setScope});
 
             /*********************************
             /* GETTERS AND SETTERS definitions
@@ -61,12 +81,25 @@
                     _msg.push(x);
                 }
             }
+            var _scope = null;
+            function getScope(){
+                return _scope;
+            }
+            function setScope($scope){
+                if(_scope == null){
+                    $scope.$on('$destroy',function(){
+                        console.log('destroy controller scope ',self.constructor.name);
+                        _cleanUp();
+                    });
+                }
+                _scope = $scope;
+
+            }
 
             /************************
              * CONSTRUCTOR LOGIC
              ************************/
-            var _entry = self.constructor.name + '.construct START';
-            SysMan.Logger.entry(_entry,'App_Common_Abstracts_Controller');
+            SysMan.Logger.entry('START ' + self.constructor.name + '.construct()','App_Common_Abstracts_Controller');
 
             if(!_constructorSet){
                 _errMsg = 'You just instantiated a Controller without properly setting the constructor.  You should have ' +
@@ -84,38 +117,15 @@
                 }
                 SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_Controller',SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.CTRL_ERROR);
             }
-            else{
-                var _paramCorrect = ('module' in $stateParams) && ('controller' in $stateParams) && ('action' in $stateParams);
-                if(!_paramCorrect){
-                    _errMsg = 'You did not pass "module", "controller", and "action" parameters within the URL for your ' +
-                        'controller = "'+self.constructor.name+'"';
-                    SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_Controller',SysMan.Logger.TYPE.WARNING);
-                }else{
-                    // set the application state for memory and reference
-                    SysMan.state = {
-                        "module":       $stateParams.module,
-                        "controller":   $stateParams.controller,
-                        "action":       $stateParams.action
-                    }
-                }
-            }
 
-            if(!SysMan.Logger.inError){
-                // run the controller action after the document is ready
+            if(!SysMan.Logger.inError && self._isActionController){
+                //run the controller action after the document is ready
                 angular.element(document).ready(function () {
-                    try{
-                        // run the action specified by the URL
-                        self[$stateParams.action+'Action']();
-                    }
-                    catch(err){
-                        _errMsg = 'You did not specify a "' + $stateParams.action + '" action for your controller = "' + self.constructor.name +
-                            '" contained in your module = "' + $stateParams.module + '".  Error reported:  ' + err.message;
-                        SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_Controller',SysMan.Logger.TYPE.WARNING);
-                    }
+                    self.processStateChange($stateParams,SysMan.state,true);
                 });
             }
 
-            SysMan.Logger.entry('Construct END',self.constructor.name);
+            SysMan.Logger.entry('END ' + self.constructor.name + '.construct()','App_Common_Abstracts_Controller');
 
             return self;
         }
@@ -154,12 +164,68 @@
                 "action":       action
             };
 
-            $state.go('module.controller.action',_newState);
+            var _sameController =
+                _newState.module == SysMan.state.module && _newState.controller == SysMan.state.controller;
+            var _sameState = _sameController && SysMan.state.action == _newState.action;
+
+            if(!_sameState){
+                $state.go('module.controller.action',_newState);
+            }
+
+        };
+
+        /**
+         * Executes logic following state change.
+         *
+         * @method   processStateChange
+         * @public
+         * @param   {object}    newState        - new state parameters
+         * @param   {object}    oldState        - old state parameters
+         * @param   {boolean}   isConstruct     - flags if processing controller constructor
+         */
+        App_Common_Abstracts_Controller.prototype.processStateChange = function(newState,oldState,isConstruct){
+            //if(typeof newState !== 'undefined' && typeof oldState !== 'undefined'){
+            if(this._isActionController){
+                var _paramCorrect = ('module' in newState) && ('controller' in newState) && ('action' in newState);
+                var _sameState =
+                    SysMan.state.module == newState.module &&
+                    SysMan.state.controller == newState.controller &&
+                    SysMan.state.action == newState.action;
+                var _newController =
+                    SysMan.state.module != newState.module ||
+                    (SysMan.state.module == newState.module && SysMan.state.controller != newState.controller);
+
+
+                // Process state change always on construction, otherwise only when changing action of same controller.
+                // Construction flag required because the state transition before the new controller is instantiated.
+                // Hence the logic below cannot run the target controller's action because it does not yet exist.
+                if(_paramCorrect && (isConstruct || (!_sameState && !_newController))){
+                    console.log(this.constructor.name,'.processStateChange, from ',oldState,'; to ',newState);
+                    SysMan.state = {
+                        "module":       newState.module,
+                        "controller":   newState.controller,
+                        "action":       newState.action
+                    };
+                    try{
+                        SysMan.Logger.entry('START ' + this.constructor.name + '.' + newState.action + 'Action()','App_Common_Abstracts_Controller');
+                        // run the action specified by the URL
+                        this[newState.action+'Action']();
+                        SysMan.Logger.entry('END ' + this.constructor.name + '.' + newState.action + 'Action()','App_Common_Abstracts_Controller');
+                    }
+                    catch(err){
+                        var _errMsg = 'You did not specify a "' + newState.action + '" action for your controller = "' + this.constructor.name +
+                            '" contained in your module = "' + newState.module + '".  Error reported:  ' + err.message;
+                        SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_Controller',SysMan.Logger.TYPE.WARNING);
+                    }
+
+                }
+            }
+
         };
 
         return App_Common_Abstracts_Controller;
     }
 
-    App_Common_Abstracts_ControllerFactory.$inject = ['App_Common_Models_SysMan','$stateParams', '$state'];
+    App_Common_Abstracts_ControllerFactory.$inject = ['App_Common_Models_SysMan','$stateParams','$state','$rootScope'];
     angular.module('App').factory('App_Common_Abstracts_Controller',App_Common_Abstracts_ControllerFactory);
 })();
