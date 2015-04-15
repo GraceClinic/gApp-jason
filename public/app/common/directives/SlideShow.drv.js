@@ -1,16 +1,21 @@
 (function () {
 
-    //todo:  reference newly injected dependencies as needed
-    function SlideShowDirective(Logger,$interval) {
+    /**
+     * @param {App_Common_Models_Tools_Logger} Logger
+     * @param $interval
+     * @returns {appCommonDirectivesSlideShow}
+     */
+    function appCommonDirectivesSlideShowProvider(Logger,$interval) {
 
-        function SlideShow() {
+        /**
+         * @class appCommonDirectivesSlideShow
+         * @returns {appCommonDirectivesSlideShow}
+         */
+        function appCommonDirectivesSlideShow() {
             var self = this;
 
-            Logger.entry('START constructor','SlideShowDirective');
+            Logger.entry('START ' + self.constructor.name + '.construct()',self.constructor.name);
 
-            // todo:  define static variables, shared across any functions contained herein
-
-            // todo:  define the angularjs expected returns from the directive
             self.restrict = 'E';    // element name type directive
             self.templateUrl = '/app/common/directives/SlideShow.drv.html';
             self.scope = {
@@ -27,9 +32,8 @@
              * @param   {WordShuffle_Models_Page[]} scope.pages     - array of pages to display
              * @param   {string}                    scope.pageBody  - current page to display
              * @param   {Object}    element         - the DOM element attached to directive
-             * @param   {Object}    attributes      - the actual attributes values passed within the directive DOM element
              */
-            function controller(scope, element, attributes) {
+            function controller(scope, element) {
                 // wait for backend to load pages
                 var _intervalId = $interval(wait, 100);
                 var _i = 0;
@@ -69,16 +73,15 @@
                 // todo:  use "ng_drv_func" live template to extended the directive scope with another function
             }
 
-            Logger.entry('END constructor','SlideShowDirective');
+            Logger.entry('END ' + self.constructor.name + '.construct()',self.constructor.name);
 
             return self;
         }
 
-        return new SlideShow;
+        return new appCommonDirectivesSlideShow;
     }
 
-    // todo:  inject new dependencies into directive as needed
-    SlideShowDirective.$inject = ['App_Common_Models_Tools_Logger','$interval'];
+    appCommonDirectivesSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$interval'];
 
-    angular.module('App').directive('appCommonDirectivesSlideShow', SlideShowDirective);
+    angular.module('App').directive('appCommonDirectivesSlideShow', appCommonDirectivesSlideShowProvider);
 })();

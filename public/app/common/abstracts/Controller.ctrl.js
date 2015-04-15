@@ -88,7 +88,6 @@
             function setScope($scope){
                 if(_scope == null){
                     $scope.$on('$destroy',function(){
-                        console.log('destroy controller scope ',self.constructor.name);
                         _cleanUp();
                     });
                 }
@@ -200,7 +199,11 @@
                 // Construction flag required because the state transition before the new controller is instantiated.
                 // Hence the logic below cannot run the target controller's action because it does not yet exist.
                 if(_paramCorrect && (isConstruct || (!_sameState && !_newController))){
-                    console.log(this.constructor.name,'.processStateChange, from ',oldState,'; to ',newState);
+                    SysMan.Logger.entry(
+                        this.constructor.name + '.processStateChange(), from state '
+                        + JSON.stringify(oldState) + '; to state ' + JSON.stringify(newState),
+                        this.constructor.name
+                    );
                     SysMan.state = {
                         "module":       newState.module,
                         "controller":   newState.controller,

@@ -140,15 +140,12 @@
             /************************
              * CONSTRUCTOR LOGIC
              ************************/
-            SysMan.Logger.entry('START ' + self.constructor.name+'.construct()','App_Common_Abstracts_Model');
-            
+
             self.excludeFromPost(['uid','idTag','DOM','properties','x','y','height','width','SysMan']);
 
             if(data){
                 self.setFromArray(data);
             }
-
-            SysMan.Logger.entry('END ' + self.constructor.name+'.construct()','App_Common_Abstracts_Model');
 
             // most models return itself for daisy chaining
             return self;
@@ -335,11 +332,20 @@
                     .then(
                     function(response) {
                         self.status = self.POST_DISPATCH;
-                        // TODO: check for existance of model property
-                        self.setFromArray(response.data.model);
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '.find() response process','App_Common_Abstracts_Model');
+                        if('model' in response.data){
+                            self.SysMan.Logger.entry('START ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                            self.setFromArray(response.data.model);
+                            self.SysMan.Logger.entry('END ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                        }
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
                         self._postDispatch();
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '._postFind()','App_Common_Abstracts_Model');
                         self._postFind();
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '._postFind()','App_Common_Abstracts_Model');
                         self.status = self.READY;
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '.find() response process','App_Common_Abstracts_Model');
                     },
                     function(errResponse) {
                         self.status = self.POST_DISPATCH;
@@ -388,12 +394,21 @@
                 $http(_request)
                     .then(
                     function(response) {
-                        self.SysMan.Logger.entry(self.constructor.name + '.save() return successful','App_Common_Abstracts_Model');
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '.save() response process','App_Common_Abstracts_Model');
                         self.status = self.POST_DISPATCH;
-                        self.setFromArray(response.data.model);
+                        if('model' in response.data){
+                            self.SysMan.Logger.entry('START ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                            self.setFromArray(response.data.model);
+                            self.SysMan.Logger.entry('END ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                        }
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
                         self._postDispatch();
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '._postSave()','App_Common_Abstracts_Model');
                         self._postSave();
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '._postSave()','App_Common_Abstracts_Model');
                         self.status = self.READY;
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '.save() response process','App_Common_Abstracts_Model');
                     },
                     function(errResponse) {
                         // error processed by App Interceptor
@@ -447,22 +462,45 @@
                 $http(_request)
                     .then(
                     function(response) {
+                        self.SysMan.Logger.entry(
+                            'START ' + self.constructor.name + '.relay() response process for method ' + response.data.method + '()',
+                            'App_Common_Abstracts_Model'
+                        );
                         /*
                          * @var {ResponseDataType}    response.data
                          */
                         self.status = self.POST_DISPATCH;
-                        // TODO: check for model property before attempting set, it may not be there
-                        self.setFromArray(response.data.model);
+                        if('model' in response.data){
+                            self.SysMan.Logger.entry('START ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                            self.setFromArray(response.data.model);
+                            self.SysMan.Logger.entry('END ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                        }
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
                         self._postDispatch();
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
                         try{
                             // run the specific post method follow-up if defined
                             var _method = '_post'+_ucFirst(response.data.method);
+                            self.SysMan.Logger.entry(
+                                'START ' + self.constructor.name + '.' + _method + '()',
+                                'App_Common_Abstracts_Model'
+                            );
                             self[_method](response.data.results);
+                            self.SysMan.Logger.entry(
+                                'END ' + self.constructor.name + '.' + _method + '()',
+                                'App_Common_Abstracts_Model'
+                            );
                         }
                         catch(err) {
                             self._postRelay(response.data.results);
                         }
                         self.status = self.READY;
+
+                        self.SysMan.Logger.entry(
+                            'END ' + self.constructor.name + '.relay() response process for method ' + response.data.method + '()',
+                            'App_Common_Abstracts_Model'
+                        );
+
                     },
                     function(errResponse) {
                         // error processed by App Interceptor
@@ -639,7 +677,6 @@
             return _status[this.uid];
         }
         function setStatus(value){
-            this.SysMan.Logger.entry(this.constructor.name + ".setStatus() = " + value, this.constructor.name);
             _status[this.uid] = value;
         }
 

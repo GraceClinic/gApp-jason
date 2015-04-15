@@ -281,6 +281,7 @@
             /************************
              * CONSTRUCTOR LOGIC
              ************************/
+            self.SysMan.Logger.entry('START ' + self.constructor.name+'.construct()',self.constructor.name);
             Model.call(self,data);
 
             self.excludeFromPost([
@@ -300,6 +301,7 @@
                 'COLS'
             ]);
 
+            self.SysMan.Logger.entry('END ' + self.constructor.name+'.construct()',self.constructor.name);
             // most models return itself for daisy chaining
             return self;
         }

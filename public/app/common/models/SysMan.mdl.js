@@ -179,7 +179,6 @@
                         _state[$key] = value[$key];
                     }
                 }
-                self.Logger.entry('New SysMan.state = ' + JSON.stringify(_state),self.constructor.name);
             }
 
             /******************
