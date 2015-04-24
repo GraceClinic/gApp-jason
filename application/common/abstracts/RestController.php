@@ -41,6 +41,7 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
     protected $_model = null;
     /** @var string */
     protected $_modelClass = null;
+    protected $_className = null;
 
     public function init()
     {
@@ -49,19 +50,25 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
         $this->_helper->viewRenderer->setNoRender(TRUE);
 
         $this->_SysMan = Common_Models_SysMan::getInstance();
+        $this->_className = get_class($this);
+        $this->_SysMan->Logger->info('START '.$this->_className.'.init()','Common_Abstracts_RestController');
 
         //AngularJS POST encodes the data element as a JSON object.
         //Zend/PHP has trouble understanding that format without calling json_decode first.
         try {
             $contents = file_get_contents("php://input");
+            $JSONPostParams = 'none';
             if ($contents) {
                 $JSONPostParams = json_decode($contents);
                 // transfer contents of JSON data array to Post parameters
                 foreach ($JSONPostParams as $key => $value) {
                     $this->getRequest()->setParam($key, $value);
                 }
-                $this->_SysMan->Logger->info(get_class($this).'.init(), parameters = '.print_r($JSONPostParams,true));
             }
+            $this->_SysMan->Logger->info(
+                'END '.get_class($this).'.init(); extracted parameters = '.print_r($JSONPostParams,true),
+                'Common_Abstracts_RestController'
+            );
         } catch (Exception $e) {
             // todo:  log error
 //            $this->SysMan->log->err("Problem applying JSON post parameters");
@@ -72,20 +79,39 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
 
     public function indexAction(){
         // this is anonymous play
+        $this->_SysMan->Logger->info('*********************************************','Common_Abstracts_RestController');
+        $this->_SysMan->Logger->info('START '.$this->_className.'->indexAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass();
+        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
         $this->_model->find();
+        $this->_SysMan->Logger->info(
+            'END '.$this->_modelClass.'->find(), found data for id = '.$this->_model->id,
+            'Common_Abstracts_RestController'
+        );
 
+
+        $this->_SysMan->Logger->info(
+            'START '.$this->_modelClass.'->toArray() for sending response',
+            'Common_Abstracts_RestController'
+        );
         $response = Array(
             "model" => $this->_model->toArray(true)
         );
+        $this->_SysMan->Logger->info('END '.$this->_modelClass.'->toArray()','Common_Abstracts_RestController');
 
         $this->getResponse()->appendBody(json_encode($response));
+
+        $this->_SysMan->Logger->info('END '.$this->_className.'->indexAction()','Common_Abstracts_RestController');
+        $this->_SysMan->Logger->info('*********************************************','Common_Abstracts_RestController');
     }
 
     public function getAction($id = 0){
 
+        $this->_SysMan->Logger->info('START '.$this->_className.'->getAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass($id);
+        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
         $this->_model->find();
+        $this->_SysMan->Logger->info('END '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
 
         $response = Array(
             "model" => $this->_model->toArray(true)
@@ -96,8 +122,11 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
     }
 
     public function putAction($model = Array()){
+        $this->_SysMan->Logger->info('START '.$this->_className.'->putAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass($model);
+        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->save()','Common_Abstracts_RestController');
         $this->_model->save();
+        $this->_SysMan->Logger->info('END '.$this->_modelClass.'->save()','Common_Abstracts_RestController');
 
         $response = Array(
             "model" => $this->_model->toArray(true)
@@ -106,14 +135,20 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
         $this->getResponse()->appendBody(json_encode($response));
     }
 
-    public function postAction($model = Array(), $method = '', $arguments = Array()){
+    public function postAction($model = Array(), $method = '', $args = Array(), $noModel = false){
+        $this->_SysMan->Logger->info('START '.$this->_className.'->postAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass($model);
-        $results = $this->_model->$method($arguments);
+        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->'.$method.'()','Common_Abstracts_RestController');
+        $results = $this->_model->$method($args);
+        $this->_SysMan->Logger->info('END '.$this->_modelClass.'->'.$method.'()','Common_Abstracts_RestController');
         $response = Array(
-            "model" => $this->_model->toArray(true),
             "method" => $method,
             "results" => $results
         );
+
+        if(!$noModel){
+            $response["model"] = $this->_model->toArray(true);
+        }
 
         $this->getResponse()->appendBody(json_encode($response));
     }

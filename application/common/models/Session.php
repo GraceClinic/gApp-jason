@@ -19,6 +19,10 @@
  * @property int        idChallenge     *SESSION* primary key indexing challenge question
  * @property    int         signInState        - tracks the current sign-in state of the player
  * @property    array         Squares          - game squares for active round
+ * @property    datetime         gameStart          - time stamp for start of new Game
+ * @property    string          gameState           - current state of game
+ * @property    array   Rounds          - game rounds
+ * @property    array   wordList        - list of current words selected
  */
 class Common_Models_Session
 {
@@ -148,6 +152,26 @@ class Common_Models_Session
     {
         return $this->_Session->idGame;
     }
+    protected function setGameStart($x)
+    {
+        $this->_Session->GameStart = $x;
+
+        return $this;
+    }
+    protected function getGameStart()
+    {
+        return $this->_Session->GameStart;
+    }
+    protected function setGameState($x)
+    {
+        $this->_Session->GameState = $x;
+
+        return $this;
+    }
+    protected function getGameState()
+    {
+        return $this->_Session->GameState;
+    }
     protected function setSignInState($state){
         if($state !== $this->_oldSignInState){
             $this->_oldSignInState = $this->_Session->signInState;
@@ -162,6 +186,18 @@ class Common_Models_Session
     }
     protected function getSquares(){
         return $this->_Session->Squares;
+    }
+    protected function setWordList($value){
+        if(is_array($value)){
+            $this->_Session->wordList = $value;
+        }elseif($value==''){
+            $this->_Session->wordList = [];
+        }else{
+            array_push($this->_Session->wordList,$value);
+        }
+    }
+    protected function getWordList(){
+        return $this->_Session->wordList;
     }
     protected function setRounds($value){
         $this->_Session->Rounds = $value;
@@ -187,6 +223,7 @@ class Common_Models_Session
         return $msg;
     }
 
+
     public function toArray(){
         $ret = Array(
             'idPlayer'=>    $this->idPlayer,
@@ -197,6 +234,7 @@ class Common_Models_Session
             'signInState'=> $this->signInState,
             'Squares'=>  $this->Squares,
             'Rounds'=>  $this->Rounds,
+            'wordList'=> $this->wordList,
             'Msg'=> $this->msg
         );
 

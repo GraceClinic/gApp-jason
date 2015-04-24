@@ -1,3 +1,37 @@
+#models-game-header
+{
+    width:100%;
+    display: table;
+}
+#models-game-clock
+{
+    font: 20px normal, "Comic Sans", cursive;
+    background-color: black;
+    color: white;
+    width: 70px;
+    text-align: center;
+    box-sizing: border-box;
+    border: solid 3px;
+    border-color: blue;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    float: right;
+}
+#models-game-word
+{
+    float:left;
+    padding-left:5%;
+}
+#models-game-word span
+{
+    padding-left: 2px;
+    padding-right: 2px;
+    background-color: #f2dede;
+}
+#models-game-word button
+{
+    padding-left: 5px;
+}
 #models-game
 {
     font: 20px normal, "Comic Sans", cursive;
@@ -17,6 +51,7 @@
     box-sizing: border-box;
     height: auto;
     display: table;
+    z-index: 1;
 }
 .models-game-row
 {

@@ -1,5 +1,22 @@
+<app-common-directives-banner msg="Play.msg" msgType="INFO" expires="5000"></app-common-directives-banner>
 <div id="models-game">
     <div id="models-game-board">
+        <div id="models-game-header">
+            <div id="models-game-word">
+                <label for="models-game-word-field">Word:</label>
+                <span id="models-game-word-field">{{Play.Game.word}}</span>
+                <button
+                        id="models-game-word-submit"
+                        class="btn btn-success btn-xs"
+                        type="submit"
+                        ng-click="Play.Game.submitWord()"
+                        ng-disabled="Play.Game.word.length < 2"
+                        >
+                    OK
+                </button>
+            </div>
+            <div id="models-game-clock">{{Play.Game.Clock.minutes}}:{{Play.Game.Clock.seconds}}</div>
+        </div>
         <div class="models-game-row"
             ng-repeat="gameRow in Play.Game.Squares"
         >

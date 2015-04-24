@@ -56,23 +56,30 @@ class Common_Models_Logger
     /**
      * Log a message
      *
-     * @param int    $level  Class constant for logging level
-     * @param string $code   Error code to log
-     * @param string $string Error message to log
+     * @param int    $level     - Class constant for logging level
+     * @param string $code      - Error code to log
+     * @param string $string    - Error message to log
+     * @param string $source    - Originator of message, usually class name and method
      * @return bool
      */
-    public function Log($level, $code, $string)
+    public function Log($level, $code, $string, $source)
     {
         if ($level > $this->logLevel) { //Stop messages that are above the logging level
             return false;
         }
         $prepend = "[".$_SERVER['REMOTE_ADDR'].":".$_SERVER['REMOTE_PORT']."] ".
-            "[User:".Common_Models_SysMan::getInstance()->Session->idPlayer."]: ";
+            "[User:".Common_Models_SysMan::getInstance()->Session->idPlayer."]";
+        if($source){
+            $prepend = $prepend.' [source:'.$source.']: ';
+        }else{
+            $prepend = $prepend.': ';
+        }
         if($code){
             $message = $prepend."ErrorCode ".$code.": ".$string;
         }else{
             $message = $prepend.$string;
         }
+
         try {
             switch ($level) {
                 case self::DEBUG:
@@ -110,18 +117,19 @@ class Common_Models_Logger
      */
     public function debug($message)
     {
-        return $this->Log(self::DEBUG,false,$message);
+        return $this->Log(self::DEBUG,false,$message,'Common_Models_Logger');
     }
 
     /**
      * Insert a message in the log file with a type of "INFO"
      *
-     * @param string $message Message to be logged
+     * @param string $message   - Message to be logged
+     * @param string $source    - Originator of message, usually class name and method
      * @return bool True on success, false otherwise
      */
-    public function info($message)
+    public function info($message, $source = null)
     {
-        return $this->Log(self::INFO,false,$message);
+        return $this->Log(self::INFO,false,$message,$source);
     }
 
     /**
@@ -132,7 +140,7 @@ class Common_Models_Logger
      */
     public function warn($message)
     {
-        return $this->Log(self::WARN,false,$message);
+        return $this->Log(self::WARN,false,$message,'Common_Models_Logger');
     }
 
     /**
@@ -143,7 +151,7 @@ class Common_Models_Logger
      */
     public function err($message)
     {
-        return $this->Log(self::ERR,false,$message);
+        return $this->Log(self::ERR,false,$message,'Common_Models_Logger');
     }
 
 }

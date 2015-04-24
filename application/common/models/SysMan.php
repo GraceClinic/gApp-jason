@@ -193,7 +193,7 @@ final class Common_Models_SysMan
     }
 
     protected function setState($state){
-        $this->Logger->info('SysMan->setState = '.print_r($state,true));
+//        $this->Logger->info('SysMan->setState = '.print_r($state,true));
         foreach($state as $key => $value){
             if (!in_array($key,array('module','controller','action'))){
                 $msg = 'Attempt to set SysMan.state to non-compliant value.  Expected '.
@@ -238,6 +238,10 @@ final class Common_Models_SysMan
             $session->signInState = 0;
             $session->Rounds = Array();
             $session->Squares = Array();
+            $session->wordList = Array();
+            $session->gameStart = null;
+            $session->gameEnd = null;
+            $session->gameState = null;
         }
 
         return $session;

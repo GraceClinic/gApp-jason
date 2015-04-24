@@ -26,6 +26,8 @@ abstract class Common_Abstracts_Mapper
         $_model,
         $_findAllBy = [];
 
+        // todo:  need to add _orderBy for default sorting of findAll
+
     public function __construct(Common_Abstracts_Model &$model)
     {
         $this->_className = get_class($this);
@@ -133,6 +135,7 @@ abstract class Common_Abstracts_Mapper
      * @return array[] - array of associative arrays representing models
      * @throws Exception
      */
+    // todo: add $orderBy argument
     public function findAll($by = null)
     {
         $addAnd = false;
@@ -154,6 +157,7 @@ abstract class Common_Abstracts_Mapper
             }
         }
 
+        $result   = array();
         if(count($by)>0){
             // first element is the order by
             $order = $by[0];
@@ -176,20 +180,23 @@ abstract class Common_Abstracts_Mapper
                     $addAnd = true;
                 }
             }
+
+            $this->_model->SysMan->Logger->info($this->_className.'->findAll(); $where = '.$where);
+
+            $resultSet = $this->getDbTable()->fetchAll($where,$order);
+
+            // transform row set to an array of associative arrays representing the model
+            foreach ($resultSet as $row) {
+                $mappedRow = $this->mapModel($this->_map,$row->toArray());
+                $result[] = $mappedRow;
+            }
+
         }else{
-            throw new Exception($this->_className.'->findAll() called no criteria supplied in argument nor a default'.
-                ' defined in protected Mapper->_map variable.');
-        }
-
-        $this->_model->SysMan->Logger->info($this->_className.'->findAll(); $where = '.$where);
-
-        $resultSet = $this->getDbTable()->fetchAll($where,$order);
-
-        $result   = array();
-        // transform row set to an array of associative arrays representing the model
-        foreach ($resultSet as $row) {
-            $mappedRow = $this->mapModel($this->_map,$row->toArray());
-            $result[] = $mappedRow;
+            $this->_model->SysMan->Logger->info(
+                $this->_className.'->findAll() called with no criteria supplied in argument nor a default'.
+                '_findAllBy identified in model mapper.  Hence, method returns null.'
+            );
+//            throw new Exception($this->_className.'->findAll() called with no criteria supplied in argument nor a default '.
         }
 
         $this->_model->SysMan->Logger->info($this->_className.'->findAll() results = '.print_r($result,true));

@@ -13,7 +13,7 @@
          *
          * @constructor
          * @extends     App_Common_Abstracts_Model
-         * @param       {Array}     data            - data array for setting properties during instantiation
+         * @param       {(array|Object)}    data                        - data array for setting properties during instantiation
          * @this        WordShuffle_Models_Game_Square
          * @returns     {WordShuffle_Models_Game_Square}
          */
@@ -91,6 +91,16 @@
             }
             function setIsSelected(value){
                 _isSelected = value;
+                if(self.DOM !== null){
+                    if(_isSelected){
+                        self.DOM.css('opacity',0.7);
+                        self.DOM.css('border-color','yellow');
+                    }else{
+                        self.DOM.css('opacity',1.0);
+                        self.DOM.css('border-color','#181b42');
+                    }
+                }
+
             }
             var _callOnClick;
             function getCallOnClick(){

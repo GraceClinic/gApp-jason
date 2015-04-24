@@ -56,11 +56,23 @@
              * @public
              */
             self.indexAction = function(){
-                // todo: define any parameters and then code action logic
-                console.log('Play.index() action, Game.state = '+Game.state+'; Game.IN_PROGRESS = '+Game.IN_PROGRESS);
-                if(Game.state == Game.IN_PROGRESS){
-                    self.goToState('wordshuffle','play','play');
+                // update the player and game information based on backend
+                Player.find();
+                var _promise = Game.find();
+
+                if(_promise !== null){
+                    _promise.then(function(){
+                        if(typeof Game.state == 'undefined' || Game.state == Game.COMPLETED){
+                            self.msg = 'You do not have an active game!  Click "Play" if you wish to use your current settings to start a new one.'
+                        }else{
+                            if(Game.state == Game.IN_PROGRESS){
+                                self.msg = 'You have an active game in progress!  Please finish what you started!'
+                                self.goToState('wordshuffle','play','play');
+                            }
+                        }
+                    });
                 }
+
             };
 
             /**
@@ -71,14 +83,12 @@
              */
             self.playAction = function(){
                 // todo: define any parameters and then code action logic
-                console.log('Play.play() action');
                 if(Game.state !== Game.IN_PROGRESS){
                     self.Game.roundsPerGame = self.Player.roundsPerGame;
                     self.Game.secondsPerRound = self.Player.secondsPerRound;
                     self.Game.idPlayer = self.Player.id;
                     self.Game.save();
                 }
-
             };
 
             /**********************************************

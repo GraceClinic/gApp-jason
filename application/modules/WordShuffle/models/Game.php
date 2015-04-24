@@ -10,6 +10,7 @@
  * @property    int         round           current round
  * @property    int         roundsPerGame   number of rounds in the game
  * @property    int         secondsPerRound seconds per round
+ * @property    int         roundAvg        average score per round
  * @property    int         points          summation of points in all rounds
  * @property    datetime    start           date time current game started
  * @property    datetime    end             date time current game ended
@@ -17,6 +18,8 @@
  * @property    int         Board
  * @property    string      state          - state of game as one of the constants: NEW_GAME, IN_PROGRESS, COMPLETED, and ABANDONED
  * @property    array       Squares         - game squares
+ * @property    string         word        - current word
+ * @property    array         wordSquares        - array of Square objects that created the word
  * @property    WordShuffle_Model_Mapper_Game Mapper    - explicitly define Mapper
  */
 class WordShuffle_Model_Game extends Common_Abstracts_Model
@@ -40,7 +43,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         $_Rounds = null,
         $_Board = null,
         $_points = 0,
-        $_start = null,
         $_end = null;
 
     // TODO:  Perhaps override _construct and determine if appropriate to set property, if not remove property from data array
@@ -134,10 +136,10 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     }
 
     protected function setStart($x){
-        $this->_start = $x;
+        $this->SysMan->Session->gameStart = $x;
     }
     protected function getStart(){
-        return $this->_start;
+        return $this->SysMan->Session->gameStart;
     }
 
     protected function setEnd($x){
@@ -199,44 +201,77 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
 
     private $_Squares = null;
     protected function setSquares($value){
-        $this->_Squares = $value;
-        if(count($this->_Squares) !== 0){
-            $this->SysMan->Session->Squares = array();
-            $squares = array();
-            foreach($this->_Squares as $row){
-                $newRow = array();
-                foreach($row as $square){
-                    $newRow[] = $square->toArray();
-                }
-                $squares = $newRow;
+        $inError = false;
+        if(count($value) == self::ROWS){
+            if(count($value[0]) == self::COLS){
+                // assumes an array of Square objects
+                $this->_Squares = $value;
+                $this->_writeSquaresToSession();
+            }else{
+                $inError = true;
             }
-            $this->SysMan->Session->Squares = $squares;
+        }else{
+            $inError = true;
         }
 
+        if($inError){
+            throw new Exception($this->className.'.setSquares() attempted against non-compliant value = '.print_r($value,true));
+        }
     }
     protected function getSquares(){
         if($this->_Squares == null){
+            $this->SysMan->Logger->info('Game.getSquares; session squares = '.print_r($this->SysMan->Session->Squares,true));
             if(count($this->SysMan->Session->Squares) !== 0){
-                foreach($this->SysMan->Session->Squares as $square){
-                    $this->_Squares[] = new WordShuffle_Model_Game_Square($square);
+                $i = 0;
+                // set value from session information
+                foreach($this->SysMan->Session->Squares as $row){
+                    foreach($row as $square){
+                        $this->_Squares[$i][] = new WordShuffle_Model_Game_Square($square);
+                    }
+                    $i++;
                 }
+            }else{
+                $this->SysMan->Logger->info('Game.getSquares; initialize squares');
+                $this->_Squares = $this->_initializeSquares();
+                $this->_writeSquaresToSession();
             }
         }
         return $this->_Squares;
     }
 
-    private $_state = null;
     protected function setState($value){
         $options = array(self::NEW_GAME,self::IN_PROGRESS,self::COMPLETED,self::ABANDONED);
-        $this->SysMan->Logger->info('Game.setState = '.$value);
         if(in_array($value,$options)){
-            $this->_state = (string) $value;
+            $this->SysMan->Session->gameState = (string) $value;
         }else{
             throw new Exception($this->className.'->setState to disallowed value = '.$value);
         }
     }
     protected function getState(){
-        return $this->_state;
+        if($this->SysMan->Session->gameState == null){
+            $this->SysMan->Session->gameState = self::NEW_GAME;
+        }
+        return $this->SysMan->Session->gameState;
+    }
+
+    private $_word = null;
+    protected function setWord($value){
+        $this->_word = (string) $value;
+    }
+    protected function getWord(){
+        return $this->_word;
+    }
+
+    private $_wordSquares = null;
+    protected function setWordSquares($value){
+        if(is_array($value)){
+            // assumes set derives from request through API, which will be an array of PHP objects representing a Square object
+            $this->_wordSquares = $value;
+        }
+
+    }
+    protected function getWordSquares(){
+        return $this->_wordSquares;
     }
 
 
@@ -249,22 +284,34 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
      */
     protected function _preInsert(){
         // this is a new game
-        $this->Mapper->abandonUncompletedGames();
+
+        if($this->state <> self::IN_PROGRESS){
+            $this->start = date("Y-m-d H:i:s");
+            $this->state = self::IN_PROGRESS;
+            $this->points = 0;
+            $this->roundAvg = 0;
+
+            // initialize game squares for sending to front end
+            foreach($this->Squares as $row){
+                foreach($row as $square){
+                    $square->letter = $this->_randomLetter();
+                }
+            }
+            $this->_writeSquaresToSession();
+        }
 
         // any save invoked when player not authenticated equated to anonymous play
         if($this->SysMan->Session->signInState < Common_Models_SysMan::SIGNED_IN){
             $this->SysMan->Session->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
 
-            // todo: update mapper to save information to session variables if state is anonymous, maybe variables always write to that location
-            // need to track game state, start, end
+            // no database save with anonymous play, set return value to false
+            $continue = false;
         }else{
-            $this->start = date("Y-m-d H:i:s");
-            $this->state = self::IN_PROGRESS;
-            $this->points = 0;
-            $this->roundAvg = 0;
+            $this->Mapper->abandonUncompletedGames();
+            $continue = true;
         }
 
-        return true;
+        return $continue;
     }
 
     /*
@@ -302,23 +349,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
                     $this->Rounds = new WordShuffle_Model_Round($data);
                     $this->Rounds[$x]->save();
 
-                    // initialize game squares for sending to front end
-                    $squares = array();
-                    for($i=1;$i<=self::ROWS;$i++){
-                        $row = array();
-                        for($j=1;$j<=self::COLS;$j++){
-                            $row[] = new WordShuffle_Model_Game_Square(array(
-                                'letter'        =>  $this->_randomLetter(),
-                                'row'           =>  $i,
-                                'col'           =>  $j,
-                                'isSelected'    =>  false
-                            ));
-                        }
-                        $squares[] = $row;
-                    }
-                    $this->SysMan->Logger->info('Game->_postSave(); squares created');
-                    $this->Squares = $squares;
-
                 }
             }
         }else{
@@ -348,6 +378,56 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     public function start(){
         $this->start = date('Y-m-d H:i:s');
         $this->save();
+    }
+
+    public function submitWord(){
+        $this->SysMan->Logger->info('Game.submitWord(), wordList = '.print_r($this->SysMan->Session->wordList,true));
+        $msg = 'Rejected!';
+        $success = true;
+
+        // validate word with board layout
+        if(count($this->wordSquares) < 2){
+            $success = false;
+            $msg = 'Word too short!';
+        }else{
+            $word = '';
+            foreach($this->wordSquares as $square){
+                $word = $word.$square->letter;
+                // check the letter with the board stored in session
+                if($this->SysMan->Session->Squares[$square->row-1][$square->col-1]['Letter'] != $square->letter){
+                    $success = false;
+                    $msg = 'Board Mismatch';
+                }
+            }
+            if($word != $this->word){
+                $success = false;
+                $msg = 'Board Mismatch';
+            }
+        }
+
+        // check current word list and see if it exists
+        if(in_array($this->word,$this->SysMan->Session->wordList)){
+            $msg = 'Duplicate';
+            $success = false;
+        }
+
+        // look for word
+        if($success){
+            $success = $this->Mapper->findWord($this->word);
+            if($success){
+                $msg = 'Success!';
+                $this->SysMan->Session->wordList = $this->word;
+            }else{
+                $msg = 'Rejected!';
+            }
+        }
+
+        $return = array(
+            'success'=> $success,
+            'msg'=> $msg
+        );
+
+        return $return;
     }
 
     protected function _validateModel(){
@@ -415,4 +495,49 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         return (string)$return;
     }
 
+    /**
+     * Initialized Squares to an empty array of empty arrays
+     *
+     * @return array
+     */
+    private function _initializeSquares(){
+        // the session object holds the current squares state
+        $squares = array();
+//        for($i=1;$i<=self::ROWS;$i++){
+//            $squares[] = array();
+//        }
+
+        for($i=1;$i<=self::ROWS;$i++){
+            $row = array();
+            for($j=1;$j<=self::COLS;$j++){
+                $row[] = new WordShuffle_Model_Game_Square(array(
+                    'letter'        =>  'X',
+                    'row'           =>  $i,
+                    'col'           =>  $j,
+                    'isSelected'    =>  false
+                ));
+            }
+            $squares[] = $row;
+        }
+
+        return $squares;
+    }
+
+    private function _writeSquaresToSession(){
+        $sessionSquares = array();
+        $i = 0;
+        foreach($this->_Squares as $row){
+            /**
+             * @var WordShuffle_Model_Game_Square $square
+             */
+            $sessionRow = array();
+            foreach($row as $square){
+                $sessionRow[] = $square->toArray();
+            }
+            $i++;
+            $sessionSquares[] = $sessionRow;
+        }
+        $this->SysMan->Session->Squares = $sessionSquares;
+
+    }
 }

@@ -41,6 +41,13 @@ class WordShuffle_Model_Mapper_Game extends WordShuffle_Model_Mapper_Abstract
     public function findRounds(){
 
     }
+
+    public function findWord($word){
+        $wordTable = new WordShuffle_Model_DbTable_WordList();
+        $where = $this->_db->quoteInto('word = ?',strtolower($word));
+        $word = $wordTable->fetchAll($where);
+        return count($word);
+    }
     /**
      * Saving a Game record requires saving all of the round objects.
      *

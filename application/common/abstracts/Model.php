@@ -40,7 +40,8 @@ abstract class Common_Abstracts_Model
     {
         $this->_className = get_class($this);
 
-        $this->SysMan->Logger->info('START '.$this->_className.'->construct(), data = '.print_r($data,true));
+        $msg = 'START '.$this->_className.'->construct()';  //, data = '.print_r($data,true);
+        $this->SysMan->Logger->info($msg,'Common_Abstracts_Model');
 
         // Model property set statically for transfer to JavaScript frontend and thereafter proper instantiation.
         // Since Zend names classes based on name space defined by directory structure, pop the last element off the array stack
@@ -68,13 +69,18 @@ abstract class Common_Abstracts_Model
             }
         }
 
+        $this->SysMan->Logger->info('START '.$this->_className.'->_validateModel()','Common_Abstracts_Model');
         if(!($this->_validateModel())){
             throw new Exception($this->className.' failed _validateModel() on construction.');
         };
+        $this->SysMan->Logger->info('END '.$this->_className.'->_validateModel()','Common_Abstracts_Model');
 
+        $this->SysMan->Logger->info('START '.$this->_className.'->_init()','Common_Abstracts_Model');
         $this->init();
+        $this->SysMan->Logger->info('END '.$this->_className.'->_init()','Common_Abstracts_Model');
 
-        $this->SysMan->Logger->info('END '.$this->_className.'->construct(), model = '.print_r($this->toArray(),true));
+        $msg = 'END '.$this->_className.'->construct()';    //, model = '.print_r($this->toArray(),true);
+        $this->SysMan->Logger->info($msg,'Common_Abstracts_Model');
 
     }
 
@@ -249,17 +255,27 @@ abstract class Common_Abstracts_Model
      */
     public function find($id = null)
     {
-        $this->SysMan->Logger->info($this->_className.'->find() for id = '.$id);
-        $success = $this->Mapper->find($id);
-        if($success){
-            $success = $this->_validateModel();
-            if(!$success){
-                throw new Exception(
-                    $this->_className.'->find() retrieved a record that does not fit validation criteria.');
-            }
+        if($id == null || $id == 0){
+            $id = $this->id;
+        }
+        if($id > 0){
+            $success = $this->Mapper->find($id);
+            if($success){
+                $success = $this->_validateModel();
+                if(!$success){
+                    throw new Exception(
+                        $this->_className.'->find() retrieved a record that does not fit validation criteria specified in _validateModel() method.');
+                }
+            }else{
+                throw new Exception($this->_className.' failure to find record id = '.$id);
+            };
         }else{
-            throw new Exception($this->_className.' failure to find record id = '.$id);
-        };
+            // explicitly setting model id to zero will override findall for this model
+            if($this->id <> 0){
+                // todo: execute findall?
+            }
+        }
+
 
         return $this;
     }
@@ -289,7 +305,7 @@ abstract class Common_Abstracts_Model
      */
     public function save()
     {
-        $this->SysMan->Logger->info('START '.$this->_className.'->save() given model = '.print_r($this->toArray(),true));
+        $this->SysMan->Logger->info('START '.$this->_className.'->save()'); // given model = '.print_r($this->toArray(),true));
 
         if (isset($this->id) && !is_null($this->id) && $this->id > 0) {
             $this->SysMan->Logger->info('Save event is an update, fetch existing data.');

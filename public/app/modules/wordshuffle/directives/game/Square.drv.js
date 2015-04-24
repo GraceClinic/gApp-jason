@@ -53,20 +53,10 @@
                 element.bind('click', function(){
                     scope.square.isSelected = !scope.square.isSelected;
 
-                    if(scope.square.DOM !== null){
-                        if(scope.square.isSelected){
-                            scope.square.DOM.css('opacity',0.7);
-                            scope.square.DOM.css('border-color','yellow');
-                        }else{
-                            scope.square.DOM.css('opacity',1.0);
-                            scope.square.DOM.css('border-color','#181b42');
-                        }
-                        scope.square.callOnClick(scope.square);
-                    }
-
+                    // need to use scope.$apply because the watched event is outside of angular's scope; hence it
+                    // must be instructed to apply changes to the DOM
+                    scope.$apply(scope.square.callOnClick(scope.square));
                 });
-                //
-                //element.bind('load',_updateHeight());
 
                 element.on('mouseenter',function(){
                     if(scope.square.DOM !== null){
@@ -85,7 +75,6 @@
                         scope.square.DOM.css('border-width','2px');
                     }
                 });
-
 
                 function _updateHeight() {
                     if(scope.square.DOM !== null){

@@ -89,7 +89,10 @@
              *
              * @method  setFromArray
              * @public
-             * @param {array}   propArray
+             * @param {object}   propArray
+             * @param {int}     propArray.id    - model id
+             * @param {string}  propArray.idTag - model DOM element id tag
+             *
              */
             self.setFromArray = function(propArray){
                 // check to make sure argument is an array object
@@ -303,18 +306,20 @@
          *
          */
         /**
-         * Returns model attributes from data source based on “id” property.  This may result in getting information
+         * Retrieves model attributes from data source based on “id” property.  This may result in getting information
          * from multiple tables as dictated by the mapper side of the ORM model.  On the frontend side if “id” property
          * present, find establishes the id as a URL parameter and execute a “get” request.  Otherwise, find executes
          * an “index” request to the backend.  Backend proceeds to execute find operation.
          *
          * @method   find
          * @public
+         * @return  {function}
          */
         App_Common_Abstracts_Model.prototype.find = function(){
             // proxy this so it does not get lost in the promise
             var self = this;
             var _url = self._rootURL;
+            var _promise = null;
 
             SysMan.Logger.entry('START '+self.constructor.name+'.find()','App_Common_Abstracts_Model');
 
@@ -325,10 +330,7 @@
             self.status = self.PRE_DISPATCH;
 
             if(self._preDispatch()){
-                $http({
-                    url:_url,
-                    method: "GET"
-                })
+                _promise = $http({url:_url,method: "GET"})
                     .then(
                     function(response) {
                         self.status = self.POST_DISPATCH;
@@ -359,6 +361,7 @@
 
             SysMan.Logger.entry('END '+self.constructor.name+'.find()','App_Common_Abstracts_Model');
 
+            return _promise;
         };
 
         /**
@@ -384,6 +387,8 @@
                     model:  self.toJSON(true)
                 }
             };
+            var _promise = null;
+
             self.SysMan.Logger.entry('START ' + self.constructor.name + '.save()','App_Common_Abstracts_Model');
 
 
@@ -391,7 +396,7 @@
             self.status = self.PRE_DISPATCH;
 
             if(self._preDispatch()) {
-                $http(_request)
+                _promise = $http(_request)
                     .then(
                     function(response) {
                         self.SysMan.Logger.entry('START ' + self.constructor.name + '.save() response process','App_Common_Abstracts_Model');
@@ -422,6 +427,7 @@
 
             self.SysMan.Logger.entry('END ' + self.constructor.name + '.save()','App_Common_Abstracts_Model');
 
+            return _promise;
         };
 
         /**
@@ -436,12 +442,14 @@
          *
          * @method   relay
          * @param   {string}        method      - method to relay to the backend
+         * @param   {boolean}       noModel     - flags backend not to return model
          * @param   {object}        args        - object representing the arguments associated with the method
          * @protected
          */
-        App_Common_Abstracts_Model.prototype.relay = function(method,args){
+        App_Common_Abstracts_Model.prototype.relay = function(method,noModel,args){
             // proxy this so it does not get lost in the promise
             var self = this;
+
             //var _scope = $scope;
             var _request = {
                 url: self._rootURL,
@@ -452,6 +460,11 @@
                     args:   args
                 }
             };
+            var _promise = null;
+
+            if(noModel){
+                _request.data['noModel'] = true;
+            }
 
             self.SysMan.Logger.entry('START ' + self.constructor.name + '.relay() for method = '+method,'App_Common_Abstracts_Model');
 
@@ -459,7 +472,7 @@
             self.status = self.PRE_DISPATCH;
 
             if(self._preDispatch()) {
-                $http(_request)
+                _promise = $http(_request)
                     .then(
                     function(response) {
                         self.SysMan.Logger.entry(
@@ -514,6 +527,7 @@
 
             self.SysMan.Logger.entry('END ' + self.constructor.name + '.relay() for method = '+method,'App_Common_Abstracts_Model');
 
+            return _promise;
         };
 
         /**

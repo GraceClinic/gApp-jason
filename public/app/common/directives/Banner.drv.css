@@ -2,6 +2,7 @@
 .app-common-directives-banner.banner-shell
 {
     position: relative;
+    z-index:          100;
 }
 /* Styling for all Banner elements styling */
 .app-common-directives-banner.banner-anchor
