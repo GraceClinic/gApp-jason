@@ -242,6 +242,7 @@ final class Common_Models_SysMan
             $session->gameStart = null;
             $session->gameEnd = null;
             $session->gameState = null;
+            $session->scoreBoard = Array();
         }
 
         return $session;

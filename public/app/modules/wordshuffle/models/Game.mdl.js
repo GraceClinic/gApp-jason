@@ -107,7 +107,21 @@
              * @public
              **/
             Object.defineProperty(self,'wordSquares',{get: getWordSquares,set: setWordSquares});
-
+            /**
+             * impromptu class for documenting scoreBoard
+             *
+             * @class
+             * @name        Score
+             * @property    {string}    word        - word making the score
+             * @property    {string}    points      - points associated with the word
+             *
+             */
+            /**
+             * @property    WordShuffle_Models_Game#scoreBoard      - array of scores
+             * @type        Score[]
+             * @public
+             **/
+            Object.defineProperty(self,'scoreBoard',{get: getScoreBoard,set: setScoreBoard});
 
             /*****************************************
              * Public Methods declaration / definition
@@ -323,7 +337,7 @@
             self.buildWord = function(Square){
                 if(Square.isSelected){
                     // check for valid square, it must be adjacent to last selected square
-                    if(_wordSquares.length > 0){
+                    if(_wordSquares != null && _wordSquares.length > 0){
                         var _last = _wordSquares[_wordSquares.length-1];
                         if(Math.abs(_last.row - Square.row)<=1 && Math.abs(_last.col - Square.col)<=1){
                             _wordSquares.push(Square);
@@ -333,7 +347,7 @@
                             // todo: play audio sound
                         }
                     }else{
-                        _wordSquares.push(Square);
+                        _wordSquares = [Square];
                         self.word = Square.letter;
                     }
 
@@ -353,6 +367,13 @@
                 }
 
             };
+            var _scoreBoard;
+            function getScoreBoard(){
+                return _scoreBoard;
+            }
+            function setScoreBoard(value){
+                _scoreBoard = value;
+            }
 
             // watch for key presses
             jQuery(document).on('keypress',function(e){
@@ -384,7 +405,8 @@
                 'COMPLETED',
                 'ABANDONED',
                 'ROWS',
-                'COLS'
+                'COLS',
+                'scoreBoard'
             ]);
 
             self.SysMan.Logger.entry('END ' + self.constructor.name+'.construct()',self.constructor.name);
@@ -426,7 +448,7 @@
          * @public
          */
         WordShuffle_Models_Game.prototype.submitWord = function(){
-            if(this.word.length > 1){
+            if(this.wordSquares.length > 1){
                 this.relay('submitWord',true);
             }
         };
@@ -449,6 +471,9 @@
 
             // reset the array of squares that make the word
             this.wordSquares = [];
+
+            // update the scoreboard
+            this.scoreBoard = oResults.scoreBoard;
         };
 
         /******************************************

@@ -23,6 +23,7 @@
  * @property    string          gameState           - current state of game
  * @property    array   Rounds          - game rounds
  * @property    array   wordList        - list of current words selected
+ * @property    array   scoreBoard      - array of scores for the current game
  */
 class Common_Models_Session
 {
@@ -198,6 +199,17 @@ class Common_Models_Session
     }
     protected function getWordList(){
         return $this->_Session->wordList;
+    }
+    protected function setScoreBoard($value){
+        // assume associative array with keys (word, points)
+        if(is_array($value)){
+            array_push($this->_Session->scoreBoard,$value);
+        }else{
+            $this->_Session->scoreBoard = [];
+        }
+    }
+    protected function getScoreBoard(){
+        return $this->_Session->scoreBoard;
     }
     protected function setRounds($value){
         $this->_Session->Rounds = $value;

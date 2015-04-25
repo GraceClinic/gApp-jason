@@ -21,6 +21,7 @@
  * @property    string         word        - current word
  * @property    array         wordSquares        - array of Square objects that created the word
  * @property    WordShuffle_Model_Mapper_Game Mapper    - explicitly define Mapper
+ * @property    array         scoreBoard        - array of word scores
  */
 class WordShuffle_Model_Game extends Common_Abstracts_Model
 {
@@ -274,7 +275,9 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         return $this->_wordSquares;
     }
 
-
+    protected function getScoreBoard(){
+        return $this->SysMan->Session->scoreBoard;
+    }
     
     /*
      * New Game object requires creation of the associated Round objects that will be used during the Game
@@ -417,6 +420,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             if($success){
                 $msg = 'Success!';
                 $this->SysMan->Session->wordList = $this->word;
+                $this->_scoreWord($this->word);
             }else{
                 $msg = 'Rejected!';
             }
@@ -424,8 +428,11 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
 
         $return = array(
             'success'=> $success,
-            'msg'=> $msg
+            'msg'=> $msg,
+            'scoreBoard'=> $this->scoreBoard
         );
+
+        $this->SysMan->Logger->info('Game.submitWord(); return = '.print_r($return,true));
 
         return $return;
     }
@@ -494,6 +501,47 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         }
         return (string)$return;
     }
+    
+    /**
+     * Record score to records
+     *
+     * @private                 
+     * @param   string  $word   - word to record on score board
+     */
+    private function _scoreWord($word)
+    {
+        $wordLength = strlen($word);
+
+        switch($wordLength){
+            case 2:
+                $score = 2;
+                break;
+            case 3:
+                $score = 3;
+                break;
+            case 4:
+                $score = 5;
+                break;
+            case 5:
+                $score = 7;
+                break;
+            case 6:
+                $score = 9;
+                break;
+            default:
+                $score = $wordLength + 3;
+        }
+
+        $scoreEntry = array(
+            'word'=>    $word,
+            'points'=>   $score
+        );
+
+        $this->SysMan->Session->scoreBoard = $scoreEntry;
+
+        //array_push($this->_scoreBoard,$scoreEntry);
+    }
+    
 
     /**
      * Initialized Squares to an empty array of empty arrays

@@ -72,8 +72,6 @@
              * @public
              */
             self.start = function(){
-                // todo: code method
-                console.log('Clock.start(), duration = ',self.duration);
                 _start = Date.now();
                 _intervalId = $interval(_updateClock, 200);
             };
@@ -86,7 +84,7 @@
                 return _minutes;
             }
             function setMinutes(value){
-                value = Math.floor(value)
+                value = Math.floor(value);
                 if(value > 9){
                     _minutes = value.toString();
                 }else{

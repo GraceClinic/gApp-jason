@@ -10,7 +10,7 @@
                         class="btn btn-success btn-xs"
                         type="submit"
                         ng-click="Play.Game.submitWord()"
-                        ng-disabled="Play.Game.word.length < 2"
+                        ng-disabled="Play.Game.wordSquares.length < 2"
                         >
                     OK
                 </button>
@@ -32,21 +32,12 @@
             <div class="models-game-scoreboard right-side">Score</div>
         </div>
         <div id="models-game-scoreboard-body">
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jetty</div>
-                <div class="models-game-scoreboard right-side">20</div>
-            </div>
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jar</div>
-                <div class="models-game-scoreboard right-side">15</div>
-            </div>
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jetty</div>
-                <div class="models-game-scoreboard right-side">20</div>
-            </div>
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jar</div>
-                <div class="models-game-scoreboard right-side">15</div>
+            <div
+                    class="models-game-scoreboard models-game-scoreboard-line"
+                    ng-repeat="score in Play.Game.scoreBoard"
+                    >
+                <div class="models-game-scoreboard left-side">{{score.word}}</div>
+                <div class="models-game-scoreboard right-side">{{score.points}}</div>
             </div>
         </div>
         <div class="models-game-scoreboard models-game-scoreboard-footer">
