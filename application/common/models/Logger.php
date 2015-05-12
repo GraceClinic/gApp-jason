@@ -32,7 +32,7 @@ class Common_Models_Logger
 
     private
         $logLevel = self::DEBUG,
-        $logger;               /** @var Zend_Log _logger Handle to Zend logging object*/
+        $logger;               /** @var Zend_Log Handle to Zend logging object*/
 
     /**
      * Constructor. Attach to the Zend log writer and set the log level if given (default to self:ERR
@@ -64,11 +64,29 @@ class Common_Models_Logger
      */
     public function Log($level, $code, $string, $source)
     {
+        $bracketMe = false;
+
         if ($level > $this->logLevel) { //Stop messages that are above the logging level
             return false;
         }
+
         $prepend = "[".$_SERVER['REMOTE_ADDR'].":".$_SERVER['REMOTE_PORT']."] ".
             "[User:".Common_Models_SysMan::getInstance()->Session->idPlayer."]";
+
+        if(strtoupper(substr($string,0,3)) == "END"){
+            // adding ending bracket for expanding and collapsing log entries
+            $this->logger->info("}");
+        }elseif(strtoupper(substr($string,0,5)) == "START"){
+            // adding ending bracket for expanding and collapsing log entries
+            $prepend = "{".$prepend;
+        }else{
+            /*
+             * This is a direct message entry, bracket start and end so it can be collapsed individually just in case
+             * it is a long message with lots of data printouts.
+            */
+            $bracketMe = true;
+        }
+
         if($source){
             $prepend = $prepend.' [source:'.$source.']: ';
         }else{
@@ -78,6 +96,9 @@ class Common_Models_Logger
             $message = $prepend."ErrorCode ".$code.": ".$string;
         }else{
             $message = $prepend.$string;
+        }
+        if($bracketMe){
+            $message = "{".$message."}";
         }
 
         try {

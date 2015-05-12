@@ -40,11 +40,11 @@
              **/
             Object.defineProperty(self,'errNo',{get: getErrNo,set: setErrNo});
             /**
-             * @property    App_Common_Models_SysMan#msg      - array of messages stored for reference by controller and/or models
-             * @type        string[]
+             * @property    App_Common_Models_SysMan#msg      - array of message objects with keys 'text' and 'type'
+             * @type        object[]
              * @public
              **/
-            Object.defineProperty(self,'msg',{get: getMsg,set: setMsg});
+            Object.defineProperty(self,'msg',{get: getMsg,set: setMsg,enumerable:true});
             /**
              * @property    App_Common_Models_SysMan#Timer      - application wide timer
              * @type        App_Common_Models_Tools_Timer
@@ -84,13 +84,16 @@
                 var _allowed = ['msg','error','errNo','state'];
                 // set properties per argument passed during construction
                 for(var $key in data){
-                    // set property if it exists anywhere in prototype chain, hasOwnProperty only checks the object itself
-                    if($key in _allowed){
+                    //noinspection JSUnfilteredForInLoop
+                    if(_allowed.indexOf($key)){
                         // use self reference in order to execute setter method, call using bracket notation within object scope
+                        //noinspection JSUnfilteredForInLoop
                         self[$key] = data[$key];
                     }else{
                         // check for lower case version of property
-                        if(_lcFirst($key) in _allowed){
+                        //noinspection JSUnfilteredForInLoop
+                        if(_allowed.indexOf(_lcFirst($key))){
+                            //noinspection JSUnfilteredForInLoop
                             self[_lcFirst($key)] = data[$key];
                         }
                     }
@@ -103,8 +106,9 @@
              * @public
              */
             self.restart = function(){
+                console.log('Current window location: ',$window.location.href);
                 $state.go('module.controller.action',{"module":"wordshuffle","controller":"welcome","action":"index"});
-                $window.location.reload();
+                //$window.location.reload();
             };
 
             /**********************************
@@ -135,25 +139,26 @@
             }
             var _msg = [];
             function getMsg(){
-                var msg = _msg;
-
-                // clear the message array after reading
-                _msg = [];
-                return msg;
+                return _msg;
             }
             function setMsg(x){
                 // assume over-write of current message array
-                if(Array.isArray(x)){
-                    _msg = x;
+                if(x !== null){
+                    if(Array.isArray(x) && x.length > 0){
+                        _msg = x;
+                    }
+                    // else add entry to existing message array
+                    else if("text" in x && "type" in x){
+                        _msg.push(x);
+                    }
+                    else if(x.length == 0){
+                        // do nothing
+                    }
+                    else{
+                        console.log('SysMan.setMsg() called with improper argument');
+                    }
                 }
-                // assume clearing message array
-                else if(x == ''){
-                    _msg = [];
-                }
-                // else add entry to existing message array
-                else{
-                    _msg.push(x);
-                }
+                console.log('SysMan.setMsg() completed msg = ',_msg);
             }
             var _Timer = new Timer;
             function getTimer(){
@@ -207,10 +212,10 @@
                         method: "HEAD"
                     })
                         .then(
-                        function(response) {
+                        function() {
                             $state.go('module.controller.action',_newState);
                         },
-                        function(errResponse) {
+                        function() {
                             var _msg = 'You did not define an Error controller/action for your module = ' +
                                 self.state.module + '.';
                             Logger.entry(_msg,'SysMan._routeToError()',Logger.TYPE.WARNING);

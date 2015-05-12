@@ -124,6 +124,13 @@
                 });
             }
 
+            // clear any SysMan messages remaining from previous controllers
+            var i = SysMan.msg.length;
+            while(i > 0){
+                SysMan.msg.shift();
+                i--;
+            }
+
             SysMan.Logger.entry('END ' + self.constructor.name + '.construct()','App_Common_Abstracts_Controller');
 
             return self;
@@ -134,11 +141,11 @@
          * @type        App_Common_Models_SysMan
          * @public
          **/
-         Object.defineProperty(App_Common_Abstracts_Controller.prototype,"SysMan",{get: getSysMan, set: setSysMan});
+         Object.defineProperty(App_Common_Abstracts_Controller.prototype,"SysMan",{get: getSysMan, set: setSysMan,enumerable:true});
         function getSysMan(){
             return SysMan;
         }
-        function setSysMan(value){
+        function setSysMan(){
             var _msg = 'Set of Controller.SysMan not allowed!';
             SysMan.Logger.entry(_msg,'App_Common_Abstracts_Controller',SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.CTRL_ERROR);
         }

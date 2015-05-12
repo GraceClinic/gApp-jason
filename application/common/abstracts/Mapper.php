@@ -181,8 +181,6 @@ abstract class Common_Abstracts_Mapper
                 }
             }
 
-            $this->_model->SysMan->Logger->info($this->_className.'->findAll(); $where = '.$where);
-
             $resultSet = $this->getDbTable()->fetchAll($where,$order);
 
             // transform row set to an array of associative arrays representing the model
@@ -198,8 +196,6 @@ abstract class Common_Abstracts_Mapper
             );
 //            throw new Exception($this->_className.'->findAll() called with no criteria supplied in argument nor a default '.
         }
-
-        $this->_model->SysMan->Logger->info($this->_className.'->findAll() results = '.print_r($result,true));
 
         return $result;
     }
@@ -217,8 +213,6 @@ abstract class Common_Abstracts_Mapper
      */
     public function save()
     {
-        $this->_preSave();
-
         $targetTable = $this->getDbTable();
         $map = $this->_map;
         // The id property is the primary key for accessing database records
@@ -226,7 +220,11 @@ abstract class Common_Abstracts_Mapper
 
         $data = $this->mapModel($map);
 
-        $this->_model->SysMan->Logger->info($this->_className.'->save() given table data = '.print_r($data,true));
+        $this->_model->SysMan->Logger->info('START '.$this->_className.'->save() given table data = '.print_r($data,true),'Common_Abstracts_Mapper');
+
+        $this->_model->SysMan->Logger->info('START '.$this->_className.'->_preSave()','Common_Abstracts_Mapper');
+        $this->_preSave();
+        $this->_model->SysMan->Logger->info('END '.$this->_className.'->_preSave()','Common_Abstracts_Mapper');
 
         // remove primary key field for insert and update operations (for insert it insures return of $pk, for update modifying primary key not allowed
         if(isset($data[$targetTable->getPrimary()])){
@@ -262,9 +260,11 @@ abstract class Common_Abstracts_Mapper
             throw new Exception('Exception thrown during '.$this->_className.'->save() method:  '.$e->getMessage());
         }
 
+        $this->_model->SysMan->Logger->info('START '.$this->_className.'->_postSave()','Common_Abstracts_Mapper');
         $this->_postSave();
+        $this->_model->SysMan->Logger->info('END '.$this->_className.'->_postSave()','Common_Abstracts_Mapper');
 
-        $this->_model->SysMan->Logger->info($this->_className.'->save() complete, primary key returned = '.$pk);
+        $this->_model->SysMan->Logger->info('END '.$this->_className.'->save() complete, primary key returned = '.$pk,'Common_Abstracts_Mapper');
 
         return $pk;
     }
@@ -368,7 +368,7 @@ abstract class Common_Abstracts_Mapper
                 }else{
                     // intent here is to save table data to database
                     // create array of table field names set to the model property value
-                    if(isset($this->_model->$prop)){
+                    if(isset($this->_model->$prop) && !is_null($this->_model->$prop)){
                         $ret[$field] = $this->_model->$prop;
                     }
                 }

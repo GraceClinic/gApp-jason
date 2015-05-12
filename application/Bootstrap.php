@@ -1,6 +1,7 @@
 <?php
 
 require_once('common/models/SysMan.php');
+require_once('common/models/Session.php');
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
@@ -86,42 +87,32 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         // If you want all requests to have and use sessions, then place this function call early and
         // unconditionally in your bootstrap code.
-        //Zend_Session::start();
+        Zend_Session::start();
 
-        $session = Common_Models_SysMan::initSession();
-
-        // make the session handler available to all function who need it
-        Zend_Registry::set('session', $session);
-        Common_Models_SysMan::getInstance()->Logger->info('Zend session started');
-
-        if($session->idPlayer == 0){
-            Common_Models_SysMan::getInstance()->Logger->info('Zend session does not exists, created and initialized');
+        if(Zend_Session::sessionExists()){
+            $sessionExists = true;
         }else{
-            Common_Models_SysMan::getInstance()->Logger->info('Zend session exists, session object: '.
-                print_r(Common_Models_SysMan::getInstance()->Session->toArray(),true));
+            $sessionExists = false;
         }
 
-//
-//        // if user identified, maintain session variables, otherwise initialize session variables
-//        if (!isset($session->idGame)) {
-//            // stuff
-//            $session->idGame = 0;
-//            $session->idPlayer = 0;
-//            $session->playerName = '';
-//            $session->idChallenge = 0;
-//            $session->roundsPerGame = 3;
-//            $session->secondsPerRound = 120;
-//            $session->start = null;
-//            $session->end = null;
-//            $session->points = 0;
-//            $session->roundAvg = 0;
-//            $session->signInState = 0;
-//            $session->Rounds = Array();
-//        }
+        Common_Models_Session::initSession();
 
+        $msg = 'START Zend application; ';
+        if($sessionExists){
+            $msg = $msg.'Session exists, session object: ';
+        }else{
+            $msg = $msg.'Session created and initialized: ';
+        }
+        $msg = $msg.PHP_EOL.'{'.print_r(Common_Models_SysMan::getInstance()->Session->toArray(),true)."}";
+        Common_Models_SysMan::getInstance()->Logger->info($msg,'Bootstrap');
 
     }
 
+    public function __destruct(){
+        if(!Zend_Session::isDestroyed()){
+            Common_Models_SysMan::getInstance()->Logger->info('END application','Bootstrap');
+        }
+    }
 
 }
 

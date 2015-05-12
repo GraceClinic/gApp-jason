@@ -16,8 +16,7 @@
             self.restrict = 'E'; // match on element name only
             self.templateUrl = '/app/common/directives/Banner.drv.html';
             self.scope = {
-                msg:        '=',
-                msgType:    '=',
+                msg:        '=',        // array of msg objects with keys "text" and "type" defining the properties
                 expires:    '='
             };
             self.link = controller;
@@ -37,6 +36,7 @@
                 // watch messages for new content and process accordingly
                 scope.$watch('msg',_processNewMsg,true);
 
+
                 // expand Banner scope to service user click of "close" link
                 scope.closeMsg = function() {
                     scope.msg.shift();
@@ -53,10 +53,17 @@
                     if(scope.msg.length > 0){
                         element.show();
                         _expiresAt = Date.now() + scope.expires;
+                        if(_intervalId != null){
+                            // cancel any currently active processing
+                            if(!_intervalId.cancelled){
+                                $interval.cancel(_intervalId);
+                            }
+                        }
                         _intervalId = $interval(_updateMsg, 100);
                     }else{
                         element.hide();
                     }
+
                 }
 
                 /**
@@ -74,10 +81,11 @@
                                 _opacity = Math.round((_opacity - _fade)*100)/100;
                                 element.css('opacity',_opacity);
                                 if(_opacity <= _fade){
-                                    scope.msg.shift();
                                     element.hide();
+                                    $interval.cancel(_intervalId);
+                                    scope.msg.shift();
                                 }
-                            }else{
+                            }else if(scope.msg.length > 1){
                                 _opacity = 1.0;
                                 scope.msg.shift();
                                 if(scope.msg.length > 0){
@@ -85,7 +93,10 @@
                                     _expiresAt = Date.now() + scope.expires;
                                 }else{
                                     element.hide();
+                                    $interval.cancel(_intervalId);
                                 }
+                            }else{
+                                $interval.cancel(_intervalId);
                             }
                         }
                     }else{

@@ -56,7 +56,7 @@ class WordShuffle_Model_Mapper_Game extends WordShuffle_Model_Mapper_Abstract
 //    {
 //        // save each Round object
 //        foreach($this->_model->Rounds as $round){
-//            // @var WordShuffle_Model_Round $round
+//            // @var WordShuffle_Model_Game_Round $round
 //            // set the game reference for each round object
 //            $round->idGame = $this->_model->id;
 //            $round->save();

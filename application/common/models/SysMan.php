@@ -47,7 +47,7 @@ final class Common_Models_SysMan
     const SIGNED_IN = 20;
 
     private
-        $_Session,
+        $_Session = null,
         $_msg = array(),
         $_Logger,
         $_error,
@@ -210,44 +210,6 @@ final class Common_Models_SysMan
         return $this->_state;
     }
 
-    /**
-     * Initialize new session name space
-     *
-     * @public
-     * @return object
-     */
-    public static function initSession()
-    {
-        Zend_Session::start();
-
-        $session = new Zend_Session_Namespace('gapp');
-
-        // if user identified, maintain session variables, otherwise initialize session variables
-        if (!isset($session->idPlayer)) {
-            // stuff
-            $session->idGame = 0;
-            $session->idPlayer = 0;
-            $session->playerName = '';
-            $session->idChallenge = 0;
-            $session->roundsPerGame = 3;
-            $session->secondsPerRound = 120;
-            $session->start = null;
-            $session->end = null;
-            $session->points = 0;
-            $session->roundAvg = 0;
-            $session->signInState = 0;
-            $session->Rounds = Array();
-            $session->Squares = Array();
-            $session->wordList = Array();
-            $session->gameStart = null;
-            $session->gameEnd = null;
-            $session->gameState = null;
-            $session->scoreBoard = Array();
-        }
-
-        return $session;
-
-    }
 
 
 

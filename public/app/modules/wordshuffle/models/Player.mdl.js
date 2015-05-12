@@ -101,7 +101,6 @@
                 if(self.signInState){
                     // clear current messages
                     self.msg = [];
-                    self.SysMan.state.action = "Player.login.waiting";
                     // simply save the model and the backend will determine if a challenge is required
                     self.relay('login');
                 }
@@ -132,8 +131,10 @@
              */
             self.logout = function(){
                 _resetFlags();
-                self.relay('logout');
-                self.SysMan.restart();
+                var _promise = self.remove();
+                _promise.then(function(){
+                    self.SysMan.restart();
+                });
             };
 
             /**

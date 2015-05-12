@@ -62,6 +62,14 @@
              * @public
              **/
             Object.defineProperty(self,'end',{get: getEnd,set: setEnd});
+            /**
+             * @property    WordShuffle_Models_Game_Round#index      - index position of round within game
+             * @type        {int}
+             * @public
+             **/
+            Object.defineProperty(self,'index',{get: getIndex,set: setIndex,enumerable:true});
+
+
 
             /*****************************************
              * MODEL METHODS declaration / definition
@@ -112,6 +120,13 @@
             }
             function setEnd(value){
                 _end = value;
+            }
+            var _index;
+            function getIndex(){
+                return _index;
+            }
+            function setIndex(value){
+                _index = value;
             }
 
             /******************

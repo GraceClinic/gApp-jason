@@ -60,8 +60,14 @@
             Controller.call(self);
             self.scope = $scope;
 
-            self.msg = 'Welcome to WordShuffle!';
-            self.msg = "Please read the instructions and learn more about this exciting game!";
+            self.SysMan.msg = {
+                text:   'Welcome to WordShuffle!',
+                type:   'INFO'
+            };
+            self.SysMan.msg = {
+                text:   "Please read the instructions and learn more about this exciting game!",
+                type:   'INFO'
+            };
 
         }
         // inherit prototype functions from superclass Controller

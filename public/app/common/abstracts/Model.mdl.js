@@ -111,13 +111,13 @@
                         // set property if it exists anywhere in prototype chain, hasOwnProperty only checks the object itself
                         if($key in self){
                             // use self reference in order to execute setter method, call using bracket notation within object scope
-                            if(self[$key] !== null){
-                                self[$key] = propArray[$key];
+                            if(propArray[$key] !== null){
+                                    self[$key] = propArray[$key];
                             }
                         }else{
                             // check for lower case version of property
                             if(_lcFirst($key) in self){
-                                if(self[_lcFirst($key)] !== null){
+                                if(propArray[$key] !== null){
                                     self[_lcFirst($key)] = propArray[$key];
                                 }
                             }else{
@@ -273,6 +273,7 @@
 
         };
 
+        //noinspection JSUnusedGlobalSymbols
         /**
          * Removes message from msg property
          *
@@ -349,7 +350,7 @@
                         self.status = self.READY;
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '.find() response process','App_Common_Abstracts_Model');
                     },
-                    function(errResponse) {
+                    function() {
                         self.status = self.POST_DISPATCH;
                         // error processed by App Interceptor
                         return $http.reject
@@ -415,7 +416,7 @@
                         self.status = self.READY;
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '.save() response process','App_Common_Abstracts_Model');
                     },
-                    function(errResponse) {
+                    function() {
                         // error processed by App Interceptor
                         self.status = self.POST_DISPATCH;
                         return $http.reject;
@@ -505,7 +506,12 @@
                             );
                         }
                         catch(err) {
+                            self.SysMan.Logger.entry(
+                                'START ' + self.constructor.name + '._postRelay since no specific _post'
+                                +_ucFirst(response.data.method)+' method found, error = ' + err.message,'App_Common_Abstracts_Model');
                             self._postRelay(response.data.results);
+                            self.SysMan.Logger.entry(
+                                'END ' + self.constructor.name + '._postRelay','App_Common_Abstracts_Model');
                         }
                         self.status = self.READY;
 
@@ -515,7 +521,7 @@
                         );
 
                     },
-                    function(errResponse) {
+                    function() {
                         // error processed by App Interceptor
                         self.status = self.POST_DISPATCH;
                         return $http.reject;
@@ -526,6 +532,60 @@
             }
 
             self.SysMan.Logger.entry('END ' + self.constructor.name + '.relay() for method = '+method,'App_Common_Abstracts_Model');
+
+            return _promise;
+        };
+
+        /**
+         * Executes delete request to data source based on “id” property.  This is typically for delete of associated
+         * model records, but it is also useful for servicing logout request whereby the backend must terminate the session
+         * and hence it will not be available for logging and other common followups to the request.
+         *
+         * @method   remove
+         * @public
+         * @return  {function}
+         */
+        App_Common_Abstracts_Model.prototype.remove = function(){
+            // proxy this so it does not get lost in the promise
+            var self = this;
+            var _url = self._rootURL;
+            var _promise = null;
+
+            SysMan.Logger.entry('START '+self.constructor.name+'.remove()','App_Common_Abstracts_Model');
+
+            self.status = self.PRE_DISPATCH;
+
+            if(self._preDispatch()){
+                _promise = $http({url:_url,data: {id: self.id},method: "DELETE"})
+                    .then(
+                    function(response) {
+                        self.status = self.POST_DISPATCH;
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '.remove() post dispatch','App_Common_Abstracts_Model');
+                        if('model' in response.data){
+                            self.SysMan.Logger.entry('START ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                            self.setFromArray(response.data.model);
+                            self.SysMan.Logger.entry('END ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
+                        }
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
+                        self._postDispatch();
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
+                        self.SysMan.Logger.entry('START ' + self.constructor.name + '._postRemove()','App_Common_Abstracts_Model');
+                        self._postRemove();
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '._postRemove()','App_Common_Abstracts_Model');
+                        self.status = self.READY;
+                        self.SysMan.Logger.entry('END ' + self.constructor.name + '.remove() post dispatch','App_Common_Abstracts_Model');
+                    },
+                    function() {
+                        self.status = self.POST_DISPATCH;
+                        // error processed by App Interceptor
+                        return $http.reject
+                    }
+                );
+            }else{
+                self.status = self.READY;
+            }
+
+            SysMan.Logger.entry('END '+self.constructor.name+'.remove()','App_Common_Abstracts_Model');
 
             return _promise;
         };
@@ -552,6 +612,7 @@
          * @param       {object}  results     - JSON object containing the results from the relayed method
          * @return      {boolean}
          */
+        //noinspection
         App_Common_Abstracts_Model.prototype._postRelay = function(results){
             return true;
         };
@@ -563,6 +624,16 @@
          * @protected
          */
         App_Common_Abstracts_Model.prototype._postSave = function(){
+            // TODO:  Overwrite during creation of a specific model
+        };
+
+        /**
+         * Prototype shell for running model logic after remove method returns
+         *
+         * @method   _postRemove
+         * @protected
+         */
+        App_Common_Abstracts_Model.prototype._postRemove = function(){
             // TODO:  Overwrite during creation of a specific model
         };
 
@@ -638,6 +709,7 @@
                 var isFunction;
                 var isProtected;
 
+                // todo: it's likely that specifying Object.defineProperty as enumerable will show prototype properties, must validate this
                _properties[this.uid] = Object.getOwnPropertyNames(this);
 
                 // build JSON object of only model properties
@@ -669,8 +741,11 @@
             return _msg[this.uid];
         }
         function setMsg(x){
-            if(Array.isArray(x)){
+            if(Array.isArray(x) && x.length > 0){
+                console.log('Setting Model.msg as Array');
                 _msg[this.uid] = x;
+                // bubble up to SysMan
+                this.SysMan.msg = x;
             }
             // assume clearing message array
             else if(x == ''){
@@ -684,7 +759,10 @@
                     _msg[this.uid] = [];
                     _msg[this.uid].push(x);
                 }
+                // bubble up to SysMan
+                this.SysMan.msg = x;
             }
+
         }
         var _status = [];
         function getStatus(){

@@ -91,7 +91,7 @@ class WordShuffle_Model_Instructions extends Common_Abstracts_Model
      * @param Common_Abstracts_Model $old
      * @return boolean  Indication to save method that preUpdate succeeded; therefore, save can continue
      **/
-    protected function _preUpdate($old){
+    protected function _preUpdate(){
          $success = true;
          
        // TODO:  determine if preUpdate process required prior to table update

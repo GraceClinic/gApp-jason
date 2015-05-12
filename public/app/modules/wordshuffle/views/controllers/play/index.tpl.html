@@ -10,44 +10,33 @@
         </div>
     </div>
     <div id="models-game-scoreboard">
+        <div class="models-game-scoreboard models-game-scoreboard-title">
+            Round XX
+        </div>
+        <div class="models-game-scoreboard models-game-scoreboard-summary">
+            <div id="models-game-scoreboard-total-label" class="models-game-scoreboard left-side">This Round = </div>
+            <div id="models-game-scoreboard-totalScore" class="models-game-scoreboard right-side"><span class="models-game-scoreboard-box"></span></div>
+        </div>
+        <div class="models-game-scoreboard models-game-scoreboard-summary">
+            <div id="models-game-scoreboard-lastRound-label" class="models-game-scoreboard left-side">Game Total = </div>
+            <div id="models-game-scoreboard-lastRoundScore" class="models-game-scoreboard right-side"><span class="models-game-scoreboard-box"></span></div>
+        </div>
         <div class="models-game-scoreboard models-game-scoreboard-header" >
             <div class="models-game-scoreboard left-side">Word</div>
             <div class="models-game-scoreboard right-side">Score</div>
         </div>
         <div id="models-game-scoreboard-body">
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jetty</div>
-                <div class="models-game-scoreboard right-side">20</div>
+            <div
+                    class="models-game-scoreboard models-game-scoreboard-line"
+                    >
+                <div class="models-game-scoreboard left-side"></div>
+                <div class="models-game-scoreboard right-side"></div>
             </div>
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jar</div>
-                <div class="models-game-scoreboard right-side">15</div>
-            </div>
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jetty</div>
-                <div class="models-game-scoreboard right-side">20</div>
-            </div>
-            <div class="models-game-scoreboard models-game-scoreboard-line">
-                <div class="models-game-scoreboard left-side">Jar</div>
-                <div class="models-game-scoreboard right-side">15</div>
-            </div>
-        </div>
-        <div class="models-game-scoreboard models-game-scoreboard-footer">
-            <div id="models-game-scoreboard-total-label" class="models-game-scoreboard left-side">Total = </div>
-            <div id="models-game-scoreboard-totalScore" class="models-game-scoreboard right-side"><span class="models-game-scoreboard-box">64</span></div>
-        </div>
-        <div class="models-game-scoreboard models-game-scoreboard-footer">
-            <div id="models-game-scoreboard-lastRound-label" class="models-game-scoreboard left-side">Last Round = </div>
-            <div id="models-game-scoreboard-lastRoundScore" class="models-game-scoreboard right-side"><span class="models-game-scoreboard-box">52</span></div>
-        </div>
-        <div class="models-game-scoreboard models-game-scoreboard-footer">
-            <div id="models-game-scoreboard-roundAvg-label" class="models-game-scoreboard left-side">Round Avg = </div>
-            <div id="models-game-scoreboard-roundAvg" class="models-game-scoreboard right-side"><span class="models-game-scoreboard-box">52</span></div>
         </div>
     </div>
     <div id="models-game-overlay">
-        <app-common-directives-banner msg="Play.msg" msgType="INFO" expires="5000"></app-common-directives-banner>
-        <button id="Setup-playGame" type="button" class="btn btn-success btn-lg" ng-click="Play.goToState('wordshuffle','play','play')">Play</button>
+        <app-common-directives-banner msg="Play.SysMan.msg" expires="5000"></app-common-directives-banner>
+        <button id="Play-start" type="button" class="btn btn-success btn-lg" ng-click="Play.start()">Play</button>
     </div>
 </div>
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/models/Game.mdl.css">

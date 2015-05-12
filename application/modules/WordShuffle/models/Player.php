@@ -310,6 +310,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
      */
     public function logout()
     {
+        $this->SysMan->Logger->info('Execute logout, destroy session',$this->className);
         $this->name = $this->defaultName;
         $this->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
         $this->idChallenge = 0;
@@ -317,7 +318,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
 
         Zend_Session::destroy(TRUE);
 
-        $this->SysMan->Logger->info('Logout complete');
         return true;
     }
 
@@ -360,7 +360,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
      *
      * @return bool
      */
-    protected function _validateModel(){
+    protected function _postFind(){
         // todo:  validate the find return to make sure user is allowed to read record
         switch($this->signInState){
             case Common_Models_Sysman::NEW_SIGN_IN:
@@ -380,11 +380,11 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     /**
      * Compare current values with values saved in database, maintain database values as appropriate
      *
-     * @param WordShuffle_Model_Player $old
      * @return boolean
      */
-    protected function _preUpdate($old)
+    protected function _preUpdate()
     {
+        $old = new WordShuffle_Model_Player($this->id);
         // maintain createDate in database
         $this->createDate = $old->createDate;
 

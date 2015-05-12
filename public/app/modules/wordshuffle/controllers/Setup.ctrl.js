@@ -80,12 +80,8 @@
                     self.Player.save();
                     self.Player.saveIsPending = false;
                 }
-                //self.Game.roundsPerGame = self.Player.roundsPerGame;
-                //self.Game.secondsPerRound = self.Player.secondsPerRound;
-                //self.Game.idPlayer = self.Player.id;
-                //self.Game.save();
-
                 // routing to play controller / play action will start the game
+                self.Game.newGame = true;
                 self.goToState('wordshuffle','play','play');
             };
             /**
@@ -117,9 +113,7 @@
             function setGame(){
                 self.SysMan.Logger.entry('Game.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
             }
-            //var _Player = new Player;
-            //_Player.msg = [];
-            Player.msg = [];
+
             function getPlayer(){
                 return Player;
             }

@@ -23,7 +23,12 @@
             var self = this;
 
             var _start = null;
-            var _intervalId = 0;
+            
+            /**
+             * @var  {promise} _intervalId                   - $interval promise handle
+             * @private
+             */
+            var _intervalId = null;
 
             /********************************
              * MODEL PROPERTIES declarations
@@ -73,6 +78,12 @@
              */
             self.start = function(){
                 _start = Date.now();
+                if(_intervalId != null){
+                    //if(!_intervalId.cancelled){
+                    //if(!_intervalId.cancelled){
+                        $interval.cancel(_intervalId);
+                    //}
+                }
                 _intervalId = $interval(_updateClock, 200);
             };
 
@@ -117,6 +128,7 @@
                     self.seconds = 0;
                     self.minutes = 0;
                     $interval.cancel(_intervalId);
+                    self.callOnExpire();
                 }else{
                     self.seconds = _now % 60;
                     self.minutes = _now / 60;
@@ -129,14 +141,26 @@
             function setCallOnExpire(value){
                 _callOnExpire = value;
             }
-            var _duration = 0;
+            var _duration = 120;
             function getDuration(){
                 return _duration;
             }
             function setDuration(value){
-                _duration = value;
-                self.now = _duration;
+                if(value > 0){
+                    _duration = value;
+                    self.now = _duration;
+                }
             }
+
+            /**
+             * stop the clock
+             *
+             * @method   stop
+             * @public               - todo: scope as public or protected, prefix name with "_" for protected
+             */
+            self.stop = function(){
+                $interval.cancel(_intervalId);
+            };
 
             /******************
              * PRIVATE FUNCTIONS

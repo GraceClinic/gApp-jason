@@ -122,18 +122,38 @@
              * @public
              **/
             Object.defineProperty(self,'scoreBoard',{get: getScoreBoard,set: setScoreBoard});
+            /**
+             * @property    WordShuffle_Models_Game#newGame      - flags start of new Game
+             * @type        boolean
+             * @public
+             **/
+            Object.defineProperty(self,'newGame',{get: getNewGame,set: setNewGame,enumerable:true});
+            /**
+             * @property    WordShuffle_Models_Game#newRound      - flags start of new Round
+             * @type        boolean
+             * @public
+             **/
+            Object.defineProperty(self,'newRound',{get: getNewRound,set: setNewRound,enumerable:true});
 
             /*****************************************
              * Public Methods declaration / definition
              *****************************************/
-            // todo:  use "method#" live template to insert individual model methods
+            /**
+             * End currently active game.
+             *
+             * @method   clockExpired
+             * @public
+             */
+            self.clockExpired = function(){
+                if(self.state != self.COMPLETED || self.state != self.ABANDONED){
+                    // execute save, backend will toggle game state as appropriate
+                    self.save();
+                }
+            };
 
             // The above maintains a clean class definition, promoting readability and maintainability.  Follow
             // with the any constructor logic.  This is what should be done during instantiation of the controller.
 
-            Object.defineProperty(WordShuffle_Models_Game.prototype,"ROWS",{value: 5, writable: false});
-            Object.defineProperty(WordShuffle_Models_Game.prototype,"COLS",{value: 5, writable: false});
-            
             /**********************************
              /* GETTERS AND SETTERS definitions
              /*********************************/
@@ -286,11 +306,14 @@
             }
             var _state;
             function getState(){
+                if(typeof _state == 'undefined'){
+                    _state = null;
+                }
                 return _state;
             }
             function setState(value){
                 if(value!==null){
-                    var _validValues = [self.NEW_GAME,self.IN_PROGRESS, self.COMPLETED, self.ABANDONED];
+                    var _validValues = [self.NEW_GAME,self.NEW_ROUND,self.IN_PROGRESS, self.COMPLETED, self.ABANDONED];
                     if(_validValues.indexOf(value)>=0){
                         _state = value;
                     }else{
@@ -302,7 +325,12 @@
                     }
                 }
             }
-            var _Clock = new Clock();
+            /*
+            Set callback function within Clock, attach anonymous function that executes Game.save().  This is
+            necessary because when the anonymous function is called, the Game object will be bound to it.  If
+            I make self.save directly the argument, it will resolve to Clock scope.
+             */
+            var _Clock = new Clock({'callOnExpire':function(){self.clockExpired()}});
             function getClock(){
                 return _Clock;
             }
@@ -335,37 +363,43 @@
              * @param    {WordShuffle_Models_Game_Square}   Square  - game square object initiating call
              */
             self.buildWord = function(Square){
-                if(Square.isSelected){
-                    // check for valid square, it must be adjacent to last selected square
-                    if(_wordSquares != null && _wordSquares.length > 0){
-                        var _last = _wordSquares[_wordSquares.length-1];
-                        if(Math.abs(_last.row - Square.row)<=1 && Math.abs(_last.col - Square.col)<=1){
-                            _wordSquares.push(Square);
-                            self.word = self.word.concat(Square.letter);
+                // validate state
+                if(self.state == self.COMPLETED || self.state == self.ABANDONED){
+                    // de-select square, game is over
+                    Square.isSelected = false;
+                }
+                else{
+                    if(Square.isSelected){
+                        // check for valid square, it must be adjacent to last selected square
+                        if(_wordSquares != null && _wordSquares.length > 0){
+                            var _last = _wordSquares[_wordSquares.length-1];
+                            if(Math.abs(_last.row - Square.row)<=1 && Math.abs(_last.col - Square.col)<=1){
+                                _wordSquares.push(Square);
+                                self.word = self.word.concat(Square.letter);
+                            }else{
+                                Square.isSelected = false;
+                                // todo: play audio sound
+                            }
                         }else{
-                            Square.isSelected = false;
-                            // todo: play audio sound
+                            _wordSquares = [Square];
+                            self.word = Square.letter;
                         }
-                    }else{
-                        _wordSquares = [Square];
-                        self.word = Square.letter;
                     }
-
-                }else{
-                    var _popSquare = _wordSquares.pop();
-                    while(_popSquare.uid != Square.uid && _wordSquares.length > 0){
-                        // remove all letters that preceded the de-selected letter
+                    else{
+                        var _popSquare = _wordSquares.pop();
+                        while(_popSquare.uid != Square.uid && _wordSquares.length > 0){
+                            // remove all letters that preceded the de-selected letter
+                            self.word = self.word.substring(0,self.word.length-1);
+                            _popSquare.isSelected = false;
+                            _popSquare = _wordSquares.pop();
+                        }
+                        // remove the de-selected letter from the current word
                         self.word = self.word.substring(0,self.word.length-1);
-                        _popSquare.isSelected = false;
-                        _popSquare = _wordSquares.pop();
-                    }
-                    // remove the de-selected letter from the current word
-                    self.word = self.word.substring(0,self.word.length-1);
-                    if(_wordSquares.length == 0){
-                        self.word = '???';
+                        if(_wordSquares.length == 0){
+                            self.word = '???';
+                        }
                     }
                 }
-
             };
             var _scoreBoard;
             function getScoreBoard(){
@@ -373,6 +407,20 @@
             }
             function setScoreBoard(value){
                 _scoreBoard = value;
+            }
+            var _newGame = false;
+            function getNewGame(){
+                return _newGame;
+            }
+            function setNewGame(value){
+                _newGame = value;
+            }
+            var _newRound = false;
+            function getNewRound(){
+                return _newRound;
+            }
+            function setNewRound(value){
+                _newRound = value;
             }
 
             // watch for key presses
@@ -398,15 +446,16 @@
                 'end',
                 'roundAvg',
                 'Squares',
-                'state',
                 'Clock',
                 'NEW_GAME',
+                'NEW_ROUND',
                 'IN_PROGRESS',
                 'COMPLETED',
                 'ABANDONED',
                 'ROWS',
                 'COLS',
-                'scoreBoard'
+                'scoreBoard',
+                'Rounds'
             ]);
 
             self.SysMan.Logger.entry('END ' + self.constructor.name+'.construct()',self.constructor.name);
@@ -419,10 +468,12 @@
         WordShuffle_Models_Game.prototype.constructor = WordShuffle_Models_Game;
 
         Object.defineProperty(WordShuffle_Models_Game.prototype,"NEW_GAME",{value: 'New', writable: false});
+        Object.defineProperty(WordShuffle_Models_Game.prototype,"NEW_ROUND",{value: 'NewRound', writable: false});
         Object.defineProperty(WordShuffle_Models_Game.prototype,"IN_PROGRESS",{value: 'InProgress', writable: false});
         Object.defineProperty(WordShuffle_Models_Game.prototype,"COMPLETED",{value: 'Completed', writable: false});
         Object.defineProperty(WordShuffle_Models_Game.prototype,"ABANDONED",{value: 'Abandoned', writable: false});
-                        
+        Object.defineProperty(WordShuffle_Models_Game.prototype,"ROWS",{value: 5, writable: false});
+        Object.defineProperty(WordShuffle_Models_Game.prototype,"COLS",{value: 5, writable: false});
 
         /*****************************************
          * PROTOTYPE PUBLIC PROPERTIES DECLARATION
@@ -432,13 +483,54 @@
          * PROTOTYPE PUBLIC METHODS DECLARATION
          *****************************************/
         /**
+         * save Game model
+         *
+         * @method   save
+         * @protected
+         */
+        //WordShuffle_Models_Game.prototype.save = function(){
+        //    // process game state before save
+        //    if(this.state == this.COMPLETED || this.state == this.ABANDONED){
+        //        // new game is starting, reset game properties
+        //        this.round = 1;
+        //        this.Rounds = [];
+        //        this.word = '';
+        //        this.wordSquares = [];
+        //    }
+        //    Model.prototype.save.call(this);
+        //};
+
+        /**
+         * Quit the game
+         *
+         * @method   quit
+         * @public
+         * @return  object  - promise object from http request to quit game
+         */
+        WordShuffle_Models_Game.prototype.quit = function(){
+            this.Clock.stop();
+            return this.relay('quit',true);
+        };
+
+
+        /**
          * Process Game state after return of safe operation
          *
          * @method   _postSave
          * @public
          */
         WordShuffle_Models_Game.prototype._postSave = function(){
-            this.Clock.start();
+            // todo: decide when to reset the clock for new round and/or terminate game
+            if(this.state == this.COMPLETED || this.state == this.ABANDONED){
+                this.word = "Game Over!";
+            }
+            else if(this.newRound || this.newGame){
+                this.Clock.start();
+                this.word = '???';
+                this.newRound = false;
+                this.newGame = false;
+            }
+
         };
 
         /**
@@ -448,7 +540,7 @@
          * @public
          */
         WordShuffle_Models_Game.prototype.submitWord = function(){
-            if(this.wordSquares.length > 1){
+            if(this.wordSquares.length > 1 && (this.state != this.COMPLETED || this.state != this.ABANDONED)){
                 this.relay('submitWord',true);
             }
         };
@@ -460,7 +552,13 @@
          * @method   _postSubmitWord
          * @protected
          * @param    {object}   oResults   - the results returned from the backend after relay of the submitWord method
+         * @param   {boolean}   oResults.success    - flags successful submit of word
+         * @param   {string}    oResults.msg        - message to display to user
+         * @param   {int}       oResults.gamePoints - total game points
+         * @param   {int}       oResults.roundPoints    - points for current round
+         * @param   {string}    oResults.gameState      - current game state
          */
+        //noinspection
         WordShuffle_Models_Game.prototype._postSubmitWord = function(oResults){
             this.word = oResults.msg;
 
@@ -474,6 +572,28 @@
 
             // update the scoreboard
             this.scoreBoard = oResults.scoreBoard;
+            // update scoreboard footer
+            this.points = oResults.gamePoints;
+            this.Rounds[this.round-1].points = oResults.roundPoints;
+            this.state = oResults.gameState;
+
+            if(this.newRound){
+                var self = this;
+                var _promise = this.save();
+                // stop the clock so that it will not trigger Game.save after it elapses
+                self.Clock.stop();
+                this.newRound = false;
+
+                if(_promise !== null){
+                    _promise.then(function(){
+                        // restart the clock so it is not behind the backend
+                        self.Clock.start();
+                    })
+                }
+            }
+            else if(this.state == this.ABANDONED || this.COMPLETED){
+                this.Clock.stop();
+            }
         };
 
         /******************************************

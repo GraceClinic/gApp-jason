@@ -51,6 +51,7 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
 
         $this->_SysMan = Common_Models_SysMan::getInstance();
         $this->_className = get_class($this);
+
         $this->_SysMan->Logger->info('START '.$this->_className.'.init()','Common_Abstracts_RestController');
 
         //AngularJS POST encodes the data element as a JSON object.
@@ -66,7 +67,7 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
                 }
             }
             $this->_SysMan->Logger->info(
-                'END '.get_class($this).'.init(); extracted parameters = '.print_r($JSONPostParams,true),
+                'END '.get_class($this).'.init(); extracted parameters = '.PHP_EOL.'{'.print_r($JSONPostParams,true).'}',
                 'Common_Abstracts_RestController'
             );
         } catch (Exception $e) {
@@ -79,13 +80,12 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
 
     public function indexAction(){
         // this is anonymous play
-        $this->_SysMan->Logger->info('*********************************************','Common_Abstracts_RestController');
         $this->_SysMan->Logger->info('START '.$this->_className.'->indexAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass();
         $this->_SysMan->Logger->info('START '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
         $this->_model->find();
         $this->_SysMan->Logger->info(
-            'END '.$this->_modelClass.'->find(), found data for id = '.$this->_model->id,
+            'END '.$this->_modelClass.'->find() for id = '.$this->_model->id,
             'Common_Abstracts_RestController'
         );
 
@@ -102,16 +102,15 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
         $this->getResponse()->appendBody(json_encode($response));
 
         $this->_SysMan->Logger->info('END '.$this->_className.'->indexAction()','Common_Abstracts_RestController');
-        $this->_SysMan->Logger->info('*********************************************','Common_Abstracts_RestController');
     }
 
     public function getAction($id = 0){
 
         $this->_SysMan->Logger->info('START '.$this->_className.'->getAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass($id);
-        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
-        $this->_model->find();
-        $this->_SysMan->Logger->info('END '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
+//        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
+//        $this->_model->find();
+//        $this->_SysMan->Logger->info('END '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
 
         $response = Array(
             "model" => $this->_model->toArray(true)
@@ -124,19 +123,20 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
     public function putAction($model = Array()){
         $this->_SysMan->Logger->info('START '.$this->_className.'->putAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass($model);
-        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->save()','Common_Abstracts_RestController');
         $this->_model->save();
-        $this->_SysMan->Logger->info('END '.$this->_modelClass.'->save()','Common_Abstracts_RestController');
 
         $response = Array(
             "model" => $this->_model->toArray(true)
         );
 
         $this->getResponse()->appendBody(json_encode($response));
+        $this->_SysMan->Logger->info('END '.$this->_className.'->putAction()','Common_Abstracts_RestController');
     }
 
     public function postAction($model = Array(), $method = '', $args = Array(), $noModel = false){
-        $this->_SysMan->Logger->info('START '.$this->_className.'->postAction()','Common_Abstracts_RestController');
+        $this->_SysMan->Logger->info(
+            'START '.$this->_className.'->postAction() for method '.$method.'; arguments ='.PHP_EOL.'{'.print_r($args,true).'}',
+            'Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass($model);
         $this->_SysMan->Logger->info('START '.$this->_modelClass.'->'.$method.'()','Common_Abstracts_RestController');
         $results = $this->_model->$method($args);
@@ -150,18 +150,27 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
             $response["model"] = $this->_model->toArray(true);
         }
 
+        $this->_SysMan->Logger->info(
+            'END '.$this->_className.'->postAction() for method '.$method.'; results ='.PHP_EOL.'{'.print_r($results,true).'}',
+            'Common_Abstracts_RestController');
+
         $this->getResponse()->appendBody(json_encode($response));
     }
 
-    public function deleteAction($model = Array()){
-        $this->_model = new $this->_modelClass($model);
+    public function deleteAction($id = 0){
+        $this->_SysMan->Logger->info(
+            'START '.$this->_className.'->deleteAction()','Common_Abstracts_RestController');
 
-        $results = $this->_model->delete();
+        $this->_model = new $this->_modelClass($id);
+
+        $results = $this->_model->remove();
 
         $response = Array(
-            "model" => $this->_model->toArray(true),
             "results" => $results
         );
+
+        $this->_SysMan->Logger->info(
+            'END '.$this->_className.'->deleteAction()','Common_Abstracts_RestController');
 
         $this->getResponse()->appendBody(json_encode($response));
     }
@@ -224,7 +233,6 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
             ->setHeader("Access-Control-Max-Age", "3600");
     }
 
-
     /**
      *  CONTROLLER ABSTRACT FUNCTIONS
      */
@@ -263,6 +271,10 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
             $this->toJSONResponse(
                 array('message' => $this->ERROR_INFO), 1, self::HTTP_INTERNAL_SERVER_ERROR
             );
+        }
+
+        if(!Zend_Session::isDestroyed()){
+            $this->_SysMan->Logger->info($this->_className.'->postDispatch(); session object = '.PHP_EOL.'{'.print_r($this->_SysMan->Session->toArray(),true).'}','Common_Abstracts_RestController');
         }
     }
 

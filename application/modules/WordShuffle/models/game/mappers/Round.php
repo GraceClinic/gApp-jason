@@ -7,24 +7,25 @@
  *
  * Class WordShuffle_Model_Mapper_Round
  *
- * @property    WordShuffle_Model_Round    _model     Reference to respective model
- * @property    WordShuffle_Model_DbTable_Round   dbTable Default table object storing model information
+ * @property    WordShuffle_Model_Game_Round    _model     Reference to respective model
+ * @property    WordShuffle_Model_Game_DbTable_Round   dbTable Default table object storing model information
  *
  */
-class WordShuffle_Model_Mapper_Round extends WordShuffle_Model_Mapper_Abstract
+class WordShuffle_Model_Game_Mapper_Round extends WordShuffle_Model_Mapper_Abstract
 {
     // map table field name to Game property
     protected $_map = array(
         'id'            =>'id',
-        'idWSgame'      =>'idGame',
+        'idWSGame'      =>'idGame',
         'time'          =>'time',
         'points'        => 'points',
         'wordCount'     => 'wordCount',
         'start'         => 'start',
-        'end'           => 'end'
+        'end'           => 'end',
+        'index'         => 'index'
     );
 
     protected $_findAllBy = array(
-        'idWSgame'
+        'idWSGame'
     );
 }

@@ -23,6 +23,8 @@
             var self = this;		// required alias to address resolution to immediate scope
             self._isActionController = true;
 
+            var _blockFetch = false;    // flag to block additional request to the backend when changing states
+
             /*****************
              * Public CONSTANTS
              ******************/
@@ -57,22 +59,25 @@
              */
             self.indexAction = function(){
                 // update the player and game information based on backend
-                Player.find();
-                var _promise = Game.find();
+                if(!_blockFetch){
+                    Player.find();
+                    var _promise = Game.find();
 
-                if(_promise !== null){
-                    _promise.then(function(){
-                        if(typeof Game.state == 'undefined' || Game.state == Game.COMPLETED){
-                            self.msg = 'You do not have an active game!  Click "Play" if you wish to use your current settings to start a new one.'
-                        }else{
-                            if(Game.state == Game.IN_PROGRESS){
-                                self.msg = 'You have an active game in progress!  Please finish what you started!'
-                                self.goToState('wordshuffle','play','play');
+                    if(_promise !== null){
+                        _promise.then(function(){
+                            if(typeof Game.state == 'undefined' || Game.state == Game.COMPLETED){
+                                self.msg = 'You do not have an active game!  Click "Play" if you wish to use your current settings to start a new one.'
+                            }else{
+                                if(Game.state == Game.IN_PROGRESS){
+                                    self.goToState('wordshuffle','play','play');
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                }else{
+                    // reset flag for next action
+                    _blockFetch = false;
                 }
-
             };
 
             /**
@@ -82,12 +87,26 @@
              * @public
              */
             self.playAction = function(){
-                // todo: define any parameters and then code action logic
-                if(Game.state !== Game.IN_PROGRESS){
+
+                if(self.Game.newGame){
                     self.Game.roundsPerGame = self.Player.roundsPerGame;
                     self.Game.secondsPerRound = self.Player.secondsPerRound;
                     self.Game.idPlayer = self.Player.id;
+                    self.Game.state = self.Game.IN_PROGRESS;
                     self.Game.save();
+                    self.Game.newGame = false;
+                }
+                else if(self.Game.state == null || self.Game.state == self.Game.ABANDONED || self.Game.state == self.Game.COMPLETED){
+                    self.goToState('wordshuffle','play','index');
+                }
+                else{
+                    self.msg = 'You have an active game!  You cannot start another until this one is completed!';
+                    // todo: update timer
+                    var _start = new Date(self.Game.Rounds[self.Game.round-1].start);
+                    var _now = new Date();
+                    self.Game.Clock.start();
+                    self.Game.Clock.now = (_now.getTime() - _start.getTime())/1000;
+
                 }
             };
 
@@ -95,6 +114,25 @@
              * Controller Methods declarations / definition
              **********************************************/
             // todo:  use "ng_method" live template to insert individual controller methods (accessible through the controller's associated view)
+
+            /**
+             * quit the game
+             *
+             * @method   quit
+             * @public
+             */
+            self.quit = function(){
+                var _promise = self.Game.quit();
+
+                if(_promise != null){
+                    console.log('here');
+                    _promise.then(function(){
+                        self.goToState('wordshuffle','play','index');
+                    })
+                }
+
+            };
+
 
             /*********************************
              * GETTERS AND SETTERS definitions

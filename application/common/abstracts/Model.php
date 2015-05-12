@@ -33,14 +33,14 @@ abstract class Common_Abstracts_Model
         $_className = "";
 
     /**
-     * @param array null $data
+     * @param object null $data
      * @throws Exception
      */
     public function __construct($data = null)
     {
         $this->_className = get_class($this);
 
-        $msg = 'START '.$this->_className.'->construct()';  //, data = '.print_r($data,true);
+        $msg = 'START '.$this->_className.'->construct(), data = '.PHP_EOL.'{'.print_r($data,true).'}';
         $this->SysMan->Logger->info($msg,'Common_Abstracts_Model');
 
         // Model property set statically for transfer to JavaScript frontend and thereafter proper instantiation.
@@ -69,17 +69,18 @@ abstract class Common_Abstracts_Model
             }
         }
 
-        $this->SysMan->Logger->info('START '.$this->_className.'->_validateModel()','Common_Abstracts_Model');
-        if(!($this->_validateModel())){
-            throw new Exception($this->className.' failed _validateModel() on construction.');
-        };
-        $this->SysMan->Logger->info('END '.$this->_className.'->_validateModel()','Common_Abstracts_Model');
+
+//        $this->SysMan->Logger->info('START '.$this->_className.'->_validateModel()','Common_Abstracts_Model');
+//        if(!($this->_validateModel())){
+//            throw new Exception($this->className.' failed _validateModel() on construction.');
+//        };
+//        $this->SysMan->Logger->info('END '.$this->_className.'->_validateModel()','Common_Abstracts_Model');
 
         $this->SysMan->Logger->info('START '.$this->_className.'->_init()','Common_Abstracts_Model');
         $this->init();
         $this->SysMan->Logger->info('END '.$this->_className.'->_init()','Common_Abstracts_Model');
 
-        $msg = 'END '.$this->_className.'->construct()';    //, model = '.print_r($this->toArray(),true);
+        $msg = 'END '.$this->_className.'->construct(); model built: '.PHP_EOL.'{'.print_r($this->toArray(),true).'}';    //, model = '.print_r($this->toArray(),true);
         $this->SysMan->Logger->info($msg,'Common_Abstracts_Model');
 
     }
@@ -200,14 +201,17 @@ abstract class Common_Abstracts_Model
         $this->_id = (int) $x;
     }
 
-    private $_msg = array();
+    private $_msg = null;
     protected function setMsg($value){
         $err = false;
         $keys = array('type','text');
 
+        if($this->_msg == null){
+            $this->_msg = array();
+        }
         // assume clearing message array
         if($value == '' || $value == array()){
-            $this->_msg = array();
+            $this->_msg = null;
         }
         // else if array, check keys and set
         elseif(is_array($value)){
@@ -255,17 +259,19 @@ abstract class Common_Abstracts_Model
      */
     public function find($id = null)
     {
+        $this->SysMan->Logger->info('START '.$this->_className.'->find() for id = '.$id);
         if($id == null || $id == 0){
             $id = $this->id;
         }
         if($id > 0){
             $success = $this->Mapper->find($id);
             if($success){
-                $success = $this->_validateModel();
-                if(!$success){
-                    throw new Exception(
-                        $this->_className.'->find() retrieved a record that does not fit validation criteria specified in _validateModel() method.');
-                }
+                // nothing
+//                $success = $this->_validateModel();
+//                if(!$success){
+//                    throw new Exception(
+//                        $this->_className.'->find() retrieved a record that does not fit validation criteria specified in _validateModel() method.');
+//                }
             }else{
                 throw new Exception($this->_className.' failure to find record id = '.$id);
             };
@@ -276,6 +282,15 @@ abstract class Common_Abstracts_Model
             }
         }
 
+        $this->SysMan->Logger->info('START '.$this->_className.'->postFind()');
+        $success = $this->_postFind();
+        $this->SysMan->Logger->info('END '.$this->_className.'->postFind(); success = '.$success);
+        if(!$success){
+            throw new Exception(
+                $this->_className.'->_postFind() method flagged unsuccessful execution.');
+        }
+
+        $this->SysMan->Logger->info('END '.$this->_className.'->find()');
 
         return $this;
     }
@@ -290,10 +305,13 @@ abstract class Common_Abstracts_Model
      */
     public function findAll($by = null)
     {
-        $this->SysMan->Logger->info($this->_className.'->findAll() given $by = '.$by);
+        $this->SysMan->Logger->info('START '.$this->_className.'->findAll() given $by = '.$by);
 
-        // todo: include validation criteria
-        return $this->Mapper->findAll($by);
+        $ret = $this->Mapper->findAll($by);
+
+        $this->SysMan->Logger->info('END '.$this->_className.'->findAll(); return:  {'.PHP_EOL.print_r($ret,true).'}');
+
+        return $ret;
     }
 
     /**
@@ -305,28 +323,41 @@ abstract class Common_Abstracts_Model
      */
     public function save()
     {
-        $this->SysMan->Logger->info('START '.$this->_className.'->save()'); // given model = '.print_r($this->toArray(),true));
+        $this->SysMan->Logger->info('START '.$this->_className.'->save()','Common_Abstracts_Model'); // given model = '.print_r($this->toArray(),true));
 
-        if (isset($this->id) && !is_null($this->id) && $this->id > 0) {
-            $this->SysMan->Logger->info('Save event is an update, fetch existing data.');
-            /** @var Common_Abstracts_Model $old */
-            $old = new $this->_className();
-            $old->find($this->id);
-            $success = $this->_preUpdate($old);
-        } else {
-            $this->SysMan->Logger->info('Save event is an insert, create new record.');
-            $success = $this->_preInsert();
+        $this->SysMan->Logger->info('START '.$this->className.'->_preSave()','Common_Abstracts_Model');
+        $success = $this->_preSave();
+        $this->SysMan->Logger->info('END '.$this->className.'->_preSave(); success = '.$success,'Common_Abstracts_Model');
+
+        if($success){
+            if (isset($this->id) && !is_null($this->id) && $this->id > 0) {
+                $this->SysMan->Logger->info('START '.$this->_className.'->_preUpdate()','Common_Abstracts_Model');
+                $success = $this->_preUpdate();
+                $this->SysMan->Logger->info('END '.$this->_className.'->_preUpdate(); success = '.$success,'Common_Abstracts_Model');
+            } else {
+                $this->SysMan->Logger->info('START '.$this->_className.'->_preInsert()','Common_Abstracts_Model');
+                $success = $this->_preInsert();
+                $this->SysMan->Logger->info('END '.$this->_className.'->_preInsert(); success = '.$success,'Common_Abstracts_Model');
+            }
         }
 
-        //check properties against the model validator.
-        if($success && $this->_validateSave()){
+        if($success){
+            $this->SysMan->Logger->info('START '.$this->_className.'->_validateSave()','Common_Abstracts_Model');
+            //check properties against the model validator.
+            $success = $success && $this->_validateSave();
+            $this->SysMan->Logger->info('END '.$this->_className.'->_validateSave(); success = '.$success,'Common_Abstracts_Model');
+        }
+
+        if($success){
             $this->id = $this->Mapper->save();
         }else{
             $this->id = 0;
         }
 
         if($this->id <> 0){
+            $this->SysMan->Logger->info('START '.$this->_className.'->_postSave()','Common_Abstracts_Model');
             $this->_postSave();
+            $this->SysMan->Logger->info('END '.$this->_className.'->_postSave()','Common_Abstracts_Model');
         }else{
             $this->SysMan->Msg = array(
                 "text"=>'Save of class '.$this->_className.' failed.',
@@ -335,25 +366,25 @@ abstract class Common_Abstracts_Model
             );
         }
 
-        $this->SysMan->Logger->info('END '.$this->_className.'->save(), id = '.$this->id);
+        $this->SysMan->Logger->info('END '.$this->_className.'->save(), id = '.$this->id,'Common_Abstracts_Model');
 
         return $this->id;
     }
 
-    public function delete(){
-        // find the current record
-        $success = $this->find();
+    /**
+     * Typical used to delete model information from database.
+     *
+     * @return boolean          - true on success, otherwise false
+     */
+    public function remove(){
 
-        if($success){
-            $success = $this->Mapper->delete();
-        }
+        $success = $this->Mapper->delete();
 
         return $success;
     }
     /**
      * Validate model before a save operation. Called before mapper::Save()
      * **Override this function in each child model as needed**
-     * For every 'error' identified, add it to $this->errorDetails array and increment $this->errorCount
      *
      * @return  bool    True    on valid data
      */
@@ -376,14 +407,35 @@ abstract class Common_Abstracts_Model
     }
 
     /**
+     * Specific model logic that follows find function.  Override as required, otherwise ignore.
+     *
+     * @public
+     * @return      boolean     - flags successful execution
+     */
+    protected function _postFind()
+    {
+        return true;
+    }
+
+    /**
      * Set model required model fields for an update
      *
-     * @param Common_Abstracts_Model $old
+     * @return boolean  Indication to save method that preSave succeeded; therefore, save can continue
+     */
+    protected function _preSave()
+    {
+        return true;
+    }
+
+    /**
+     * Set model required model fields for an update.  Sometimes this requires gathering the existing record state
+     * from the database and updating as appropriate.
+     *
      * @return boolean  Indication to save method that preUpdate succeeded; therefore, save can continue
      */
-    protected function _preUpdate($old)
+    protected function _preUpdate()
     {
-        $this->SysMan->Logger->info($this->_className.'_preUpdate() not defined for id = '.$old->id);
+        $this->SysMan->Logger->info($this->_className.'_preUpdate() not defined for id = '.$this->id);
 
         return true;
     }
@@ -419,7 +471,7 @@ abstract class Common_Abstracts_Model
         $success = false;
 
         foreach ($data as $key => $value) {
-            $method = 'get' . ucfirst($key);
+            $method = 'set' . ucfirst($key);
             if (method_exists($this, $method)) {
                 try {
                     $this->$key = $value;
@@ -435,7 +487,9 @@ abstract class Common_Abstracts_Model
         if(!$success){
             throw new Exception('Attempt to set model from array yielded no properties set for model '.$this->_className.
                 '; values to set were the following:  ('.implode(',',$data));
-        }    }
+        }
+
+    }
 
     /**
      * Return an array of model properties.
@@ -445,13 +499,16 @@ abstract class Common_Abstracts_Model
      */
     public function toArray($scrubExcludes = true)
     {
+        // list of model properties never translated
+        $alwaysExclude = array('Mapper','Properties','SysMan');
+
         // TODO: Test to see if works when !scrubExcludes function, previously it returned a NULL
         $ret = Array();
         foreach ($this->properties as $prop){
             if($scrubExcludes){
                 $proceed = !in_array(ucfirst($prop),$this->_exclude);
             }else{
-                $proceed = true;
+                $proceed = !in_array(ucfirst($prop),$alwaysExclude);
             }
             // some properties excluded for transfer to frontend
             if($proceed){
