@@ -556,7 +556,8 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             'scoreBoard'=> $this->scoreBoard,
             'roundPoints'=> $this->Rounds[$this->round-1]->points,
             'gamePoints'=> $this->points,
-            'gameState'=> $this->state
+            'gameState'=> $this->state,
+            'newRound'=> $this->newRound
         );
 
         return $return;

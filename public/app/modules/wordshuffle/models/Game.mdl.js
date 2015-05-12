@@ -557,6 +557,7 @@
          * @param   {int}       oResults.gamePoints - total game points
          * @param   {int}       oResults.roundPoints    - points for current round
          * @param   {string}    oResults.gameState      - current game state
+         * @param   {boolean}   oResults.newRound       - flags start of new round
          */
         //noinspection
         WordShuffle_Models_Game.prototype._postSubmitWord = function(oResults){
@@ -576,7 +577,9 @@
             this.points = oResults.gamePoints;
             this.Rounds[this.round-1].points = oResults.roundPoints;
             this.state = oResults.gameState;
+            this.newRound = oResults.newRound;
 
+            // todo: determine if game save should occur at backend when SubmitWord ids a NewRound
             if(this.newRound){
                 var self = this;
                 var _promise = this.save();
@@ -591,7 +594,7 @@
                     })
                 }
             }
-            else if(this.state == this.ABANDONED || this.COMPLETED){
+            else if(this.state == this.ABANDONED || this.state == this.COMPLETED){
                 this.Clock.stop();
             }
         };

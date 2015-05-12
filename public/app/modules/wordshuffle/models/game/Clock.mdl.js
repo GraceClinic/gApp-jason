@@ -77,6 +77,7 @@
              * @public
              */
             self.start = function(){
+                console.log('Clock.start(); intervalId isNull = ',_intervalId == null);
                 _start = Date.now();
                 if(_intervalId != null){
                     //if(!_intervalId.cancelled){
