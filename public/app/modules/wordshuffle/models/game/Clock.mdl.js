@@ -74,11 +74,11 @@
              * Start the countdown
              *
              * @method   start
+             * @param   {int}     atTime  - start time to anchor, if null then it uses now
              * @public
              */
-            self.start = function(){
-                console.log('Clock.start(); intervalId isNull = ',_intervalId == null);
-                _start = Date.now();
+            self.start = function(atTime){
+                _start = typeof atTime !== 'undefined' ? atTime : Date.now();
                 if(_intervalId != null){
                     //if(!_intervalId.cancelled){
                     //if(!_intervalId.cancelled){

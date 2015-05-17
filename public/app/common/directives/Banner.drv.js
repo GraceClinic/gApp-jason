@@ -36,7 +36,6 @@
                 // watch messages for new content and process accordingly
                 scope.$watch('msg',_processNewMsg,true);
 
-
                 // expand Banner scope to service user click of "close" link
                 scope.closeMsg = function() {
                     scope.msg.shift();

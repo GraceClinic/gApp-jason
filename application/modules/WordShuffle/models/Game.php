@@ -50,16 +50,21 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
      * @param array $data
      */
     public function __construct($data = null){
-        $_remove = array('round','start','end','points','idPlayer','roundAvg','scoreBoard');
+        $_remove = array('round','start','end','points','idPlayer','roundAvg','scoreBoard','state');
 
         if($data != null){
-            $data = (array) $data;
-            // remove properties from data array that are not allowed to be set during construction
-            foreach($data as $prop=>$value){
-                if(in_array($prop,$_remove)){
-                    unset($data[$prop]);
+            if(is_integer($data) && (int)$data !== 0){
+                $data = (int)$data;
+            }else{
+                $data = (array) $data;
+                // remove properties from data array that are not allowed to be set during construction
+                foreach($data as $prop=>$value){
+                    if(in_array($prop,$_remove)){
+                        unset($data[$prop]);
+                    }
                 }
             }
+
         }
 
         // any game construction invoked when player not authenticated equates to anonymous play
@@ -67,7 +72,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             $this->SysMan->Session->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
         }
 
-        if($data != null && array_key_exists('newGame',$data) && $data['newGame']){
+        if($data != null && array_key_exists('newGame',$data) && $data['newGame'] && $this->state != self::IN_PROGRESS){
             // reset the game id before any find or save operation so that a new Game is created
             $this->SysMan->Session->idGame = 0;
         }
@@ -96,7 +101,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         $this->excludeFromJSON(array('Word','WordSquares'));
 
         // translate model properties to session variables as appropriate
-        if(!$this->state || $this->state == self::COMPLETED || $this->state == self::ABANDONED || $this->newGame){
+        if(!$this->state || $this->state == self::COMPLETED || $this->state == self::ABANDONED){
             // Session object will update the Rounds accordingly
             $this->SysMan->Session->secondsPerRound = $this->secondsPerRound;
             $this->SysMan->Session->roundsPerGame = $this->roundsPerGame;
@@ -400,6 +405,24 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     protected function getNewRound(){
         return $this->_newRound;
     }
+
+    // todo: move property docblock to top of class
+    /**
+     * @property    int         timeRemaining        - time remaining for active round
+     */
+    protected function setTimeRemaining(){
+        // no setter
+        throw new Exception('WordShuffle_Models_Game->setTimeRemaining() not allowed for this property');
+    }
+    protected function getTimeRemaining(){
+        if($this->_Rounds != null && $this->round > 0){
+            $diff = strtotime($this->Rounds[$this->round-1]->end) - time();
+        }else{
+            $diff = 0;
+        }
+        return (int) $diff;
+    }
+
 
     /**
      * Process game state after execution of find.  Updates game state if abandoned.
@@ -749,9 +772,9 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
      */
     private function _processState()
     {
-        $this->SysMan->Logger->info('START Game->_processState for state = '.$this->state,$this->className);
+        $this->SysMan->Logger->info('START Game->_processState; current state = '.$this->state,$this->className);
 
-        if($this->newGame){
+        if($this->newGame && $this->state != self::IN_PROGRESS){
             $this->id = 0;
             $this->SysMan->Session->idGame = 0;
             $this->SysMan->Session->round = 1;
@@ -761,6 +784,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             $this->scoreBoard = [];
             $this->word = '';
             $this->newGame = false; // reset new game flag since it will be processed here
+            $this->state = self::IN_PROGRESS;
             foreach($this->Rounds as $round){
                 $round->reset();
                 $round->time = $this->secondsPerRound;
@@ -782,24 +806,35 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
 
             $this->newRound = true; // set new round flag so that frontend starts the clock
         }
-        else if($this->state == self::IN_PROGRESS){
-            // todo: make sure that current round has not elapsed, toggle to IN_PROGRESS
+        elseif($this->state == self::IN_PROGRESS){
             $time = time();
             $diff = $time - strtotime($this->Rounds[$this->round-1]->end);
             // call round ended if within one second of end time.
             $roundEnded = $diff >= -1;
             $gameEnded = $roundEnded && ($this->round == $this->roundsPerGame);
 
+            // check if user trying to start a new game with one in-progress
+            if($this->newGame){
+                // active game in progress, set the id to the value stored in session and return for processing by frontend
+                $this->id = $this->SysMan->Session->idGame;
+                $this->newGame = false;
+            }
+
             if($gameEnded){
                 $this->state = self::COMPLETED;
                 $this->end = date('Y-m-d H:i:s');
             }elseif($roundEnded){
+                $this->SysMan->Logger->info('Game->_processState determines round ended.'.$this->state,$this->className);
+                // save current round to DB
+                $this->Rounds[$this->round-1]->save();
                 $this->newRound = true;
                 $this->SysMan->Session->round++;
                 $this->scoreBoard = [];
                 $round = $this->Rounds[$this->round-1];
                 $round->start = date('Y-m-d H:i:s');
                 $round->end = date('Y-m-d H:i:s',strtotime("+{$this->secondsPerRound} seconds"));
+                // save new round to DB
+                $this->Rounds[$this->round-1]->save();
 
                 // initialize game squares for sending to front end
                 foreach ($this->Squares as $row) {

@@ -7,7 +7,7 @@
  */
 (function(){
 
-    function App_InterceptorFactory(Logger){
+    function App_InterceptorFactory($q,Logger){
         var _log = [];
         var _tripped = false;
 
@@ -83,6 +83,7 @@
 
             self.responseError = function(rejection) {
                 if(!_tripped){
+                    _tripped = true;
                     Logger.errMsg = rejection.data.message;
 
                     Logger.entry(
@@ -94,9 +95,9 @@
                 }
 
                 // above error entry will toggle error state change, return rejection information
-                return rejection;
+                //return rejection;
                 // ripple the rejection down so the specific model using $http can service as desired
-                //return $q.reject(rejection);
+                return $q.reject(rejection);
             }
 
         }
@@ -104,7 +105,7 @@
         return new App_Interceptor();
     }
 
-    App_InterceptorFactory.$inject = ['App_Common_Models_Tools_Logger'];
+    App_InterceptorFactory.$inject = ['$q','App_Common_Models_Tools_Logger'];
 
     angular.module('App')
         .factory('App_Interceptor',App_InterceptorFactory)

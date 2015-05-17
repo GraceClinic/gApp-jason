@@ -1,5 +1,23 @@
 <div id="models-game">
-    <div id="models-game-board">
+    <app-common-directives-banner msg="Play.SysMan.msg" expires="5000"></app-common-directives-banner>
+    <div class="models-game-board">
+        <div class="models-game-header">
+            <div id="models-game-word">
+                <label for="models-game-word-field">Word:</label>
+                <span id="models-game-word-field">{{Play.Game.word}}</span>
+                <button
+                        id="models-game-word-submit"
+                        class="btn btn-success btn-xs"
+                        type="submit"
+                        ng-click="Play.Game.submitWord()"
+                        ng-disabled="Play.Game.wordSquares.length < 2"
+                        >
+                    OK
+                </button>
+            </div>
+            <button id="models-game-quit" type="button" class="btn btn-warning btn-small" ng-click="Play.quit()">Quit</button>
+            <span id="models-game-clock">{{Play.Game.Clock.minutes}}:{{Play.Game.Clock.seconds}}</span>
+        </div>
         <div class="models-game-row"
             ng-repeat="gameRow in Play.Game.Squares"
         >
@@ -35,8 +53,10 @@
         </div>
     </div>
     <div id="models-game-overlay">
-        <app-common-directives-banner msg="Play.SysMan.msg" expires="5000"></app-common-directives-banner>
-        <button id="Play-start" type="button" class="btn btn-success btn-lg" ng-click="Play.start()">Play</button>
+        <div>
+            You can configure the game from the Setup menu item.  If you want to start playing with current configuration, click Play =>
+            <button type="button" class="btn btn-success btn-lg" ng-click="Play.start()">Play</button>
+        </div>
     </div>
 </div>
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/models/Game.mdl.css">

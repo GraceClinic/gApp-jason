@@ -100,6 +100,14 @@
              ************************/
             SysMan.Logger.entry('START ' + self.constructor.name + '.construct()','App_Common_Abstracts_Controller');
 
+            // clear any SysMan messages remaining from previous controllers
+            var i = SysMan.msg.length;
+            while(i > 0){
+                SysMan.msg.shift();
+                i--;
+            }
+            SysMan.Logger.entry(self.constructor.name + '.construct(); cleared SysMan.msg from previous controller.','App_Common_Abstracts_Controller');
+
             if(!_constructorSet){
                 _errMsg = 'You just instantiated a Controller without properly setting the constructor.  You should have ' +
                     'set the constructor in the prototype, like so:  "MyCtrl.prototype.constructor = MyCtrl".  Please tend to this.';
@@ -122,13 +130,6 @@
                 angular.element(document).ready(function () {
                     self.processStateChange($stateParams,SysMan.state,true);
                 });
-            }
-
-            // clear any SysMan messages remaining from previous controllers
-            var i = SysMan.msg.length;
-            while(i > 0){
-                SysMan.msg.shift();
-                i--;
             }
 
             SysMan.Logger.entry('END ' + self.constructor.name + '.construct()','App_Common_Abstracts_Controller');
@@ -209,7 +210,7 @@
                     SysMan.Logger.entry(
                         this.constructor.name + '.processStateChange(), from state '
                         + JSON.stringify(oldState) + '; to state ' + JSON.stringify(newState),
-                        this.constructor.name
+                        'App_Common_Abstracts_Controller'
                     );
                     SysMan.state = {
                         "module":       newState.module,

@@ -1,7 +1,7 @@
 <app-common-directives-banner msg="Play.SysMan.msg" expires="5000"></app-common-directives-banner>
 <div id="models-game">
-    <div id="models-game-board">
-        <div id="models-game-header">
+    <div class="models-game-board">
+        <div class="models-game-header">
             <div id="models-game-word">
                 <label for="models-game-word-field">Word:</label>
                 <span id="models-game-word-field">{{Play.Game.word}}</span>
@@ -15,7 +15,15 @@
                     OK
                 </button>
             </div>
-            <div id="models-game-clock">{{Play.Game.Clock.minutes}}:{{Play.Game.Clock.seconds}}</div>
+            <button type="button" class="btn btn-warning btn-small models-game-quit-button"
+                    ng-click="Play.quit()"
+                    ng-hide="Play.Game.state != 'InProgress'"
+                    >Quit</button>
+            <button type="button" class="btn btn-success btn-small models-game-play-button"
+                    ng-click="Play.start()"
+                    ng-hide="Play.Game.state == 'InProgress'"
+                    >Play</button>
+            <span id="models-game-clock">{{Play.Game.Clock.minutes}}:{{Play.Game.Clock.seconds}}</span>
         </div>
         <div class="models-game-row"
             ng-repeat="gameRow in Play.Game.Squares"
@@ -25,7 +33,6 @@
                 square="square"
             ></wordshuffle-directives-game-square>
         </div>
-        <button id="models-game-quit" type="button" class="btn btn-warning btn-lg" ng-click="Play.quit()">Quit</button>
     </div>
     <div id="models-game-scoreboard">
         <div class="models-game-scoreboard models-game-scoreboard-title">

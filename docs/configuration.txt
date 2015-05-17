@@ -1,17 +1,115 @@
-1) Install MySQL
-2) Install PHP
-3) Install Apache
-    a) configure virtual web server
-4) Install Zend
-5) Install GIT
-6) Install NodeJS and Bower
-    a) Create bower.json at root of project folder (not the public folder).  Run "bower init" from command line.
-    b) Create ".bowerrc" file at root of project folder to point to location of "bower_components" folder
+1) Configure GitHub
+    a) create GitHub account
+        https://github.com/
+    b) install Git on development workstation
+        https://help.github.com/articles/set-up-git/
+
+2) Install PHPstorm
+    a) create JetBrains account
+        https://account.jetbrains.com/login
+    b) download latest PHPstorm
+        https://www.jetbrains.com/phpstorm/?fromMenu
+    c) install to default location
+    d) activate license:  email Jason with request to generate activation link
+    e) configure PHPstorm to use GitHub for VCS
+    f) email Jason with request to add you as a collaborator on the "gApp" project
+    g) Create "webserver" folder on C: of development workstation.
+        i)  create "webroot" subfolder therein ( C:/webserver/webroot/ )
+        ii) create "GIT" subfolder therein ( C:/webserver/GIT/ )
+    h) clone "gAppXX" project from GitHub, target "C:/webserver/GIT/gApp" as the target location
+        i)  location is https://github.com/GraceClinic/gAppXX.git
+        ii) "XX" is the number that Jason provided you for your project
+    i) import settings from "/docs/design output/IDE/settings.jar" into your new gApp project.
+        ii)  create "C:/webserver/webroot/gapp" as your target deployment directory
+        iii) upload the entire project files to the deployment location
+    j) activate the following plugins:
+        i)   .ignore
+        ii)  AngularJS
+        iii) nodeJS
+
+3) Install MySQL and MySQL Workbench
+    a) install MySQL 5.5 to C:/webserver/mysql
+    b) create "gappUsr" user with password "gappUsr2gapp" with access from localhost
+    c) create database "gapp"
+    e) grant "gappUsr" access to gapp with SELECT, INSERT, UPDATE, and DELETE
+    f) install latest MySQL Workbench to default location
+    g) create a new server instance to your installed local MySQL under "Server Administration"
+    h) create a new model file for the "gapp" database and "Add Diagram" to provide foundation for DB architecture
+
+4) Install Apache
+    a) install to "C:/webserver/apache"
+    b) configure for PHP usage
+    b) configure 2 virtual hosts, one to the webroot of your install and one to the gApp application install
+
+        <VirtualHost *:80>
+            ServerName webroot.local
+            DocumentRoot "C:/webserver/webroot"
+            SetEnv APPLICATION_ENV development
+            <Directory "C:/webserver/webroot">
+                DirectoryIndex index.php
+                Options Indexes MultiViews FollowSymLinks
+                AllowOverride None
+                Order allow,deny
+                    Allow from all
+            </Directory>
+        </VirtualHost>
+
+        <VirtualHost *:80>
+            ServerName www.gapp.com
+            DocumentRoot "C:/webserver/webroot/gapp/public"
+            SetEnv APPLICATION_ENV development
+            <Directory "C:/webserver/webroot/gapp/public">
+                DirectoryIndex index.php
+                Options Indexes MultiViews FollowSymLinks
+                AllowOverride All
+                Order Allow,Deny
+                Allow from all
+            </Directory>
+        </VirtualHost>
+
+5) Install PHP 5.5 with opcache
+    a) enable PDO
+    b) enable memcache
+    c) enable mcrypt
+    d) enable mysql
+    e) edit php.ini-development file
+
+            error_log = "/var/www/logs/phperror.log"
+            error_reporting = E_ALL & ~E_STRICT
+
+    f) rename php.ini to "php.ini-production" and replace with php.ini-development file renamed as php.ini
+    f) update Windows hosts file ( C:\Windows\System32\drivers\etc\hosts )
+        i) add entry for gApp:
+            127.0.0.1 www.gApp.com
+        ii) add entry for webroot:
+            127.0.0.1 webroot.local
+
+6) Install Zend
+    a) Install Zend version 1.12.3
+        i) It's likely version 1.12.11 is fine, which is the latest 1.12 version.  Zend version 2 will not do.
+            http://framework.zend.com/downloads/latest#ZF1
+
+    b) place "phpinfo.php" in C:/webserver/webroot/ with the following content:
+
+        <?php
+        	phpinfo();
+        ?>
+
+    c) Open browser to http://webroot.local/phpinfo.php and display of PHP information
+        i) validate information is correct
+
+7) Install NodeJS and Bower
+    a) install nodeJS and Bower
+        i) install nodeJS to "C:/webserver/nodeJS" from https://nodejs.org/
+        ii) from NodeJS command prompt install Bower package manager:  npm install -g bower
+    b) Create bower.json at root of project folder (not the public folder).  Run "bower init" from command line.
+    c) Create ".bowerrc" file at root of project folder to point to location of "bower_components" folder
         {
         "directory": "public/bower_components/"
         }
-7) Bower Package installs (change to project root location - not public)
-    a) bower install angular --save
-    b) bower install angular-sanitize --save
-    c) bower install angular-bootstrap  --save (reference "http://angular-ui.github.io/bootstrap/" for usage)
-    d) bower install fontawesome --save
+    d) From the NodeJS command prompt, execute the following Bower Package installs
+        (change directory to project root location - not the public subfolder)
+        i)   bower install angular --save
+        ii)  bower install angular-sanitize --save
+        iii) bower install angular-bootstrap  --save (reference "http://angular-ui.github.io/bootstrap/" for usage)
+        iv)  bower install fontawesome --save

@@ -742,17 +742,17 @@
         }
         function setMsg(x){
             if(Array.isArray(x) && x.length > 0){
-                console.log('Setting Model.msg as Array');
                 _msg[this.uid] = x;
                 // bubble up to SysMan
                 this.SysMan.msg = x;
             }
-            // assume clearing message array
-            else if(x == ''){
+            // assume clearing message array, null is also considered object and/or array
+            else if(Array.isArray(x) && x.length == 0){
                 _msg[this.uid] = [];
+                // do not copy to SysMan.msg
             }
             // else add entry to existing message array
-            else{
+            else if(typeof x === 'object'){
                 if(this.uid in _msg){
                     _msg[this.uid].push(x);
                 }else{
@@ -761,6 +761,9 @@
                 }
                 // bubble up to SysMan
                 this.SysMan.msg = x;
+            }
+            else{
+                // nothing
             }
 
         }

@@ -100,12 +100,14 @@
                     self.goToState('wordshuffle','play','index');
                 }
                 else{
-                    self.msg = 'You have an active game!  You cannot start another until this one is completed!';
-                    // todo: update timer
-                    var _start = new Date(self.Game.Rounds[self.Game.round-1].start);
-                    var _now = new Date();
-                    self.Game.Clock.start();
-                    self.Game.Clock.now = (_now.getTime() - _start.getTime())/1000;
+                    self.SysMan.msg = {
+                        text:   'Please finish your active game!',
+                        type:   'INFO'
+                    };
+                    // update clock
+                    var _atTime = new Date((Date.now() - (self.Game.secondsPerRound - self.Game.timeRemaining)*1000));
+                    self.Game.Clock.start(_atTime);
+                    self.Game.Clock.now = self.Game.timeRemaining;
 
                 }
             };
@@ -125,7 +127,6 @@
                 var _promise = self.Game.quit();
 
                 if(_promise != null){
-                    console.log('here');
                     _promise.then(function(){
                         self.goToState('wordshuffle','play','index');
                     })
@@ -133,6 +134,22 @@
 
             };
 
+            self.start = function(){
+                if(self.SysMan.state.action == 'index'){
+                    self.Game.newGame = true;
+                    self.goToState('wordshuffle','play','play');
+                }
+                else if(self.Game.status == self.Game.READY){
+                    self.Game.newGame = true;
+                    self.Game.save();
+                    self.Game.newGame = false;
+                }else{
+                    self.SysMan.msg = {
+                        text:   'Hold on click-happy, you have an active Game request awaiting processing',
+                        type:   'INFO'
+                    };
+                }
+            };
 
             /*********************************
              * GETTERS AND SETTERS definitions
@@ -157,7 +174,6 @@
             self.scope = $scope;
 
             // todo: add constructor logic
-
         }
 
         // inherit prototype functions from superclass Controller

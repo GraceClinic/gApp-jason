@@ -158,7 +158,6 @@
                         console.log('SysMan.setMsg() called with improper argument');
                     }
                 }
-                console.log('SysMan.setMsg() completed msg = ',_msg);
             }
             var _Timer = new Timer;
             function getTimer(){
@@ -175,10 +174,10 @@
                 // log changes to "state" for debug purposes
                 for(var $key in value){
                     if(!$key in ['module','controller','action']){
-                        var _msg = 'APP ERROR:  Attempt to set App.state to non-compliant value.  Expected ' +
+                        var _err = 'APP ERROR:  Attempt to set App.state to non-compliant value.  Expected ' +
                             'value must be an associative array with keys = "module", "controller", and "action".  ' +
                             'Error occurred during application state = ' + JSON.stringify(self.state);
-                        Logger.entry(_msg,'App.state.set()',Logger.TYPE.ERROR,Logger.ERRNO.APP_ERROR);
+                        Logger.entry(_err,'App.state.set()',Logger.TYPE.ERROR,Logger.ERRNO.APP_ERROR);
                         self.error = true;
                     }else{
                         _state[$key] = value[$key];
@@ -198,9 +197,9 @@
              */
             function _routeError(){
                 var _newState = {
-                    "module":       self.state.module,
-                    "controller":   'error',
-                    "action":       'error'
+                    module:       self.state.module,
+                    controller:   'error',
+                    action:       'error'
                 };
 
                 // route to error controller if not already there
@@ -216,10 +215,14 @@
                             $state.go('module.controller.action',_newState);
                         },
                         function() {
-                            var _msg = 'You did not define an Error controller/action for your module = ' +
+                            var _warn = 'You did not define an Error controller/action for your module = ' +
                                 self.state.module + '.';
-                            Logger.entry(_msg,'SysMan._routeToError()',Logger.TYPE.WARNING);
-                            _newState.module = 'main';
+                            Logger.entry(_warn,'SysMan._routeToError()',Logger.TYPE.WARNING);
+                            _newState = {
+                                module: 'main',
+                                controller: 'error',
+                                action: 'error'
+                                };
                             $state.go('module.controller.action',_newState);
                             return $http.reject
                         }

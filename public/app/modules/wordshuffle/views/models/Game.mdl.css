@@ -1,26 +1,37 @@
-#models-game-header
+.models-game-header
 {
     width:100%;
     display: table;
 }
 #models-game-clock
 {
-    font: 20px normal, "Comic Sans", cursive;
+    font: 24px bolder, "Courier New", cursive;
     background-color: black;
     color: white;
-    width: 70px;
     text-align: center;
-    box-sizing: border-box;
     border: solid 3px;
     border-color: blue;
     border-radius: 3px;
     margin-bottom: 5px;
+    padding: 3px 3px 3px 3px;
     float: right;
+    box-sizing: content-box;
 }
-#models-game-quit
+.models-game-quit-button
 {
     float: right;
-    margin-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    border: solid 3px;
+    border-color: #d58c00;
+}
+.models-game-play-button
+{
+    float: right;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    border: solid 3px;
+    border-color: green;
 }
 #models-game-word
 {
@@ -45,7 +56,7 @@
     overflow: hidden;   /* wrap div container around children */
     position:relative;
 }
-#models-game-board
+.models-game-board
 {
     float: left;
     width: 60%;
@@ -70,16 +81,33 @@
     width: 100%;
     height: 100%;
     position: absolute;
+    padding: 20px 11px 20px 11px;
     top: 0;
     left: 0;
     background-color: rgba(128,128,128,0.5);
     z-index: 100;
 }
+#models-game-overlay > div
+{
+    width: 60%;
+    border-radius: 10px;
+    border: 2px solid;
+    border-color: #178615;
+    padding: 20px 5%;
+    box-sizing: border-box;
+    background-color: #cfe0cf;
+    height: auto;
+    display: table;
+    z-index: 1;
+    float: left;
+    text-align:center;
+    color: green;
+}
 #models-game-overlay button
 {
-    position: relative;
-    top: 20%;
-    left: 25%;
+    /*position: relative;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
     border: solid 3px green;
 }
 /* scoreboard css */

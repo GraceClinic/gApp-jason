@@ -116,6 +116,8 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
             "model" => $this->_model->toArray(true)
         );
 
+        $this->_SysMan->Logger->info('END '.$this->_className.'->getAction()','Common_Abstracts_RestController');
+
         $this->getResponse()->appendBody(json_encode($response));
 
     }

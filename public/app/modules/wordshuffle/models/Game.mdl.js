@@ -134,6 +134,13 @@
              * @public
              **/
             Object.defineProperty(self,'newRound',{get: getNewRound,set: setNewRound,enumerable:true});
+            /**
+             * @property    WordShuffle_Models_Game#timeRemaining      - seconds remaining in active round
+             * @type        int
+             * @public
+             **/
+            Object.defineProperty(self,'timeRemaining',{get: getTimeRemaining,set: setTimeRemaining,enumerable:true});
+
 
             /*****************************************
              * Public Methods declaration / definition
@@ -422,6 +429,13 @@
             function setNewRound(value){
                 _newRound = value;
             }
+            var _timeRemaining;
+            function getTimeRemaining(){
+                return _timeRemaining;
+            }
+            function setTimeRemaining(value){
+                _timeRemaining = value;
+            }
 
             // watch for key presses
             jQuery(document).on('keypress',function(e){
@@ -455,7 +469,8 @@
                 'ROWS',
                 'COLS',
                 'scoreBoard',
-                'Rounds'
+                'Rounds',
+                'timeRemaining'
             ]);
 
             self.SysMan.Logger.entry('END ' + self.constructor.name+'.construct()',self.constructor.name);

@@ -63,6 +63,9 @@
             self.indexAction = function(){
                 // todo: define any parameters and then code action logic
                 self.Player.find();
+                if(self.Game.state == self.Game.IN_PROGRESS){
+                    self.goToState('wordshuffle','play','play');
+                }
             };
 
             /**********************************************
