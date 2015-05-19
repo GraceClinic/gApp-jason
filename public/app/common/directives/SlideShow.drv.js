@@ -40,9 +40,13 @@
                 var _maxHt = 0;
 
                 function wait(){
-                    if(typeof scope.pages[_i] === 'undefined'){
+                    if(typeof scope.pages === 'undefined'){
                         // do nothing until pages have content
-                    }else{
+                    }
+                    else if(typeof scope.pages[_i] === 'undefined') {
+                        // do nothing until pages have content
+                    }
+                    else{
                         // as soon as pages load from backend, display in directive
                         scope.pageBody = scope.pages[_i].body;    // initialize page display to the first page
 

@@ -22,9 +22,14 @@
     <script src="vendor/lib/jquery-1.9.1.min.js"></script>
     <!-- TODO: this does not load from local when google is not available -->
     <script>window.jQuery || document.write('<script src="vendor/lib/jquery-1.9.1.min.js"><\/script>')</script>
+
     <script src="vendor/lib/angular.js"></script>
-    <script src="vendor/lib/angular-animate.js"></script>
     <script src="vendor/lib/angular-ui-router.min.js"></script>
+    <script src="vendor/lib/angular-animate.js"></script>
+
+    <!--<script src="bower_components/angular/angular.js"></script>-->
+    <!--<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>-->
+    <!--<script src="bower_components/angular-animate/angular-animate.js"></script>-->
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
@@ -35,6 +40,7 @@
     <script src="app/modules/Main.mod.js"></script>
     <script src="app/common/models/SysMan.mdl.js"></script>
     <script src="app/common/abstracts/Controller.ctrl.js"></script>
+    <script src="app/common/abstracts/Controller2.ctrl.js"></script>
     <script src="app/common/abstracts/Model.mdl.js"></script>
     <script src="app/common/models/tools/Timer.mdl.js"></script>
     <script src="app/common/models/tools/Logger.mdl.js"></script>
@@ -57,7 +63,16 @@
 </head>
 <body>
 <div id="wrap">
-    <div ui-view id="App_Module"></div>
+    <div ui-view id="App_Module">
+        <img src="app/assets/logo.png"><br><br>
+        Yikes! We apologize, but there is an error.<br>
+        Grace Web Application is built using new and exciting web technologies.<br>
+        As such, this website operates best on new and modern web browsers such as
+        <a href="http://www.google.com/chrome/">Google Chrome</a>,
+        <a href="https://www.mozilla.org/firefox/">Mozilla FireFox</a>, and
+        <a>Internet Explorer Version XX</a>.<br>
+        <noscript>This site also requires active JavaScript to run the AngularJS framework.</noscript>
+    </div>
 </div>
 <style scoped="">
     #wrap{

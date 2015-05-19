@@ -49,7 +49,7 @@
 
                 function _processNewMsg(){
                     // initialize message presentation
-                    if(scope.msg.length > 0){
+                    if(typeof scope.msg != 'undefined' && scope.msg.length > 0){
                         element.show();
                         _expiresAt = Date.now() + scope.expires;
                         if(_intervalId != null){

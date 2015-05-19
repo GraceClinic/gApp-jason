@@ -60,6 +60,8 @@
             Controller.call(self);
             self.scope = $scope;
 
+            $scope.greeting = 'testing';
+
             self.SysMan.msg = {
                 text:   'Welcome to WordShuffle!',
                 type:   'INFO'
@@ -75,7 +77,7 @@
         // Correct constructor which points to Controller
         WordShuffle_Controllers_Welcome.prototype.constructor = WordShuffle_Controllers_Welcome;
 
-        return new WordShuffle_Controllers_Welcome();
+        return new WordShuffle_Controllers_Welcome;
     }
 
     // inject dependenciesObject

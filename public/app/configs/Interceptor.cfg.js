@@ -1,5 +1,5 @@
 /**
- * File: errorInterceptor
+ * File: Interceptor
  * User: jderouen
  * Date: 2/16/15
  * Time: 3:07 PM
@@ -7,11 +7,11 @@
  */
 (function(){
 
-    function App_InterceptorFactory($q,Logger){
+    function App_Configs_InterceptorFactory($q,Logger){
         var _log = [];
         var _tripped = false;
 
-        function App_Interceptor(){
+        function App_Configs_Interceptor(){
             var self = this;
 
             // track number of request
@@ -38,7 +38,7 @@
 
                     Logger.entry(
                         'Excessive requests to the backend!',
-                        'App_Interceptor',
+                        'App_Configs_Interceptor',
                         Logger.TYPE.ERROR,
                         Logger.ERRNO.APP_ERROR
                     );
@@ -70,7 +70,7 @@
                         Logger.entry(
                             response.status + ' ' + response.statusText
                             + ':  Non-compliant response format.  Should be JSON object.  Inspect response in FireBug.',
-                            'App_Interceptor',
+                            'App_Configs_Interceptor',
                             Logger.TYPE.ERROR,
                             Logger.ERRNO.APP_ERROR
                         );
@@ -88,7 +88,7 @@
 
                     Logger.entry(
                         rejection.status + ' ' + rejection.statusText + ':  ' + rejection.data.message,
-                        'App_Interceptor',
+                        'App_Configs_Interceptor',
                         Logger.TYPE.ERROR,
                         Logger.ERRNO.APP_ERROR
                     );
@@ -96,21 +96,21 @@
 
                 // above error entry will toggle error state change, return rejection information
                 //return rejection;
-                // ripple the rejection down so the specific model using $http can service as desired
+                // ripple the rejection of the promise down so the specific model using $http so that it can service as desired
                 return $q.reject(rejection);
             }
 
         }
 
-        return new App_Interceptor();
+        return new App_Configs_Interceptor();
     }
 
-    App_InterceptorFactory.$inject = ['$q','App_Common_Models_Tools_Logger'];
+    App_Configs_InterceptorFactory.$inject = ['$q','App_Common_Models_Tools_Logger'];
 
     angular.module('App')
-        .factory('App_Interceptor',App_InterceptorFactory)
+        .factory('App_Configs_Interceptor',App_Configs_InterceptorFactory)
         .config(['$httpProvider',function($httpProvider){
-            $httpProvider.interceptors.push('App_Interceptor');
+            $httpProvider.interceptors.push('App_Configs_Interceptor');
         }]);
 
 })();

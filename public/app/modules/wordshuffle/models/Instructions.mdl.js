@@ -110,6 +110,10 @@
         WordShuffle_Models_Instructions.prototype = Object.create(App_Common_Abstracts_Model.prototype);
         WordShuffle_Models_Instructions.prototype.constructor = WordShuffle_Models_Instructions;
 
+        WordShuffle_Models_Instructions.prototype._postFind = function(){
+            console.log('Instructions._postFind, title = ',this.title);
+        };
+
         // return constructor for dependency injection and extension of class, prefix with "new" if it should be a singleton
         return WordShuffle_Models_Instructions;
     }
