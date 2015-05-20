@@ -9,7 +9,7 @@
 angular.module('App')
     .config(['$stateProvider','$urlRouterProvider', function($stateProvider,$urlRouterProvider) {
 
-    console.log('App.routes START');
+    console.log('START App_Configs_Routes construct');
 
     // redirect and establish catch all fallback
     $urlRouterProvider
@@ -24,14 +24,14 @@ angular.module('App')
         .state('module',{
             url: '/m/:module',
             templateUrl: function(param){
-                console.log('New Load shell for module = ',param.module);
+                console.log('Load layout for module = ',param.module);
                 return 'app/modules/' + param.module + '/views/Layout.tpl.html';
             }
         })
         .state('module.controller',{
             url: '/:controller',
             templateUrl: function(param){
-                console.log('Load shell for controller = ',param.controller);
+                console.log('Load template for controller = ',param.controller);
                 return 'app/modules/'+param.module+'/views/controllers/'+param.controller+'.tpl.html';
             }
         })
@@ -43,6 +43,6 @@ angular.module('App')
             }
         });
 
-    console.log('App.routes END');
+    console.log('END App_Configs_Routes construct');
 
 }]);

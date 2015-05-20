@@ -40,8 +40,10 @@
              **/
             Object.defineProperty(self,'errNo',{get: getErrNo,set: setErrNo});
             /**
+             * If msg property set to string value, type assumed as INFO
+             *
              * @property    App_Common_Models_SysMan#msg      - array of message objects with keys 'text' and 'type'
-             * @type        object[]
+             * @type        {{text: string, type: string}|string}
              * @public
              **/
             Object.defineProperty(self,'msg',{get: getMsg,set: setMsg,enumerable:true});
@@ -147,15 +149,23 @@
                     if(Array.isArray(x) && x.length > 0){
                         _msg = x;
                     }
+                    // assume clearing message array
+                    else if(x == ''){
+                        _msg = [];
+                    }
                     // else add entry to existing message array
-                    else if("text" in x && "type" in x){
+                    else if(typeof x === "object" && "text" in x && "type" in x){
                         _msg.push(x);
+                    }
+                    else if(typeof x === 'string'){
+                        // assume type is INFO
+                        _msg.push({text:x,type:self.Logger.TYPE.INFO});
                     }
                     else if(x.length == 0){
                         // do nothing
                     }
                     else{
-                        console.log('SysMan.setMsg() called with improper argument');
+                        self.Logger.entry('SysMan.setMsg() called with improper argument',self.constructor.name,self.Logger.TYPE.WARNING);
                     }
                 }
             }
@@ -180,6 +190,7 @@
                         Logger.entry(_err,'App.state.set()',Logger.TYPE.ERROR,Logger.ERRNO.APP_ERROR);
                         self.error = true;
                     }else{
+                        //noinspection JSUnfilteredForInLoop
                         _state[$key] = value[$key];
                     }
                 }

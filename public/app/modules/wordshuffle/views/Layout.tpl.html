@@ -7,13 +7,13 @@
         <div class="Right-Zone">
             <ul id="Controller-Menu" class="Model Menu" >
                 <li class="Model Menu Item" >
-                    <a href="" ng-click="Layout.goToState('wordshuffle','welcome','index')">Welcome</a>
+                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"welcome",action:"index"})'>Welcome</a>
                 </li>
                 <li class="Model Menu Item" >
-                    <a href="" ng-click="Layout.goToState('wordshuffle','setup','index')">Setup</a>
+                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>Setup</a>
                 </li>
                 <li class="Model Menu Item" >
-                    <a href="" ng-click="Layout.goToState('wordshuffle','play','index')">Play</a>
+                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"play",action:"index"})'>Play</a>
                 </li>
             </ul>
         </div>

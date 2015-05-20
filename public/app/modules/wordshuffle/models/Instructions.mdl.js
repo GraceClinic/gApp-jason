@@ -1,12 +1,20 @@
 (function () {
 
-    function WordShuffle_Models_InstructionsFactory(App_Common_Abstracts_Model,Page) {
+    /**
+     * Model factory returning a single instance of WordShuffle_Models_Instruction
+     *
+     * @param {App_Common_Abstracts_Model}      Model      - superclass
+     * @param {WordShuffle_Models_Page}         Page       - a single instruction page
+     * @returns {WordShuffle_Models_Instructions}
+     * @constructor
+     */
+    function WordShuffle_Models_InstructionsFactory(Model,Page) {
         /**
          * Instructions for a specific game
          *
          * @class
          * @extends     App_Common_Abstracts_Model
-         * @param       {Array}     data                          - allows setting properties during construction
+         * @param       {Array}     [data]                          - allows setting properties during construction
          * @this        WordShuffle_Models_Instructions
          * @returns     {WordShuffle_Models_Instructions}
          */
@@ -97,7 +105,7 @@
              * CONSTRUCTOR LOGIC
              *******************/
             self.SysMan.Logger.entry('START ' + self.constructor.name+'.construct()',self.constructor.name);
-            App_Common_Abstracts_Model.call(self,data);
+            Model.call(self,data);
 
             self.find();
 
@@ -107,15 +115,14 @@
         }
 
         // setup the inheritance chain
-        WordShuffle_Models_Instructions.prototype = Object.create(App_Common_Abstracts_Model.prototype);
+        WordShuffle_Models_Instructions.prototype = Object.create(Model.prototype);
         WordShuffle_Models_Instructions.prototype.constructor = WordShuffle_Models_Instructions;
 
         WordShuffle_Models_Instructions.prototype._postFind = function(){
-            console.log('Instructions._postFind, title = ',this.title);
         };
 
-        // return constructor for dependency injection and extension of class, prefix with "new" if it should be a singleton
-        return WordShuffle_Models_Instructions;
+        // return singleton
+        return new WordShuffle_Models_Instructions;
     }
 
     // todo: inject dependenciesObject

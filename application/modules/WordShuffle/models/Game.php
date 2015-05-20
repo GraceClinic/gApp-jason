@@ -459,8 +459,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
      */
     protected function _preInsert(){
         // this is a new game or an anonymous game
-
-
         return true;
     }
 
@@ -824,7 +822,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
                 $this->state = self::COMPLETED;
                 $this->end = date('Y-m-d H:i:s');
             }elseif($roundEnded){
-                $this->SysMan->Logger->info('Game->_processState determines round ended.'.$this->state,$this->className);
+                $this->SysMan->Logger->info('Game->_processState determines round ended during state '.$this->state,$this->className);
                 // save current round to DB
                 $this->Rounds[$this->round-1]->save();
                 $this->newRound = true;

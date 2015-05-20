@@ -122,7 +122,28 @@ class WordShuffle_Model_Game_Round extends WordShuffle_Model_Abstract
         $this->end = null;
         $this->id = 0;
     }
-    
+
+    /**
+     * Determine is save operation proceeds
+     *
+     * @return boolean  Indication to save method that preSave succeeded; therefore, save can continue
+     */
+    protected function _preSave()
+    {
+        // any save invoked when player not authenticated equates to anonymous play
+        if($this->SysMan->Session->signInState < Common_Models_SysMan::SIGNED_IN) {
+            $this->SysMan->Session->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
+            // no database save with anonymous play, set return value to false
+            $continue = false;
+
+            // populate Round information with session storage
+        }else{
+            // set flag so that postSave action will occur and save Game to database
+            $continue = true;
+        }
+
+        return $continue;
+    }
 
     protected function _validateModel(){
         // todo: validate game state

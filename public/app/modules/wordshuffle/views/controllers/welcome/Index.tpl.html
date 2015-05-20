@@ -10,7 +10,7 @@
         padding-left: 2%;
     }
 </style>
-<div id="WordShuffle_Controllers_Welcome_instructions"><img src="{{Welcome.Instructions.picture}}"><span>{{Welcome.Instructions.title}}</span></div>
+<div id="WordShuffle_Controllers_Welcome_instructions"><img ng-src="{{Welcome.Instructions.picture}}"><span>{{Welcome.Instructions.title}}</span></div>
 <div>
     <!--<div ng-bind-html="Welcome.Instructions.Pages[0].body"></div>-->
     <app-common-directives-slide-show pages="Welcome.Instructions.Pages" dwell="5000"></app-common-directives-slide-show>

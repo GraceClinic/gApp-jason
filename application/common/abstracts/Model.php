@@ -382,6 +382,7 @@ abstract class Common_Abstracts_Model
 
         return $success;
     }
+
     /**
      * Validate model before a save operation. Called before mapper::Save()
      * **Override this function in each child model as needed**
@@ -401,10 +402,10 @@ abstract class Common_Abstracts_Model
      *
      * @return  bool        - returns true if validation is successful
      */
-    protected function _validateModel(){
-        // return false to insure that the developer always creates an appropriate find validation
-        return false;
-    }
+//    protected function _validateModel(){
+//        // return false to insure that the developer always creates an appropriate find validation
+//        return false;
+//    }
 
     /**
      * Specific model logic that follows find function.  Override as required, otherwise ignore.

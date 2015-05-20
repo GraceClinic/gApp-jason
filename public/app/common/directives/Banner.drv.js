@@ -71,7 +71,7 @@
                  *
                  */
                 function _updateMsg(){
-                    if(scope.msg.length > 0){
+                    if(typeof scope.msg != 'undefined' && scope.msg.length > 0){
                         element.show();
                         if(Date.now() > _expiresAt){
                             if(scope.msg.length == 1){

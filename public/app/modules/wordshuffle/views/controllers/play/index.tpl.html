@@ -1,5 +1,4 @@
 <div id="models-game">
-    <app-common-directives-banner msg="Play.SysMan.msg" expires="5000"></app-common-directives-banner>
     <div class="models-game-board">
         <div class="models-game-header">
             <div id="models-game-word">
@@ -53,6 +52,7 @@
         </div>
     </div>
     <div id="models-game-overlay">
+        <app-common-directives-banner msg="Play.msg" expires="5000"></app-common-directives-banner>
         <div>
             You can configure the game from the Setup menu item.  If you want to start playing with current configuration, click Play =>
             <button type="button" class="btn btn-success btn-lg" ng-click="Play.start()">Play</button>
