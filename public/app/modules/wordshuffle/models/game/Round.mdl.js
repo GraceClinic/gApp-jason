@@ -4,17 +4,16 @@
      *
      * @param App_Common_Abstracts_Model
      * @returns {WordShuffle_Models_Game_Round}
-     * @constructor
      */
     function WordShuffle_Models_Game_RoundFactory(App_Common_Abstracts_Model) {
         /**
          * One round within a Word Shuffle game
          *
-         * @constructor
+         * @class       WordShuffle_Models_Game_Round
          * @extends     App_Common_Abstracts_Model
-         * @param       {array}     data            - data array for setting properties during instantiation
+         * @param       {array}     [data]            - data array for setting properties during instantiation
          * @this        WordShuffle_Models_Game_Round
-         * @returns     {function(new:WordShuffle_Models_Game_Round)}
+         * @returns     {WordShuffle_Models_Game_Round}
          */
         function WordShuffle_Models_Game_Round(data) {
             // proxy the "this" keyword to avoid scope resolution issues

@@ -7,14 +7,34 @@
  */
 (function(){
 
+    /**
+     *
+     * @param $q
+     * @param Logger
+     * @returns {App_Configs_Interceptor}
+     */
     function App_Configs_InterceptorFactory($q,Logger){
         var _log = [];
         var _tripped = false;
 
+        /**
+         * @class App_Configs_Interceptor
+         *
+         * Central processor of HTML requests and responses.  This object utilizes the App_Common_Models_Tools_Logger to record
+         * an application error if there are too many requests to the backend.
+         *
+         **/
         function App_Configs_Interceptor(){
             var self = this;
 
-            // track number of request
+            /**
+             * @method request
+             * Processes HTML request before being sent to the backend.  This method monitors the number of request to the backend
+             * over the past 10 seconds.  If there are more than 100, the method reports an application error to the Logger object.
+             *
+             * @param       config      {object}    - the AngularJS $http config object
+             * @return      {object}                - the AngularJS $http config object
+             **/
             self.request = function(config) {
                 // do something on success
                 var _now = new Date();
@@ -31,11 +51,9 @@
                         _count++;
                     }
                 }
-                // error out if excessive requests over past 20 seconds
-                if(_count > 40 && !_tripped){
+                // error out if excessive requests over past 10 seconds
+                if(_count > 100 && !_tripped){
                     _tripped = true;
-                    Logger.errMsg = 'Excessive requests to the backend!';
-
                     Logger.entry(
                         'Excessive requests to the backend!',
                         'App_Configs_Interceptor',
@@ -58,6 +76,14 @@
 //
 //            // optional method
 
+            /**
+             * @method response
+             * Processes all HTML responses from the backend.  If the response is not in the form of a JSON object, the method
+             * reports an application error to the Logger object.
+             *
+             * @param       response    {object}    - the AngularJS $http response object
+             * @return      {object}    - the AngularJS $http config object
+             **/
             self.response = function(response) {
                 // check to see if backend returned a JSON object
                 if(typeof response === 'object'){
@@ -65,8 +91,6 @@
                 }else{
                     if(!_tripped){
                         _tripped = true;
-                        Logger.errMsg = 'Non-compliant response format.  Should be JSON object.  Inspect response in FireBug.';
-
                         Logger.entry(
                             response.status + ' ' + response.statusText
                             + ':  Non-compliant response format.  Should be JSON object.  Inspect response in FireBug.',
@@ -81,10 +105,18 @@
                 return response;
             };
 
+            /**
+             * @method responseError
+             * Processes all HTML error responses from the backend.  If the method has not already processed a previous error, the
+             * method will report the error state to the Logger for proper response.
+             *
+             * @param       rejection   {object}   the AngularJS rejection promise associated with the error
+             * @return      {Promise}   the promise created from the $q.reject method to use in forwarding down a chain of
+             *                          promises as applicable to downstream objects awaiting a response.
+             **/
             self.responseError = function(rejection) {
                 if(!_tripped){
                     _tripped = true;
-                    Logger.errMsg = rejection.data.message;
 
                     Logger.entry(
                         rejection.status + ' ' + rejection.statusText + ':  ' + rejection.data.message,

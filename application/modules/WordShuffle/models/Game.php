@@ -450,7 +450,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         return true;
     }
 
-
     /*
      * New Game object requires creation of the associated Round objects that will be used during the Game
      *
@@ -487,10 +486,10 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         }
     }
 
-    public function start(){
-        $this->start = date('Y-m-d H:i:s');
-        $this->save();
-    }
+//    public function start(){
+//        $this->start = date('Y-m-d H:i:s');
+//        $this->save();
+//    }
 
     /**
      * Checks word for validity and scores as appropriate.
@@ -631,34 +630,34 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
      */
     private function _randomLetter()
     {
-        // create map for relative frequency of the first letters of a word, ref http://en.wikipedia.org/wiki/Letter_frequency
+        // create map for relative frequency of the letters in the English language, ref http://en.wikipedia.org/wiki/Letter_frequency
         $map = array(
-            'A' => 11.602,       // frequency of A = 11.602%
-            'B' => 4.702,
-            'C' => 3.511,
-            'D' => 2.67,
-            'E' => 2.007,
-            'F' => 3.779,
-            'G' => 1.95,
-            'H' => 7.232,
-            'I' => 6.286,
-            'J' => 0.597,
-            'K' => 0.59,
-            'L' => 2.705,
-            'M' => 4.374,
-            'N' => 2.365,
-            'O' => 6.264,
-            'P' => 2.545,
-            'Q' => 0.173,
-            'R' => 1.653,
-            'S' => 7.755,
-            'T' => 16.671,
-            'U' => 1.487,
-            'V' => 0.649,
-            'W' => 6.753,
-            'X' => 0.037,
-            'Y' => 1.62,
-            'Z' => 0.034
+            'A' => 8.167,       // frequency of A = 8.167%
+            'B' => 1.482,
+            'C' => 2.782,
+            'D' => 4.253,
+            'E' => 12.702,
+            'F' => 2.228,
+            'G' => 2.015,
+            'H' => 6.094,
+            'I' => 6.966,
+            'J' => 0.153,
+            'K' => 0.772,
+            'L' => 4.025,
+            'M' => 2.406,
+            'N' => 6.749,
+            'O' => 7.507,
+            'P' => 1.929,
+            'Q' => 0.095,
+            'R' => 5.987,
+            'S' => 6.327,
+            'T' => 9.056,
+            'U' => 2.758,
+            'V' => 0.978,
+            'W' => 2.361,
+            'X' => 0.150,
+            'Y' => 1.974,
+            'Z' => 0.074
         );
 
         $random = (float)rand()/(float)getrandmax()*100;

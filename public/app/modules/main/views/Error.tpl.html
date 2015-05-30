@@ -1,15 +1,18 @@
 <div ng-controller="Main_Controllers_Error as Error" class="Main_Controllers_Error">
     <div class="Main_Controllers_Error_head">
-        ERROR:  {{Error.SysMan.Logger.errMsg}}
+        ERROR:  It looks like something went wrong!  This is what the System Manager reported:<br><br>
+        <span>{{Error.SysMan.Logger.errMsg}}</span>
     </div>
     <div ui-view></div>
 </div>
 <style>
-    .Main_Controllers_Error{
+    .Main_Controllers_Error
+    {
         background-color: #e0a180;
         padding:    0 10px 10px 10px;
     }
-    .Main_Controllers_Error_head{
+    .Main_Controllers_Error_head
+    {
         font:   italic 24px bold;
         font-family:      Helvetica, Arial, sans-serif;
         padding:    10px 0 10px 0;

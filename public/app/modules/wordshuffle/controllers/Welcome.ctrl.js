@@ -9,9 +9,10 @@
      * @param   {function}    $controller - angular controller service responsible for instantiating controllers
      * @param   {WordShuffle_Models_Game}   Game    - singleton Game object, only one game active per player
      * @param   {function(new:WordShuffle_Models_Instructions)}   Instructions    - constructor for game Instructions object
+     * @param   {App_Common_Models_Message}       Message     - constructor for Message object
      * @this    WordShuffle_Controllers_Welcome
      */
-    function WordShuffle_Controllers_Welcome($scope,$controller,Game,Instructions){
+    function WordShuffle_Controllers_Welcome($scope,$controller,Game,Instructions,Message){
         var self = this;
 
         /*************************************************
@@ -38,9 +39,9 @@
          * ACTION METHODS
          ******************/
         /**
-         * Runs logic when user hits the "index" action of the Welcome controller
+         * @method indexAction
+         * Provides logic associated with index action.  Currently, that means redirection to the "play" state if the user has an active game.
          *
-         * @method
          * @public
          */
         self.indexAction = function(){
@@ -58,13 +59,16 @@
          *********************/
         self.SysMan.Logger.entry('START ' + self.constructor.name + '.construct()','App_Common_Abstracts_ActionController');
 
-        self.SysMan.msg = {
-            text:   'Welcome to WordShuffle!',
-            type:   'INFO'
-        };
-        self.SysMan.msg = {
+        // clear any messages left over from previous controllers
+        var i = self.msg.length;
+        while(i > 0){
+            self.msg.shift();
+            i--;
+        }
+        self.msg = {text:'Welcome to WordShuffle!',type:Message.prototype.TYPES.INFO};
+        self.msg = {
             text:   "Please read the instructions and learn more about this exciting game!",
-            type:   'INFO'
+            type:   Message.prototype.TYPES.INFO
         };
 
         self.SysMan.Logger.entry('END ' + self.constructor.name + '.construct()','App_Common_Abstracts_ActionController');
@@ -78,7 +82,8 @@
         '$scope',
         '$controller',
         'WordShuffle_Models_Game',
-        'WordShuffle_Models_Instructions'
+        'WordShuffle_Models_Instructions',
+        'App_Common_Models_Message'
     ];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Welcome',WordShuffle_Controllers_Welcome);

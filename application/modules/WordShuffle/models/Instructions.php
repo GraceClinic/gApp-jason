@@ -36,7 +36,6 @@ class WordShuffle_Model_Instructions extends Common_Abstracts_Model
     /************************************
      * MODEL PROPERTIES SETTERS / GETTERS
      ************************************/
-    // todo:  use "php_prop" live template to insert new properties
     private $_title = null;
     protected function setTitle($value){
         $this->_title = (string) $value;
@@ -66,11 +65,6 @@ class WordShuffle_Model_Instructions extends Common_Abstracts_Model
         return $this->_idGame;
     }
 
-    /************************************
-     * MODEL PRIVATE FUNCTIONS definition
-     ************************************/
-    // todo: use "php_func" live template to insert to functions
-    
     /**
      * << description of preInsert >>
      *

@@ -1,16 +1,3 @@
-/**
- * File: Controller2
- * User: jderouen
- * Date: 5/19/2015
- * Time: 2:52 PM
- * To change this template use File | Settings | File Templates.
- */
-/**
- * File: Controller
- * User: jderouen
- * Date: 1/12/15
- * Time: 12:47 PM
- */
 (function(){
 
     /**
@@ -18,45 +5,41 @@
      * Monitors URL state and triggers action methods based on URL parameters passed to controller
      *
      * @class       App_Common_Abstracts_ActionController
+     * @param   {App_Common_Models_SysMan}  SysMan
+     * @param   {object}    $stateParams
+     * @param   {object}    $state
+     * @param   {object}    $rootScope
+     * @param   {object}    $scope
+     * @param   {object}    self        - reference to calling controller extending this base class
      */
     function App_Common_Abstracts_ActionController(SysMan,$stateParams,$state,$rootScope,$scope,self){
 
         // private variables serving prototype
-        var _paramPresent = ($stateParams !== null) && ($stateParams instanceof Object);
 
-        // register listener to rootScope for reacting to state changes and store to clean up function for trash collection
-        var _cleanUp = $rootScope.$on('$stateChangeSuccess', function(event,toState,toParams,fromState,fromParams){
-            _processStateChange(toParams,fromParams,false);
-        });
-
-        // private class variables
+        // PRIVATE CLASS VARIABLES
         var _constructorSet = self.constructor.name !== 'Scope' && self.constructor.name !== 'Object'
             && self.constructor.name !== 'App_Common_Abstracts_ActionController';
         var _errMsg = '';
 
-        $scope.$on('$destroy',function(){
-            _cleanUp();
-        });
-
         /**
-         * If set to string value, SysMan will default type as INFO
-         *
-         * @property    App_Common_Abstracts_ActionController#msg     - messages proxied from SysMan collected from models
-         * @type {{text: string, type: string}|string}
+         * Array of object messages to display to user formatted as associative
+         * @type {{text: string, type: string}[]}
          * @public
          */
         Object.defineProperty(self,'msg',{get: getMsg,set: setMsg, enumerable: true});
         function getMsg(){
             return SysMan.msg;
         }
+        /**
+         * Proxy to SysMan.msg setter.  If set to string value, SysMan will default type as INFO
+         * @param {{text: string, type: string}|string} x
+         */
         function setMsg(x){
             SysMan.msg = x;
         }
 
         /**
-         * If set to string value, SysMan will default type as INFO
-         *
-         * @property    App_Common_Abstracts_ActionController#SysMan     - provide reference to SysMan
+         * provide reference to SysMan
          * @type {App_Common_Models_SysMan}
          * @public
          */
@@ -118,8 +101,7 @@
             // Hence the logic below cannot run the target controller's action because it does not yet exist.
             if(_paramCorrect && (isConstruct || (!_sameState && !_newController))){
                 SysMan.Logger.entry(
-                    self.constructor.name + '.processStateChange(), from state '
-                    + JSON.stringify(oldState) + '; to state ' + JSON.stringify(newState),
+                    self.constructor.name + '.processStateChange() to ' + JSON.stringify(newState),
                     'App_Common_Abstracts_ActionController'
                 );
                 SysMan.state = {
@@ -146,29 +128,20 @@
         /************************
          * CONSTRUCTOR LOGIC
          ************************/
+        SysMan.Logger.entry('START App_Common_Abstracts_ActionController.construct()','App_Common_Abstracts_ActionController');
+        // register listener to rootScope for reacting to state changes and store to clean up function for trash collection
+        var _cleanUp = $rootScope.$on('$stateChangeSuccess', function(event,toState,toParams,fromState,fromParams){
+            _processStateChange(toParams,fromParams,false);
+        });
 
-        // clear any SysMan messages remaining from previous controllers
-        var i = SysMan.msg.length;
-        while(i > 0){
-            SysMan.msg.shift();
-            i--;
-        }
-        SysMan.Logger.entry(self.constructor.name + '.construct(); cleared SysMan.msg from previous controller.','App_Common_Abstracts_ActionController');
+        $scope.$on('$destroy',function(){
+            _cleanUp();
+        });
+        
 
         if(!_constructorSet){
             _errMsg = 'You just instantiated a Controller without properly setting the constructor.  You should have ' +
             'set the constructor in the prototype, like so:  "MyCtrl.prototype.constructor = MyCtrl".  Please tend to this.';
-            SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_ActionController',SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.CTRL_ERROR);
-        }
-
-        if(!_paramPresent){
-            _errMsg = 'ERROR:  You did not pass the URL parameters to the Controller superclass when you called the constructor.  ' +
-            'Expectation is that you pass those parameters, so that the controller base class can trigger actions as appropriate.  ';
-            if(_constructorSet){
-                _errMsg = _errMsg + 'The controller in error is "'+self.constructor.name+'".';
-            }else{
-                _errMsg = _errMsg + 'Additionally, since you did not set the constructor correctly, I cannot tell you the controller name.'
-            }
             SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_ActionController',SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.CTRL_ERROR);
         }
 
@@ -178,6 +151,8 @@
                 _processStateChange($stateParams,SysMan.state,true);
             });
         }
+
+        SysMan.Logger.entry('END App_Common_Abstracts_ActionController.construct()','App_Common_Abstracts_ActionController');
 
     }
 

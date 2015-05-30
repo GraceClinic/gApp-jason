@@ -1,0 +1,22 @@
+<div ng-controller="Main_Controllers_Index as Index" class="Main_Controllers_Index">
+    <h2>
+        And now this text displays once "ui.router" loads the Main_Views_Index template per the URL state.  This template
+        also loads the Index controller. From this point on, the controller can effect display of content to the screen.
+        Controllers are the scaffolding for your web application and Models are the work engines.  Open your Firebug
+        console and take a look at the logged events to see what is going on in the background.
+    </h2>
+    <div ui-view></div>
+</div>
+<style>
+    .Main_Controllers_Index
+    {
+        background-color: #dcfcff;
+        padding:    0 10px 10px 10px;
+    }
+    h2
+    {
+        margin-top: 0;
+        padding-top: 10px;
+        color: #d48100;
+    }
+</style>

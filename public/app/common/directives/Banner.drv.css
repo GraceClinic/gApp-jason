@@ -3,11 +3,12 @@
 {
     position: relative;
     z-index:          100;
+    margin-top: 3px;
 }
 /* Styling for all Banner elements styling */
 .app-common-directives-banner.banner-anchor
 {
-    font:             normal 12px bold;
+    font:             normal 14px bold;
     font-family:      Helvetica, Arial, sans-serif;
     width:            90%;
     margin-left:      5%;
@@ -26,7 +27,7 @@
 .app-common-directives-banner.banner-msg
 {
     width:             65%;
-    padding-left:      5%;
+    padding-left:      20px;
     float:             left;
 }
 .app-common-directives-banner.banner-close
@@ -48,4 +49,20 @@
     border-width:       1px;
     border-color:       red;
     cursor:             pointer;
+}
+.app-common-directives-banner.banner-msg > span i.fa{
+    font-size: 14pt;
+    padding-right:  3px;
+}
+.app-common-directives-banner.banner-msg > span i.fa.info{
+    color: blue;
+}
+.app-common-directives-banner.banner-msg > span i.fa.warning{
+    color: orange;
+}
+.app-common-directives-banner.banner-msg > span i.fa.danger{
+    color: red;
+}
+.app-common-directives-banner.banner-msg > span i.fa.success{
+    color: green;
 }

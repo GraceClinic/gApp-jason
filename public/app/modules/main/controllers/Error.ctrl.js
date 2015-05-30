@@ -16,9 +16,9 @@
          * ACTION METHODS DEFINITION
          ****************************/
         /**
-         * Default error action, displays Logger stack information
-         *
          * @method   errorAction
+         * Empty shell, so far no extra logic associated with this action
+         *
          * @public
          */
         self.errorAction = function(){

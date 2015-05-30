@@ -12,11 +12,6 @@
 class WordShuffle_Model_Page extends Common_Abstracts_Model
 {
 
-    /*****************************
-     * CLASS CONSTANTS declaration
-     *****************************/
-    // todo: itemize class constants
-
     /**
      * << description of init >>
      *
@@ -32,8 +27,6 @@ class WordShuffle_Model_Page extends Common_Abstracts_Model
     /************************************
      * MODEL PROPERTIES SETTERS / GETTERS
      ************************************/
-    // todo:  use "php_prop" live template to insert new properties
-
     private $_idInstructions = null;
     protected function setIdInstructions($value){
         $this->_idInstructions = (int) $value;
@@ -57,18 +50,7 @@ class WordShuffle_Model_Page extends Common_Abstracts_Model
     protected function getSequence(){
         return (int) $this->_sequence;
     }
-    
 
-    /****************************************
-     * MODEL METHODS declaration / definition
-     ****************************************/
-    // todo:  use "php_method" live template to insert new methods
-
-    /************************************
-     * MODEL PRIVATE FUNCTIONS definition
-     ************************************/
-    // todo: use "php_func" live template to insert to functions
-    
     /**
      * << description of preInsert >>
      *

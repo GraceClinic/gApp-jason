@@ -4,7 +4,7 @@
      * Model factory returning a single instance of WordShuffle_Models_Instruction
      *
      * @param {App_Common_Abstracts_Model}      Model      - superclass
-     * @param {WordShuffle_Models_Page}         Page       - a single instruction page
+     * @param {WordShuffle_Models_Instructions_Page}         Page       - a single instruction page
      * @returns {WordShuffle_Models_Instructions}
      * @constructor
      */
@@ -21,8 +21,6 @@
         function WordShuffle_Models_Instructions(data) {
             // proxy the "this" keyword to avoid scope resolution issues
             var self = this;
-
-            self._rootURL = '/WordShuffle/Instructions/';
 
             /********************************
              * PUBLIC PROPERTIES declarations
@@ -42,7 +40,7 @@
             Object.defineProperty(self,'picture',{get: getPicture,set: setPicture});
             /**
              * @property    WordShuffle_Models_Instructions#Pages      - array of page references
-             * @type        WordShuffle_Models_Page[]
+             * @type        WordShuffle_Models_Instructions_Page[]
              * @public
              **/
             Object.defineProperty(self,'Pages',{get: getPages,set: setPages});
@@ -107,6 +105,7 @@
             self.SysMan.Logger.entry('START ' + self.constructor.name+'.construct()',self.constructor.name);
             Model.call(self,data);
 
+            self._rootURL = '/WordShuffle/Instructions/';
             self.find();
 
             self.SysMan.Logger.entry('END ' + self.constructor.name+'.construct()',self.constructor.name);
@@ -126,7 +125,7 @@
     }
 
     // todo: inject dependenciesObject
-    WordShuffle_Models_InstructionsFactory.$inject = ['App_Common_Abstracts_Model','WordShuffle_Models_Page'];
+    WordShuffle_Models_InstructionsFactory.$inject = ['App_Common_Abstracts_Model','WordShuffle_Models_Instructions_Page'];
 
     // todo: register model with Angularjs application for dependency injection as required
     angular.module('App_WordShuffle').factory('WordShuffle_Models_Instructions', WordShuffle_Models_InstructionsFactory);

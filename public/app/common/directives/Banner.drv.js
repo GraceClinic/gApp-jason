@@ -1,57 +1,76 @@
-/**
- * File: Core_Directives_Banner
- * User: jderouen
- * Date: 2/2/15
- * Time: 10:18 AM
- * To change this template use File | Settings | File Templates.
- */
 (function(){
+    /**
+     * @param {App_Common_Models_Tools_Logger}  Logger  - reference to Logger object
+     * @param {object}  $interval   - reference to AngularJS $interval object
+     * @returns {appCommonDirectivesBanner}
+     */
+    function appCommonDirectivesBannerProvider(Logger,$interval){
+        /**
+         * Displays message bar across top of a DIV element that houses it.  During construction, the banner
+         * directive sets a watcher on the "msg" property.  If the property is non-null, the banner will display each
+         * message in the array for the time defined by "expires".  After it displays each message, it is removed from the
+         * "msg" array.  When there are no messages remaining, the banner fades to invisible.
+         *
+         * @class appCommonDirectivesBanner
+         * @returns {appCommonDirectivesBanner}
+         */
+        function appCommonDirectivesBanner(){
+            Logger.entry('START appCommonDirectivesBanner.construct()','App_Common_Directives_Banner');
 
-    function BannerDirective(Logger,$interval){
-
-        function Banner(){
-            Logger.entry('START App_Common_Directives_Banner.construct()','App_Common_Directives_Banner');
-            var self = this;
-
-            self.restrict = 'E'; // match on element name only
-            self.templateUrl = '/app/common/directives/Banner.drv.html';
-            self.scope = {
+            this.restrict = 'E'; // match on element name only
+            this.templateUrl = '/app/common/directives/Banner.drv.html';
+            this.scope = {
                 msg:        '=',        // array of msg objects with keys "text" and "type" defining the properties
                 expires:    '='
             };
-            self.link = controller;
+            this.link = controller;
 
             /**
+             * Controller for the Banner object
              *
-             * @param   {Object}    scope           - reference to angular directive scope for Banner
-             * @param   {Object}    element         - the DOM element attached to directive
+             * @param   {Object}    scope               - reference to angular directive scope for Banner
+             * @param   {App_Common_Models_Message[]}  scope.msg   - array of message objects to display
+             * @param   {int}       scope.expires       - milliseconds to display each message before switching to next one
+             * @param   {Object}    element             - the DOM element attached to directive
              */
             function controller(scope, element){
+                // proxy scope to self for consistency and use of templates for defining methods
+                var self = scope;
+
                 var _expiresAt = null;
                 var _fade = 0.05;       // fade last message by 5% for each update window
                 var _opacity = 1.0;     // initial opacity level of banner
 
                 var _intervalId;        // defines interval callback for fading banner when message expires
 
-                // watch messages for new content and process accordingly
-                scope.$watch('msg',_processNewMsg,true);
-
-                // expand Banner scope to service user click of "close" link
-                scope.closeMsg = function() {
-                    scope.msg.shift();
-                    if(scope.msg.length > 0){
+                /****************************
+                 * PUBLIC METHODS DEFINITION
+                 ****************************/
+                /**
+                 * Immediately removes the active message from the "msg" array.  If there are no more messages, the method hides the
+                 * banner, otherwise the next message displays as appropriate.
+                 *
+                 * @method
+                 * @public
+                 */
+                self.closeMsg = function() {
+                    self.msg.shift();
+                    if(self.msg.length > 0){
                         // show next message
-                        _expiresAt = Date.now() + scope.expires;
+                        _expiresAt = Date.now() + self.expires;
                     }else{
                         element.hide();
                     }
                 };
 
+                /********************
+                 * PRIVATE FUNCTIONS
+                 ********************/
                 function _processNewMsg(){
                     // initialize message presentation
-                    if(typeof scope.msg != 'undefined' && scope.msg.length > 0){
+                    if(typeof self.msg != 'undefined' && self.msg.length > 0){
                         element.show();
-                        _expiresAt = Date.now() + scope.expires;
+                        _expiresAt = Date.now() + self.expires;
                         if(_intervalId != null){
                             // cancel any currently active processing
                             if(!_intervalId.cancelled){
@@ -71,10 +90,16 @@
                  *
                  */
                 function _updateMsg(){
-                    if(typeof scope.msg != 'undefined' && scope.msg.length > 0){
+                    if(typeof self.msg != 'undefined' && self.msg.length > 0){
                         element.show();
+                        if(self.msg[0].constructor.name != 'App_Common_Models_Message'){
+                            Logger.entry(
+                                'Banner.msg not instance of App_Common_Models_Message',
+                                'appCommonDirectivesBanner',
+                                Logger.TYPE.ERROR);
+                        }
                         if(Date.now() > _expiresAt){
-                            if(scope.msg.length == 1){
+                            if(self.msg.length == 1){
                                 // fade last message
                                 _opacity = Number(element.css('opacity'));
                                 _opacity = Math.round((_opacity - _fade)*100)/100;
@@ -82,14 +107,14 @@
                                 if(_opacity <= _fade){
                                     element.hide();
                                     $interval.cancel(_intervalId);
-                                    scope.msg.shift();
+                                    self.msg.shift();
                                 }
-                            }else if(scope.msg.length > 1){
+                            }else if(self.msg.length > 1){
                                 _opacity = 1.0;
-                                scope.msg.shift();
-                                if(scope.msg.length > 0){
+                                self.msg.shift();
+                                if(self.msg.length > 0){
                                     // show next message
-                                    _expiresAt = Date.now() + scope.expires;
+                                    _expiresAt = Date.now() + self.expires;
                                 }else{
                                     element.hide();
                                     $interval.cancel(_intervalId);
@@ -104,21 +129,32 @@
                     }
                 }
 
+                /*******************
+                 * CONSTRUCTOR LOGIC
+                 *******************/
+                // watch messages for new content and process accordingly
+                scope.$watch('msg',_processNewMsg,true);
+
+                // clean up listener functions
                 element.on('$destroy', function() {
                     $interval.cancel(_intervalId);
                 });
             }
 
-            Logger.entry('END App_Common_Directives_Banner.construct()','App_Common_Directives_Banner');
+            Logger.entry('END appCommonDirectivesBanner.construct()','App_Common_Directives_Banner');
 
-            return self;
+            return this;
         }
 
-        return new Banner;
+        //noinspection JSPotentiallyInvalidConstructorUsage
+        return new appCommonDirectivesBanner;
     }
 
     // inject dependenciesObject
-    BannerDirective.$inject = ['App_Common_Models_Tools_Logger','$interval'];
+    appCommonDirectivesBannerProvider.$inject = [
+        'App_Common_Models_Tools_Logger',
+        '$interval'
+    ];
 
-    angular.module('App').directive('appCommonDirectivesBanner',BannerDirective);
+    angular.module('App').directive('appCommonDirectivesBanner',appCommonDirectivesBannerProvider);
 })();

@@ -1,6 +1,15 @@
 (function () {
-
-    function App_Common_Models_SysManFactory(Logger,$state,Timer,$http,$window) {
+    /**
+     * Model factory for providing the superclass for all application models
+     *
+     * @param {App_Common_Models_Tools_Logger}  Logger  - reference to Logger singleton
+     * @param {object}  $state      - reference to AngularJS state object
+     * @param {function(new:App_Common_Models_Tools_Timer)}   Timer   - reference to Timer constructor
+     * @param {function}  $http     - reference to AngularJS http object
+     * @param {function(new:App_Common_Models_Message(data))|App_Common_Models_Message}   Message - message constructor
+     * @returns {App_Common_Models_SysMan}
+     */
+    function App_Common_Models_SysManFactory(Logger,$state,Timer,$http,Message) {
         /**
          * Singleton system state manager for the entire application.  Provides messaging across controllers and models.
          * Maintains access to Logger and controls error routing.  Also maintains global application timer for reference
@@ -20,39 +29,125 @@
             /********************************
              * Public Properties declarations
              ********************************/
-            // todo: use "ng_prop" live template to inject more model properties
             /**
              * @property    App_Common_Models_SysMan#Logger      - reference to Logger singleton for logging messages
              * @type        App_Common_Models_Tools_Logger
              * @public
              **/
             Object.defineProperty(self,'Logger',{get: getLog,set: setLog});
+            function getLog(){
+                return Logger;
+            }
+            function setLog(){
+                Logger.entry('SysMan.Log.set() NOT ALLOWED!  Why did you do it?',self.constructor.name,Logger.ERROR,Logger.ERRNO.APP_ERROR);
+            }
             /**
              * @property    App_Common_Models_SysMan#error      - flags application error
              * @type        bool
              * @public
              **/
-            Object.defineProperty(self,'error',{get: getError,set: setError});
-            /**
-             * @property    App_Common_Models_SysMan#errNo      - records associate error number for reference
-             * @type        int
-             * @public
-             **/
-            Object.defineProperty(self,'errNo',{get: getErrNo,set: setErrNo});
+            //Object.defineProperty(self,'error',{get: getError,set: setError});
+            //var _error = false;
+            //function getError(){
+            //    return _error;
+            //}
+            //function setError(inError){
+            //    if(inError){
+            //    }
+            //
+            //    _error = inError;
+            //}
+            ///**
+            // * @property    App_Common_Models_SysMan#errNo      - records associate error number for reference
+            // * @type        int
+            // * @public
+            // **/
+            //Object.defineProperty(self,'errNo',{get: getErrNo,set: setErrNo});
+            //var _errNo = 0;
+            //function getErrNo(){
+            //    return _errNo;
+            //}
+            //function setErrNo(value){
+            //    _errNo = value;
+            //}
             /**
              * If msg property set to string value, type assumed as INFO
              *
              * @property    App_Common_Models_SysMan#msg      - array of message objects with keys 'text' and 'type'
-             * @type        {{text: string, type: string}|string}
+             * @type        {App_Common_Models_Message|App_Common_Models_Message[]|object|object[]}
              * @public
              **/
             Object.defineProperty(self,'msg',{get: getMsg,set: setMsg,enumerable:true});
+            var _msg = [];
+            function getMsg(){
+                return _msg;
+            }
+            function setMsg(x){
+                // assume over-write of current message array
+                //if(x !== null){
+                //    if(Array.isArray(x) && x.length > 0){
+                //        _msg = x;
+                //    }
+                //    // assume clearing message array
+                //    else if(x == ''){
+                //        _msg = [];
+                //    }
+                //    // else add entry to existing message array
+                //    else if(typeof x === "object" && "text" in x && "type" in x){
+                //        _msg.push(x);
+                //    }
+                //    else if(typeof x === 'string'){
+                //        // assume type is INFO
+                //        _msg.push({text:x,type:self.Logger.TYPE.INFO});
+                //    }
+                //    else if(x.length == 0){
+                //        // do nothing
+                //    }
+                //    else{
+                //        self.Logger.entry('SysMan.setMsg() called with improper argument',self.constructor.name,self.Logger.TYPE.WARNING);
+                //    }
+                //}
+                if(typeof x === 'App_Common_Models_Message'){
+                    _msg.push(x);
+                }
+                else if(Array.isArray(x) && x.length > 0){
+                    // must be an array of Message objects
+                    if(typeof x === 'App_Common_Models_Message'){
+                        _msg = x;
+                    }else{
+                        this.Logger.entry(
+                            self.constructor.name + 'setMsg() value incorrect',
+                            'App_Common_Models_SysMan',
+                            this.Logger.TYPE.ERROR
+                        )
+                    }
+                }
+                // assume clearing message array, null is also considered object and/or array
+                else if(Array.isArray(x) && x.length == 0){
+                    _msg = [];
+                }
+                // else object passed representing Message object
+                else if(typeof x === 'object'){
+                    x = new Message(x);
+                    _msg.push(x);
+                }
+                else{
+                    // nothing
+                }
+            }
             /**
              * @property    App_Common_Models_SysMan#Timer      - application wide timer
              * @type        App_Common_Models_Tools_Timer
              * @public
              **/
             Object.defineProperty(self,'Timer',{get: getTimer,set: setTimer});
+            var _Timer = new Timer;
+            function getTimer(){
+                return _Timer;
+            }
+            function setTimer(value){
+                _Timer = value;
+            }
             /**
              * Impromptu class allowing for documentation "state" property
              *
@@ -69,113 +164,6 @@
               * @public
               */
             Object.defineProperty(self,'state',{get: getState,set: setState});
-
-            /*****************************************
-             * Public Methods declaration / definition
-             *****************************************/
-            // todo:  use "ng_method" live template to insert individual model methods
-            /**
-             * Set allowed properties from data array passed as parameter
-             *
-             * @method   setFromArray
-             * @public
-             * @param    {array}        data        - properties to set
-             * @return   {boolean}
-             */
-            self.setFromArray = function(data){
-                var _allowed = ['msg','error','errNo','state'];
-                // set properties per argument passed during construction
-                for(var $key in data){
-                    //noinspection JSUnfilteredForInLoop
-                    if(_allowed.indexOf($key)){
-                        // use self reference in order to execute setter method, call using bracket notation within object scope
-                        //noinspection JSUnfilteredForInLoop
-                        self[$key] = data[$key];
-                    }else{
-                        // check for lower case version of property
-                        //noinspection JSUnfilteredForInLoop
-                        if(_allowed.indexOf(_lcFirst($key))){
-                            //noinspection JSUnfilteredForInLoop
-                            self[_lcFirst($key)] = data[$key];
-                        }
-                    }
-                }
-            };
-            /**
-             * restart the application
-             *
-             * @method   restart
-             * @public
-             */
-            self.restart = function(){
-                console.log('Current window location: ',$window.location.href);
-                $state.go('module.controller.action',{"module":"wordshuffle","controller":"welcome","action":"index"});
-                //$window.location.reload();
-            };
-
-            /**********************************
-             /* GETTERS AND SETTERS definitions
-             /*********************************/
-            function getLog(){
-                return Logger;
-            }
-            function setLog(){
-                Logger.entry('SysMan.Log.set() NOT ALLOWED!  Why did you do it?',self.constructor.name,Logger.ERROR,Logger.ERRNO.APP_ERROR);
-            }
-            var _error = false;
-            function getError(){
-                return _error;
-            }
-            function setError(inError){
-                if(inError){
-                }
-
-                _error = inError;
-            }
-            var _errNo = 0;
-            function getErrNo(){
-                return _errNo;
-            }
-            function setErrNo(value){
-                _errNo = value;
-            }
-            var _msg = [];
-            function getMsg(){
-                return _msg;
-            }
-            function setMsg(x){
-                // assume over-write of current message array
-                if(x !== null){
-                    if(Array.isArray(x) && x.length > 0){
-                        _msg = x;
-                    }
-                    // assume clearing message array
-                    else if(x == ''){
-                        _msg = [];
-                    }
-                    // else add entry to existing message array
-                    else if(typeof x === "object" && "text" in x && "type" in x){
-                        _msg.push(x);
-                    }
-                    else if(typeof x === 'string'){
-                        // assume type is INFO
-                        _msg.push({text:x,type:self.Logger.TYPE.INFO});
-                    }
-                    else if(x.length == 0){
-                        // do nothing
-                    }
-                    else{
-                        self.Logger.entry('SysMan.setMsg() called with improper argument',self.constructor.name,self.Logger.TYPE.WARNING);
-                    }
-                }
-            }
-            var _Timer = new Timer;
-            function getTimer(){
-                return _Timer;
-            }
-            function setTimer(value){
-                _Timer = value;
-            }
             var _state = {'module':'undefined','controller':'undefined','action':'undefined'};
             function getState(){
                 return _state;
@@ -188,13 +176,55 @@
                             'value must be an associative array with keys = "module", "controller", and "action".  ' +
                             'Error occurred during application state = ' + JSON.stringify(self.state);
                         Logger.entry(_err,'App.state.set()',Logger.TYPE.ERROR,Logger.ERRNO.APP_ERROR);
-                        self.error = true;
+                        //self.error = true;
                     }else{
                         //noinspection JSUnfilteredForInLoop
                         _state[$key] = value[$key];
                     }
                 }
             }
+
+            /*****************************************
+             * Public Methods declaration / definition
+             *****************************************/
+            /**
+             * Set allowed properties from data array passed as parameter
+             *
+             * @method   setFromArray
+             * @public
+             * @param    {array}        data        - properties to set
+             * @return   {boolean}
+             */
+            //self.setFromArray = function(data){
+            //    console.log('SysMan.setFromArray; data = ',data);
+            //    var _allowed = ['msg','error','errNo','state'];
+            //    // set properties per argument passed during construction
+            //    for(var $key in data){
+            //        //noinspection JSUnfilteredForInLoop
+            //        if(_allowed.indexOf($key)){
+            //            // use self reference in order to execute setter method, call using bracket notation within object scope
+            //            //noinspection JSUnfilteredForInLoop
+            //            self[$key] = data[$key];
+            //        }else{
+            //            // check for lower case version of property
+            //            //noinspection JSUnfilteredForInLoop
+            //            if(_allowed.indexOf(_lcFirst($key))){
+            //                //noinspection JSUnfilteredForInLoop
+            //                self[_lcFirst($key)] = data[$key];
+            //            }
+            //        }
+            //    }
+            //};
+            ///**
+            // * restart the application
+            // *
+            // * @method   restart
+            // * @public
+            // */
+            self.restart = function(){
+                $state.go('module.controller.action',{"module":"wordshuffle","controller":"welcome","action":"index"});
+                //$window.location.reload();
+            };
 
             /******************
              * Private functions
@@ -279,38 +309,17 @@
         Object.defineProperty(App_Common_Models_SysMan.prototype,"SECRET_PENDING",{value: 10, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"SIGNED_IN",{value: 20, writable: false});
 
-        /*****************************************
-         * PROTOTYPE PUBLIC PROPERTIES DECLARATION
-         *****************************************/
-        // todo: use the "ng_pprop" live template to insert prototype properties
-
-        /*************************************************
-         * PROTOTYPE PUBLIC METHODS DECLARATION/DEFINITION
-         *************************************************/
-        // todo: use the "ng_pmethod" live template to insert prototype methods
-
-        /******************************************
-         * PROTOTYPE GETTERS and SETTERS definition
-         ******************************************/
-
-        /*******************************************
-         * PRIVATE FUNCTIONS shared at Factory level
-         *******************************************/
-        // todo: create private functions shared amongst all class instances
-
         // return constructor for dependency injection and extension of class, prefix with "new" if it should be a singleton
         return new App_Common_Models_SysMan;
     }
 
-    // todo: inject dependenciesObject
     App_Common_Models_SysManFactory.$inject = [
         'App_Common_Models_Tools_Logger',
         '$state',
         'App_Common_Models_Tools_Timer',
         '$http',
-        '$window'
+        'App_Common_Models_Message'
     ];
 
-    // todo: register model with Angularjs application for dependency injection as required
     angular.module('App').factory('App_Common_Models_SysMan', App_Common_Models_SysManFactory);
 })();

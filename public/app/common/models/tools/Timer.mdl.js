@@ -1,11 +1,11 @@
 
 (function () {
 
-    function App_Common_Models_Tools_TimerFactory(Logger){
+    function App_Common_Models_Tools_TimerFactory(){
         /**
+         * @class       App_Common_Models_Tools_Timer
          * Timer for tracking and synchronizing events within the application
          *
-         * @class       App_Common_Models_Tools_Timer
          * @returns     {App_Common_Models_Tools_Timer}
          */
         function App_Common_Models_Tools_Timer(){
@@ -20,7 +20,9 @@
              * PUBLIC PROPERTIES declarations
              ********************************/
             /**
-             * @property    App_Common_Models_Tools_Timer#trip        - Milliseconds until timer trips
+             * @property    trip
+             * Milliseconds until timer trips
+             *
              * @type        int
              * @public
              */
@@ -186,7 +188,7 @@
         return App_Common_Models_Tools_Timer;
     }
 
-    App_Common_Models_Tools_TimerFactory.$inject = ['App_Common_Models_Tools_Logger'];
+    //App_Common_Models_Tools_TimerFactory.$inject = [];
 
     angular.module('App').factory('App_Common_Models_Tools_Timer',App_Common_Models_Tools_TimerFactory);
 })();

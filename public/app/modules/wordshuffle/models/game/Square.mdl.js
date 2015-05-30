@@ -11,7 +11,7 @@
         /**
          * One playing square on the WordShuffle board
          *
-         * @constructor
+         * @class WordShuffle_Models_Game_Square
          * @extends     App_Common_Abstracts_Model
          * @param       {(array|Object)}    data                        - data array for setting properties during instantiation
          * @this        WordShuffle_Models_Game_Square

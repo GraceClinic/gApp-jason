@@ -48,10 +48,17 @@
     padding:0 10px 0 10px;
     display:inline
 }
+
 .Model.Menu.Item a
 {
     text-decoration:none;
-    color:mediumpurple
+    color:mediumpurple;
+    padding:0 10px 0 10px;
+}
+.Model.Menu.Item a.active
+{
+    color: #fdffcd;
+    background-color: mediumpurple;
 }
 .Model.Menu.Item a:hover
 {

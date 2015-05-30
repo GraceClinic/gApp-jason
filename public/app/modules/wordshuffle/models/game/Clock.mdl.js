@@ -12,11 +12,11 @@
         /**
          * todo: provide short description of model
          *
-         * @constructor
+         * @class   WordShuffle_Models_Game_Clock
          * @extends     App_Common_Abstracts_Model
          * @param       {Object}     [data]            - data array for setting properties during instantiation
          * @this        WordShuffle_Models_Game_Clock
-         * @returns     {WordShuffle_Models_Game_Clock}
+         * @returns     {function}
          */
         function WordShuffle_Models_Game_Clock(data) {
             // proxy the "this" keyword to avoid scope resolution issues

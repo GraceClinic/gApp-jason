@@ -25,8 +25,6 @@
             var _nameIsDefault = false;     // flags if name is Player default name
             var _saveMe = false;            // flags if Player object requires saving because of changes
 
-            self._rootURL = '/WordShuffle/Player/';
-
             /********************************
              * Public Properties declarations
              ********************************/
@@ -133,7 +131,9 @@
                 _resetFlags();
                 var _promise = self.remove();
                 _promise.then(function(){
-                    self.SysMan.restart();
+                    self.msg = {"text":"Player logout successful!","type":'info'};
+                    self.name = self.defaultName;
+                    self.id = 0;
                 });
             };
 
@@ -313,6 +313,8 @@
             self.SysMan.Logger.entry('START ' + self.constructor.name+'.construct()',self.constructor.name);
             Model.call(self,data);
 
+            self._rootURL = '/WordShuffle/Player/';
+
             self.excludeFromPost(['defaultName','challenges','saveIsPending']);
 
             self.SysMan.Logger.entry('END ' + self.constructor.name+'.construct()',self.constructor.name);
@@ -395,7 +397,10 @@
         return new WordShuffle_Models_Player;
     }
 
-    WordShuffle_Models_Player_Factory.$inject = ['App_Common_Abstracts_Model','$state'];
+    WordShuffle_Models_Player_Factory.$inject = [
+        'App_Common_Abstracts_Model',
+        '$state'
+    ];
 
     angular.module('App_WordShuffle').factory('WordShuffle_Models_Player', WordShuffle_Models_Player_Factory);
 })();

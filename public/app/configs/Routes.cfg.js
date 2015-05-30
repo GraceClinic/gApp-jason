@@ -32,14 +32,14 @@ angular.module('App')
             url: '/:controller',
             templateUrl: function(param){
                 console.log('Load template for controller = ',param.controller);
-                return 'app/modules/'+param.module+'/views/controllers/'+param.controller+'.tpl.html';
+                return 'app/modules/'+param.module+'/views/'+param.controller+'.tpl.html';
             }
         })
         .state('module.controller.action',{
             url: '/:action',
             templateUrl: function(param){
                 console.log('Load template for action = ',param.action);
-                return 'app/modules/'+param.module+'/views/controllers/'+param.controller+'/'+param.action+'.tpl.html';
+                return 'app/modules/'+param.module+'/views/'+param.controller+'/'+param.action+'.tpl.html';
             }
         });
 

@@ -1,7 +1,33 @@
 <div class="app-common-directives-banner banner-shell" app-common-directives-utilities-draggable>
     <div class="app-common-directives-banner banner-anchor">
         <div class="app-common-directives-banner banner-msg">
-            <span>{{msg[0].text}}</span>
+            <span>
+                <i
+                    class="fa fa-paper-plane {{msg[0].type}}"
+                    tooltip="For your information!"
+                    tooltip-placement="bottom"
+                    ng-show="msg[0].type == msg[0].TYPES.INFO"
+                    ></i>
+                <i
+                    class="fa fa-exclamation-triangle {{msg[0].type}}"
+                    tooltip="Watch out!"
+                    tooltip-placement="bottom"
+                    ng-show="msg[0].type == msg[0].TYPES.WARNING"
+                    ></i>
+                <i
+                    class="fa fa-ambulance {{msg[0].type}}"
+                    tooltip="Danger, Will Robinson, Danger!"
+                    tooltip-placement="bottom"
+                    ng-show="msg[0].type == msg[0].TYPES.DANGER"
+                    ></i>
+                <i
+                    class="fa fa-smile-o {{msg[0].type}}"
+                    tooltip="Great job!"
+                    tooltip-placement="bottom"
+                    ng-show="msg[0].type == msg[0].TYPES.SUCCESS"
+                    ></i>
+                {{msg[0].text}}
+            </span>
         </div>
         <div class="app-common-directives-banner banner-close" ng-click="closeMsg()">
             <span>close</span>

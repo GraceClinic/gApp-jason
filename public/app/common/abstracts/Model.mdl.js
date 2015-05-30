@@ -1,6 +1,14 @@
 (function () {
 
-    function App_Common_Abstracts_ModelFactory(SysMan,$http) {
+    /**
+     * Model factory for providing the superclass for all application models
+     *
+     * @param {App_Common_Models_SysMan}    SysMan  - reference to SysMan singleton
+     * @param {function}  $http
+     * @param {function(new:App_Common_Models_Message(data))}   Message - message constructor
+     * @returns {App_Common_Abstracts_Model}
+     */
+    function App_Common_Abstracts_ModelFactory(SysMan,$http,Message) {
         var _uidCount = 0;
 
         /**
@@ -12,50 +20,36 @@
          * @returns     {App_Common_Abstracts_Model}
          */
         function App_Common_Abstracts_Model(data) {
+
             // proxy the "this" keyword to avoid scope resolution issues
             var self = this;
 
             /**
-             *
+             * Defines the API URL that serves as data source
              * @type {string}
              * @protected
              */
-            self._rootURL;
+            self._rootURL = '/WordShuffle/Main/';
 
-            /************************
-             * Public Properties declarations
-             ************************/
+            /******************************************
+             * PUBLIC PROPERTIES / GETTERS and SETTERS
+             ******************************************/
             /**
-             * @property    {int} uid            - Unique identifier amongst all models
+             * Unique identifier amongst all models
+             * @type    {int}
              * @public
              */
-            Object.defineProperty(self,"uid",{get: getUid});
-            /**
-             * @property    {int} id            - Primary key for the table containing model data
-             * @public
-             */
-            Object.defineProperty(self,"id",{get: getId,set: setId});
-            /**
-             * @property    {string}   idTag    - the HTML "id" tag that uniquely identifies the DOM element
-             * @public
-             */
-            Object.defineProperty(self,"idTag",{get: getIdTag,set: setIdTag});
-            /**
-             * @property {Object}   DOM  - the HTML DOM element
-             * @public
-             */
-            Object.defineProperty(self,"DOM",{get: getDOM,set: setDOM});
-
-            // The above maintains a clean class definition, promoting readability and maintainability.  Follow
-            // with the any constructor logic.  This is what should be done during instantiation of the controller.
-
-            /************************
-             * GETTERS AND SETTERS definitions
-             ************************/
+            Object.defineProperty(self,"uid",{get: getUid, enumerable: true});
             var _uid = _nextUid();
             function getUid(){
                 return _uid;
             }
+            /**
+             * Primary key for the table containing model data
+             * @type    {int}
+             * @public
+             */
+            Object.defineProperty(self,"id",{get: getId,set: setId, enumerable: true});
             var _id = 0;
             function getId(){
                 return _id;
@@ -63,6 +57,12 @@
             function setId(value){
                 _id = value;
             }
+            /**
+             * The HTML "id" tag that uniquely identifies the DOM element
+             * @type    {string}
+             * @public
+             */
+            Object.defineProperty(self,"idTag",{get: getIdTag,set: setIdTag, enumerable: true});
             var _idTag = '';
             function getIdTag(){
                 return _idTag;
@@ -70,6 +70,12 @@
             function setIdTag(value){
                 _idTag = value;
             }
+            /**
+             * The HTML DOM element
+             * @type    {object}
+             * @public
+             */
+            Object.defineProperty(self,"DOM",{get: getDOM,set: setDOM, enumerable: true});
             var _DOM = null;
             function getDOM(){
                 // DOM object identified by id Tag
@@ -84,66 +90,9 @@
                 _DOM = value;
             }
 
-            /**
-             * Sets model properties based on provided associative array
-             *
-             * @method  setFromArray
-             * @public
-             * @param {object}   propArray
-             * @param {int}     propArray.id    - model id
-             * @param {string}  propArray.idTag - model DOM element id tag
-             *
-             */
-            self.setFromArray = function(propArray){
-                // check to make sure argument is an array object
-                if(typeof propArray === 'object'){
-                    // first set the id and idTag properties in order to initialize the DOM property, which other setters may depend upon
-                    if(propArray.id){
-                        self['id'] = propArray.id;
-                        delete propArray.id;
-                        if(propArray.idTag){
-                            self['idTag'] = propArray.idTag;
-                            delete propArray.idTag;
-                        }
-                    }
-                    // set properties per argument passed during construction
-                    for(var $key in propArray){
-                        // set property if it exists anywhere in prototype chain, hasOwnProperty only checks the object itself
-                        if($key in self){
-                            // use self reference in order to execute setter method, call using bracket notation within object scope
-                            if(propArray[$key] !== null){
-                                    self[$key] = propArray[$key];
-                            }
-                        }else{
-                            // check for lower case version of property
-                            if(_lcFirst($key) in self){
-                                if(propArray[$key] !== null){
-                                    self[_lcFirst($key)] = propArray[$key];
-                                }
-                            }else{
-                                // log non-existent property
-                                SysMan.Logger.entry(
-                                    'Property '+$key+' does not exist.',
-                                    self.constructor.name,
-                                    SysMan.Logger.TYPE.ERROR,
-                                    SysMan.Logger.ERRNO.MODEL_ERROR
-                                )
-                            }
-                        }
-                    }
-                }else{
-                    var _msg = 'Model.setFromArray() operation failed for object = ' + self.constructor.name +
-                        '.  Expected JS object mapping property to value, but it was not.  The value follows:';
-                    SysMan.Logger.entry(_msg,'App_Common_Abstracts_Model',SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.MODEL_GET_ERROR);
-                    console.log(propArray);
-                }
-
-            };
-
             /************************
              * CONSTRUCTOR LOGIC
              ************************/
-
             self.excludeFromPost(['uid','idTag','DOM','properties','x','y','height','width','SysMan']);
 
             if(data){
@@ -154,68 +103,205 @@
             return self;
         }
 
-        /*****************************************
-         * PROTOTYPE PUBLIC PROPERTIES DECLARATION
-         *****************************************/
+        /***************************************************
+         * PROTOTYPE PUBLIC PROPERTIES / SETTERS and GETTERS
+         ***************************************************/
         /**
-         * @property    App_Common_Abstracts_Model#x             - x location of the object (typically applies to canvas object)
+         * x location of the object (typically applies to canvas object)
          * @type        int
          * @public
          */
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"x",{get: getX, set: setX});
-
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"x",{get: getX, set: setX, enumerable: true});
+        var _x = [];
+        function getX(){
+            return _x[this.uid];
+        }
+        function setX(value){
+            _x[this.uid] = value;
+        }
         /**
-         * @property    App_Common_Abstracts_Model#y             - y location of the object (typically applies to canvas object)
+         * y location of the object (typically applies to canvas object)
          * @type        int
          * @public
          */
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"y",{get: getY, set: setY});
-
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"y",{get: getY, set: setY, enumerable: true});
+        function getY(){
+            return _y[this.uid];
+        }
+        var _y = [];
+        function setY(value){
+            _y[this.uid] = value;
+        }
         /**
-         * @property    App_Common_Abstracts_Model#height        - height of object
+         * height of object
          * @type        int
          * @public
          */
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"height",{get: getHeight, set: setHeight});
-
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"height",{get: getHeight, set: setHeight, enumerable: true});
+        var _height = [];
+        function getHeight(){
+            return _height[this.uid];
+        }
+        function setHeight(value){
+            _height[this.uid] = value;
+        }
         /**
-         * @property    App_Common_Abstracts_Model#width         - width of the object
+         * width of the object
          * @type        int
          * @public
          */
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"width",{get: getWidth, set: setWidth});
-
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"width",{get: getWidth, set: setWidth, enumerable: true});
+        var _width = [];
+        function getWidth(){
+            return _width[this.uid];
+        }
+        function setWidth(value){
+            _width[this.uid] = value;
+        }
         /**
-         * @property    App_Common_Abstracts_Model#SysMan      - reference to the SysMan singleton
+         * reference to the SysMan singleton
          * @type        App_Common_Models_SysMan
          * @public
          **/
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"SysMan",{get: getSysMan, set: setSysMan});
-
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"SysMan",{get: getSysMan, set: setSysMan, enumerable: true});
+        function getSysMan(){
+            return SysMan;
+        }
+        function setSysMan(data){
+            var _msg = 'Set of Model.SysMan not allowed!';
+            SysMan.Logger.entry(_msg,self.constructor.name,SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.MODEL_ERROR);
+            //SysMan.setFromArray(data);
+        }
         /**
-         * @property    App_Common_Abstracts_Model#properties      - all properties attached to the model
-         * @type        string[] 
+         * all properties attached to the model
+         * @type        string[]
          * @public
          **/
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"properties",{get: getProperties, set: setProperties});
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"properties",{get: getProperties, set: setProperties, enumerable: true});
+        var _properties = [];
+        function getProperties(){
+            // todo:  Model.properties getter does not grab prototype properties from the superclass (itself)
+//            return Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+            if(!(this.uid in _properties)){
+                var i;
+                var isFunction;
+                var isProtected;
 
+                // todo: it's likely that specifying Object.defineProperty as enumerable will show prototype properties, must validate this
+                _properties[this.uid] = Object.getOwnPropertyNames(this);
+
+                // build JSON object of only model properties
+                var _prototype = Object.getPrototypeOf(this);   //eval(this.constructor.name + '.prototype');
+                _properties[this.uid] = _properties[this.uid].concat(Object.getOwnPropertyNames(_prototype));
+
+                for (i=0;i<_properties[this.uid].length;i++){
+                    isFunction = typeof this[_properties[this.uid][i]] == 'function';
+                    isProtected = _properties[this.uid][i].charAt(0) == '_';
+                    if(isFunction || isProtected){
+                        // remove all functions from properties array
+                        _properties[this.uid].splice(i,1);
+                        // set i back one to account for element removal
+                        i=i-1;
+                    }
+                }
+            }
+            return _properties[this.uid];
+        }
+        function setProperties(){
+            this.SysMan.Logger.entry(
+                'Set of "properties" not allowed!',
+                this.constructor.name,
+                this.SysMan.Logger.TYPE.ERROR,
+                this.SysMan.Logger.ERRNO.MODEL_ERROR);
+        }
         /**
-         * @property    App_Common_Abstracts_Model#msg      - stores messages as an array of objects with keys ("type","text")
-         * @type        string|object[]
+         * stores messages as an array of Message objects with keys ("type","text")
+         * @type        {{text:string,type:string}|App_Common_Models_Message|App_Common_Models_Message[]}
          * @public
          **/
-         Object.defineProperty(App_Common_Abstracts_Model.prototype,"msg",{get: getMsg, set: setMsg});
-
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"msg",{get: getMsg, set: setMsg, enumerable: true});
+        var _msg = [];
+        function getMsg(){
+            return _msg[this.uid];
+        }
+        function setMsg(x){
+            if(typeof x === 'App_Common_Models_Message'){
+                if(this.uid in _msg){
+                    _msg[this.uid].push(x);
+                }else{
+                    _msg[this.uid] = [];
+                    _msg[this.uid].push(x);
+                }
+            }
+            else if(Array.isArray(x) && x.length > 0){
+                // must be an array of Message objects
+                if(typeof x === 'App_Common_Models_Message'){
+                    _msg[this.uid] = x;
+                }else{
+                    SysMan.Logger.entry(
+                        self.constructor.name + 'setMsg() value incorrect',
+                        'App_Common_Abstracts_Model',
+                        SysMan.Logger.TYPE.ERROR
+                    )
+                }
+            }
+            // assume clearing message array, null is also considered object and/or array
+            else if(Array.isArray(x) && x.length == 0){
+                _msg[this.uid] = [];
+            }
+            // else object passed representing Message object
+            else if(typeof x === 'object'){
+                x = new Message(x);
+                if(this.uid in _msg){
+                    _msg[this.uid].push(x);
+                }else{
+                    _msg[this.uid] = [];
+                    _msg[this.uid].push(x);
+                }
+            }
+            else{
+                // nothing
+            }
+        }
         /**
-         * @property    App_Common_Abstracts_Model#status      - tracks models status from http request to receipt
+         * tracks models status from http request to receipt
          * @type        string
          * @public
          **/
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,'status',{get: getStatus,set: setStatus});
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,'status',{get: getStatus,set: setStatus, enumerable: true});
+        var _status = [];
+        function getStatus(){
+            return _status[this.uid];
+        }
+        function setStatus(value){
+            _status[this.uid] = value;
+        }
 
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"PRE_DISPATCH",{value: "PRE_DISPATCH", writable: false});
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"POST_DISPATCH",{value: "POST_DISPATCH", writable: false});
-        Object.defineProperty(App_Common_Abstracts_Model.prototype,"READY",{value: "READY", writable: false});
+
+        /*****************
+         * MODEL CONSTANTS
+         *****************/
+        /**
+         * Used to flag sub-state of a model as Pre-dispatch
+         * @constant
+         * @type    {string}
+         * @public
+         */
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"PRE_DISPATCH",{value: "PRE_DISPATCH", writable: false, enumerable: false});
+        /**
+         * Used to flag sub-state of a model as post-dispatch
+         * @constant
+         * @type    {string}
+         * @public
+         */
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"POST_DISPATCH",{value: "POST_DISPATCH", writable: false, enumerable: false});
+        /**
+         * Used to flag sub-state of a model as ready
+         * @constant
+         * @type    {string}
+         * @public
+         */
+        Object.defineProperty(App_Common_Abstracts_Model.prototype,"READY",{value: "READY", writable: false, enumerable: false});
 
         /**
          * Converts model to JSON object containing only the model properties
@@ -247,56 +333,15 @@
             return _tmp;
         };
 
-        var _excludeFromPost = [];
-        /**
-         * Adds property names to exclude from any post or put operation to the backend
-         *
-         * @method   excludeFromPost
-         * @public
-         * @param    {string[]}  props           - array of properties to exclude from post
-         */
-        App_Common_Abstracts_Model.prototype.excludeFromPost = function(props){
-            if(typeof this.uid == 'undefined'){
-                SysMan.Logger.entry('Tried to access model ' + this.constructor.name + ' before the abstract was extended.',
-                    this.constructor.name,SysMan.Logger.TYPE.ERROR, SysMan.Logger.ERRNO.MODEL_ERROR);
-            }else{
-                if(!(this.uid in _excludeFromPost)){
-                    _excludeFromPost[this.uid] = props;
-                }else{
-                    for(var i = 0;i<props.length;i++){
-                        if(_excludeFromPost[this.uid].indexOf(props[i]) < 0){
-                            _excludeFromPost[this.uid].push(props[i]);
-                        }
-                    }
-                }
-            }
-
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        /**
-         * Removes message from msg property
-         *
-         * @method   removeMsg
-         * @public
-         * @param    {int}      index       - index to remove
-         * @return   {boolean}
-         */
-        App_Common_Abstracts_Model.prototype.removeMsg = function(index){
-            if(index < this.msg.length){
-                this.msg.splice(index, 1);
-                return true;
-            }else{
-                return false;
-            }
-        };
-
+        /*************************************************
+         * PROTOTYPE PUBLIC METHODS DECLARATION/DEFINITION
+         *************************************************/
         /**
          * TODO:  It is possible that multiple actions go out before return of information from backend.  The status
          * property tracks a singular event without awareness of other pending actions.  The status update needs to be
          * aware of these other events so that the flag is not changed to READY when the object is not actually READY.
          */
-        
+
         /**
          * Impromptu class allowing for documentation of the response.data return value
          *
@@ -310,11 +355,12 @@
          * Retrieves model attributes from data source based on “id” property.  This may result in getting information
          * from multiple tables as dictated by the mapper side of the ORM model.  On the frontend side if “id” property
          * present, find establishes the id as a URL parameter and execute a “get” request.  Otherwise, find executes
-         * an “index” request to the backend.  Backend proceeds to execute find operation.
+         * an “index” request to the backend.  Backend proceeds to execute find operation.  Upon successful response
+         * from backend, model executes "_postFind()" logic.
          *
          * @method   find
          * @public
-         * @return  {function}
+         * @return  {promise}
          */
         App_Common_Abstracts_Model.prototype.find = function(){
             // proxy this so it does not get lost in the promise
@@ -374,7 +420,9 @@
          * then “_postSave()” logic, then set status as READY.
          *
          * @method   save
-         * @protected
+         * @public
+         * @return	{promise}   - Since this is an asynchronous request, a promise allows for reaction once response
+         * returns from backend in lieu of or in addition to using the "_postSave()" method.
          */
         App_Common_Abstracts_Model.prototype.save = function(){
             // proxy this so it does not get lost in the promise
@@ -445,7 +493,7 @@
          * @param   {string}        method      - method to relay to the backend
          * @param   {boolean}       noModel     - flags backend not to return model
          * @param   {object}        args        - object representing the arguments associated with the method
-         * @protected
+         * @public
          */
         App_Common_Abstracts_Model.prototype.relay = function(method,noModel,args){
             // proxy this so it does not get lost in the promise
@@ -543,7 +591,7 @@
          *
          * @method   remove
          * @public
-         * @return  {function}
+         * @return  {promise}
          */
         App_Common_Abstracts_Model.prototype.remove = function(){
             // proxy this so it does not get lost in the promise
@@ -556,6 +604,12 @@
             self.status = self.PRE_DISPATCH;
 
             if(self._preDispatch()){
+                /**
+                 * @function $http
+                 * @param   {{url:string,data:{id:int},method:string}}
+                 * @return {promise}
+                 * @private
+                 */
                 _promise = $http({url:_url,data: {id: self.id},method: "DELETE"})
                     .then(
                     function(response) {
@@ -591,6 +645,105 @@
         };
 
         /**
+         * Sets model properties based on provided associative array
+         *
+         * @method  setFromArray
+         * @public
+         * @param {object}  propArray    - JSON array indexed by property name
+         * @param {string}  propArray.idTag - DOM tag for model
+         * @param {int}     propArray.id    - model primary key
+         *
+         */
+        App_Common_Abstracts_Model.prototype.setFromArray = function(propArray){
+            // check to make sure argument is an array object
+            if(typeof propArray === 'object'){
+                // first set the id and idTag properties in order to initialize the DOM property, which other setters may depend upon
+                if(propArray.id){
+                    this.id = propArray.id;
+                    delete propArray.id;
+                    if(propArray.idTag){
+                        this.idTag = propArray.idTag;
+                        delete propArray.idTag;
+                    }
+                }
+                // set properties per argument passed during construction
+                for(var $key in propArray){
+                    // set property if it exists anywhere in prototype chain, hasOwnProperty only checks the object itself
+                    if($key in this){
+                        // use self reference in order to execute setter method, call using bracket notation within object scope
+                        if(propArray[$key] !== null){
+                            this[$key] = propArray[$key];
+                        }
+                    }else{
+                        // check for lower case version of property
+                        if(_lcFirst($key) in this){
+                            if(propArray[$key] !== null){
+                                this[_lcFirst($key)] = propArray[$key];
+                            }
+                        }else{
+                            // log non-existent property
+                            SysMan.Logger.entry(
+                                'Property '+$key+' does not exist.',
+                                this.constructor.name,
+                                SysMan.Logger.TYPE.ERROR,
+                                SysMan.Logger.ERRNO.MODEL_ERROR
+                            )
+                        }
+                    }
+                }
+            }else{
+                var _msg = 'Model.setFromArray() operation failed for object = ' + this.constructor.name +
+                    '.  Expected JS object mapping property to value, but it was not.  The value follows:';
+                SysMan.Logger.entry(_msg,'App_Common_Abstracts_Model',SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.MODEL_GET_ERROR);
+            }
+
+        };
+
+        var _excludeFromPost = [];
+        /**
+         * Adds itemized properties to the exclusion list for "POST" or "PUT" operations to the backend.
+         *
+         * @method   excludeFromPost
+         * @public
+         * @param    {string[]}  props           - array of properties to exclude from post
+         */
+        App_Common_Abstracts_Model.prototype.excludeFromPost = function(props){
+            if(typeof this.uid == 'undefined'){
+                SysMan.Logger.entry('Tried to access model ' + this.constructor.name + ' before the abstract was extended.',
+                    this.constructor.name,SysMan.Logger.TYPE.ERROR, SysMan.Logger.ERRNO.MODEL_ERROR);
+            }else{
+                if(!(this.uid in _excludeFromPost)){
+                    _excludeFromPost[this.uid] = props;
+                }else{
+                    for(var i = 0;i<props.length;i++){
+                        if(_excludeFromPost[this.uid].indexOf(props[i]) < 0){
+                            _excludeFromPost[this.uid].push(props[i]);
+                        }
+                    }
+                }
+            }
+
+        };
+
+        //noinspection JSUnusedGlobalSymbols
+        /**
+         * Removes first message from msg property array of messages
+         *
+         * @method   removeMsg
+         * @public
+         * @param    {int}      index       - index to remove
+         * @return   {boolean}
+         */
+        App_Common_Abstracts_Model.prototype.removeMsg = function(index){
+            if(index < this.msg.length){
+                this.msg.splice(index, 1);
+                return true;
+            }else{
+                return false;
+            }
+        };
+
+        /**
          * Empty shell method intended to work as a “protected” method.  Intent is overwrite by specific Model defining
          * logic to implement after backend returns information.
          *
@@ -612,7 +765,7 @@
          * @param       {object}  results     - JSON object containing the results from the relayed method
          * @return      {boolean}
          */
-        //noinspection
+            //noinspection
         App_Common_Abstracts_Model.prototype._postRelay = function(results){
             return true;
         };
@@ -660,120 +813,6 @@
         App_Common_Abstracts_Model.prototype._postDispatch = function(){
             // TODO:  Overwrite during creation of a specific model
         };
-
-        /******************************************
-         * PROTOTYPE GETTERS and SETTERS definition
-         ******************************************/
-        function getSysMan(){
-            return SysMan;
-        }
-        function setSysMan(data){
-            //var _msg = 'Set of Model.SysMan not allowed!';
-            //SysMan.Logger.entry(_msg,self.constructor.name,SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.MODEL_ERROR);
-            SysMan.setFromArray(data);
-        }
-        var _x = [];
-        function getX(){
-            return _x[this.uid];
-        }
-        function setX(value){
-            _x[this.uid] = value;
-        }
-        function getY(){
-            return _y[this.uid];
-        }
-        var _y = [];
-        function setY(value){
-            _y[this.uid] = value;
-        }
-        var _height = [];
-        function getHeight(){
-            return _height[this.uid];
-        }
-        function setHeight(value){
-            _height[this.uid] = value;
-        }
-        var _width = [];
-        function getWidth(){
-            return _width[this.uid];
-        }
-        function setWidth(value){
-            _width[this.uid] = value;
-        }
-        var _properties = [];
-        function getProperties(){
-            // todo:  Model.properties getter does not grab prototype properties from the superclass (itself)
-//            return Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-            if(!(this.uid in _properties)){
-                var i;
-                var isFunction;
-                var isProtected;
-
-                // todo: it's likely that specifying Object.defineProperty as enumerable will show prototype properties, must validate this
-               _properties[this.uid] = Object.getOwnPropertyNames(this);
-
-                // build JSON object of only model properties
-                var _prototype = Object.getPrototypeOf(this);   //eval(this.constructor.name + '.prototype');
-                _properties[this.uid] = _properties[this.uid].concat(Object.getOwnPropertyNames(_prototype));
-
-                for (i=0;i<_properties[this.uid].length;i++){
-                    isFunction = typeof this[_properties[this.uid][i]] == 'function';
-                    isProtected = _properties[this.uid][i].charAt(0) == '_';
-                    if(isFunction || isProtected){
-                        // remove all functions from properties array
-                        _properties[this.uid].splice(i,1);
-                        // set i back one to account for element removal
-                        i=i-1;
-                    }
-                }
-            }
-            return _properties[this.uid];
-        }
-        function setProperties(){
-            this.SysMan.Logger.entry(
-                'Set of "properties" not allowed!',
-                this.constructor.name,
-                this.SysMan.Logger.TYPE.ERROR,
-                this.SysMan.Logger.ERRNO.MODEL_ERROR);
-        }
-        var _msg = [];
-        function getMsg(){
-            return _msg[this.uid];
-        }
-        function setMsg(x){
-            if(Array.isArray(x) && x.length > 0){
-                _msg[this.uid] = x;
-                // bubble up to SysMan
-                this.SysMan.msg = x;
-            }
-            // assume clearing message array, null is also considered object and/or array
-            else if(Array.isArray(x) && x.length == 0){
-                _msg[this.uid] = [];
-                // do not copy to SysMan.msg
-            }
-            // else add entry to existing message array
-            else if(typeof x === 'object'){
-                if(this.uid in _msg){
-                    _msg[this.uid].push(x);
-                }else{
-                    _msg[this.uid] = [];
-                    _msg[this.uid].push(x);
-                }
-                // bubble up to SysMan
-                this.SysMan.msg = x;
-            }
-            else{
-                // nothing
-            }
-
-        }
-        var _status = [];
-        function getStatus(){
-            return _status[this.uid];
-        }
-        function setStatus(value){
-            _status[this.uid] = value;
-        }
 
         /*********************************************
          * PRIVATE FUNCTIONS (shared at Factory level)
@@ -833,10 +872,6 @@
 
         function _processArray(arr,scrubExcludes){
             var _tmp = [];
-            if(self.constructor.name == 'WordShuffle_Models_Game'){
-                console.log(arr);
-                console.log(Object.prototype.toString.call(arr[0]));
-            }
             for(var j=0;j<arr.length;j++){
                 if(arr[j] instanceof App_Common_Abstracts_Model){
                     _tmp.push(arr[j].toJSON(scrubExcludes));
@@ -855,7 +890,11 @@
     }
 
     // todo: inject dependenciesObject
-    App_Common_Abstracts_ModelFactory.$inject = ['App_Common_Models_SysMan','$http'];
+    App_Common_Abstracts_ModelFactory.$inject = [
+        'App_Common_Models_SysMan',
+        '$http',
+        'App_Common_Models_Message'
+    ];
 
     // todo: register model with Angularjs application for dependency injection as required
     angular.module('App').factory('App_Common_Abstracts_Model', App_Common_Abstracts_ModelFactory);

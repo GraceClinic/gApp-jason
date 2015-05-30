@@ -7,19 +7,28 @@
         <div class="Right-Zone">
             <ul id="Controller-Menu" class="Model Menu" >
                 <li class="Model Menu Item" >
-                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"welcome",action:"index"})'>Welcome</a>
+                    <a
+                        ui-sref='module.controller.action({module:"wordshuffle",controller:"welcome",action:"index"})'
+                        ng-class="{active: Layout.isActive('welcome')}"
+                    >Welcome</a>
                 </li>
                 <li class="Model Menu Item" >
-                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>Setup</a>
+                    <a
+                            ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'
+                            ng-class="{active: Layout.isActive('setup')}"
+                            >Setup</a>
                 </li>
                 <li class="Model Menu Item" >
-                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"play",action:"index"})'>Play</a>
+                    <a
+                            ui-sref='module.controller.action({module:"wordshuffle",controller:"play",action:"index"})'
+                            ng-class="{active: Layout.isActive('play')}"
+                            >Play</a>
                 </li>
             </ul>
         </div>
     </div>
     <div id="WordShuffle_Controller" ui-view></div>
     <div id="FooterBar">
-        <div id="copyright">Copyright 2014 by Grace Clinic Holdings LLC</div>
+        <div id="copyright">Copyright 2015 by Grace Clinic Holdings LLC</div>
     </div>
 </div>

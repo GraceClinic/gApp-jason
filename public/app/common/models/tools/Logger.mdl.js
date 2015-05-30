@@ -1,11 +1,17 @@
 (function () {
 
+    /**
+     *
+     * @param dateFilter        (object)        Angularjs dateFilter object
+     *
+     * @returns {App_Common_Models_Tools_Logger}
+     */
     function App_Common_Models_Tools_LoggerFactory(dateFilter) {
         // private static variable for tracking error state
         var _inError = false;
 
         /**
-         * Provides for logging to external file and maintenance of internal stack of last 10 entry events
+         * The global Logger object for general troubleshooting and error handling
          *
          * @class       App_Common_Models_Tools_Logger
          * @returns     {App_Common_Models_Tools_Logger}
@@ -82,7 +88,7 @@
                         self.inError = true;
                     }
                 }
-                if(_stack.length > 10){
+                if(_stack.length > 30){
                     // remove first element
                     _stack.shift();
                 }
@@ -114,14 +120,15 @@
             var _errMsg = "";
             function getErrMsg(){
                 if(_errMsg == ""){
-                    return "This is the error page!";
+                    return "No error now, you just routed to the error page!";
                 }else{
                     return _errMsg;
                 }
             }
             function setErrMsg(value){
+                console.log('Logger.setErrMsg = ',value);
                 // maintain first error in message string, others will be in the stack output
-                if(_errMsg == ""){
+                if(value && typeof value != 'undefined' &&_errMsg == ""){
                     _errMsg = value;
                 }
             }

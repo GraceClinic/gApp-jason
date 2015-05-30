@@ -3,15 +3,14 @@
     /**
      * Model factory returning a single instance of WordShuffle_Models_Game
      *
-     * @param {App_Common_Abstracts_Model}      Model      - superclass
-     * @param {App_Common_Models_Tools_Timer}   Timer       - Timer object for tracking game
-     * @param          Round       - Round object that create the game
-     * @param         Square      - game square object constructor
-     * @param         Clock      - game clock constructor
+     * @function Game_Factory
+     * @param   {App_Common_Abstracts_Model}      Model      - superclass
+     * @param   {function(new:WordShuffle_Models_Game_Round)}      Round       - Round object that create the game
+     * @param   {function(new:WordShuffle_Models_Game_Square)}      Square      - game square object constructor
+     * @param   {function(new:WordShuffle_Models_Game_Clock)}    Clock      - game clock constructor
      * @returns {WordShuffle_Models_Game}
-     * @constructor
      */
-    function Game_Factory(Model,Timer,Round,Square,Clock) {
+    function Game_Factory(Model,Round,Square,Clock) {
 
         /**
          * WordShuffle game
@@ -26,27 +25,17 @@
             // proxy the "this" keyword to avoid scope resolution issues
             var self = this;
 
-            self._rootURL = '/WordShuffle/Game/';
-
             /************************
              * Public Properties declarations
              ************************/
             /**
-             * @property    {int}       idPlayer
+             * @property    idPlayer {int}       - player unique id
              */
             Object.defineProperty(self,"idPlayer",{get: getIdPlayer,set: setIdPlayer});
-            /**
-             * @property    {Timer}     Timer
-             */
-            Object.defineProperty(self,"Timer",{get: getTimer,set: setTimer});
             /**
              * @property    {int}       round
              */
             Object.defineProperty(self,"round",{get: getRound,set: setRound});
-            /**
-             * @property    {Board}     Board
-             */
-            Object.defineProperty(self,"Board",{get: getBoard,set: setBoard});
             /**
              * @property    {int}       roundsPerGame
              */
@@ -141,7 +130,6 @@
              **/
             Object.defineProperty(self,'timeRemaining',{get: getTimeRemaining,set: setTimeRemaining,enumerable:true});
 
-
             /*****************************************
              * Public Methods declaration / definition
              *****************************************/
@@ -171,26 +159,12 @@
             function setIdPlayer(value){
                 _idPlayer = value;
             }
-            var _Timer = null;
-            function getTimer(){
-                return _Timer;
-            }
-            function setTimer(value){
-                _Timer = value;
-            }
             var _round = 1;
             function getRound(){
                 return _round;
             }
             function setRound(value){
                 _round = value;
-            }
-            var _Board = null;
-            function getBoard(){
-                return _Board;
-            }
-            function setBoard(value){
-                _Board = value;
             }
             var _secondsPerRound = 0;   // default set from backend
             function getSecondsPerRound(){
@@ -451,10 +425,11 @@
             self.SysMan.Logger.entry('START ' + self.constructor.name+'.construct()',self.constructor.name);
             Model.call(self,data);
 
+            self._rootURL = '/WordShuffle/Game/';
+
             self.excludeFromPost([
                 'idPlayer',
                 'Timer',
-                'Board',
                 'points',
                 'start',
                 'end',
@@ -636,7 +611,6 @@
     // inject dependenciesObject
     Game_Factory.$inject = [
         'App_Common_Abstracts_Model',
-        'App_Common_Models_Tools_Timer',
         'WordShuffle_Models_Game_Round',
         'WordShuffle_Models_Game_Square',
         'WordShuffle_Models_Game_Clock'
