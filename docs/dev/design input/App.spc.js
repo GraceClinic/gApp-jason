@@ -3,6 +3,7 @@
  *
  * The AngularJS root module for the entire web application
  *
+ * Dependency injections:
  * @param   ui.router       {object}            Angularjs module for controlling URL state
  * @param   ui.bootstrap    {object}            Angularjs module for implementation of Twitter bootstrap functions and features
  * @param   App_Main        {App_Main}          Grace Application main module

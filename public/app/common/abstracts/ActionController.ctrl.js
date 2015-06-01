@@ -89,26 +89,31 @@
         function _processStateChange(newState,oldState,isConstruct){
             var _paramCorrect = ('module' in newState) && ('controller' in newState) && ('action' in newState);
             var _sameState =
-                SysMan.state.module == newState.module &&
-                SysMan.state.controller == newState.controller &&
-                SysMan.state.action == newState.action;
+                oldState.module == newState.module &&
+                oldState.controller == newState.controller &&
+                oldState.action == newState.action;
             var _newController =
-                SysMan.state.module != newState.module ||
-                (SysMan.state.module == newState.module && SysMan.state.controller != newState.controller);
+                oldState.module != newState.module ||
+                (oldState.module == newState.module && oldState.controller != newState.controller);
+            var _errMsg = '';
 
-            // Process state change always on construction, otherwise only when changing action of same controller.
-            // Construction flag required because the state transition before the new controller is instantiated.
+            SysMan.Logger.entry(
+                self.constructor.name + '.processStateChange() from "' +
+                oldState.module + '.' + oldState.controller + '.' + oldState.action + '" to "' +
+                newState.module + '.' + newState.controller + '.' + newState.action + '"',
+                'App_Common_Abstracts_ActionController'
+            );
+
+            // Process URL action always on construction, otherwise only when changing action of same controller.
+            // Construction flag required because the state transitions before the new controller is instantiated.
             // Hence the logic below cannot run the target controller's action because it does not yet exist.
             if(_paramCorrect && (isConstruct || (!_sameState && !_newController))){
-                SysMan.Logger.entry(
-                    self.constructor.name + '.processStateChange() to ' + JSON.stringify(newState),
-                    'App_Common_Abstracts_ActionController'
-                );
                 SysMan.state = {
                     "module":       newState.module,
                     "controller":   newState.controller,
                     "action":       newState.action
                 };
+
                 try{
                     SysMan.Logger.entry('START ' + self.constructor.name + '.' + newState.action + 'Action()','App_Common_Abstracts_ActionController');
                     // run the action specified by the URL
@@ -116,11 +121,26 @@
                     SysMan.Logger.entry('END ' + self.constructor.name + '.' + newState.action + 'Action()','App_Common_Abstracts_ActionController');
                 }
                 catch(err){
-                    var _errMsg = 'You did not specify a "' + newState.action + '" action for your controller = "' + self.constructor.name +
-                        '" contained in your module = "' + newState.module + '".  Error reported:  ' + err.message;
+                    _errMsg = 'You did not specify a "' + newState.action + '" action for your controller = "'
+                    + self.constructor.name + '".  Error reported:  ' + err.message;
                     SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_ActionController',SysMan.Logger.TYPE.WARNING);
                 }
 
+            }
+
+            // run any closure logic before the active controller terminates
+            if(_paramCorrect && !isConstruct && _newController){
+                try{
+                    SysMan.Logger.entry('START ' + self.constructor.name + '._onClose()','App_Common_Abstracts_ActionController');
+                    // run the action specified by the URL
+                    self['_onClose'](newState);
+                    SysMan.Logger.entry('END ' + self.constructor.name + '._onClose()','App_Common_Abstracts_ActionController');
+                }
+                catch(err){
+                    _errMsg = 'You did not specify a _onClose() method for your controller = "' + self.constructor.name
+                        + '".  On attempt to run method, response was:  ' + err.message;
+                    SysMan.Logger.entry(_errMsg,'App_Common_Abstracts_ActionController',SysMan.Logger.TYPE.WARNING);
+                }
             }
 
         }

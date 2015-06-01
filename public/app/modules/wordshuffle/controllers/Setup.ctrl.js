@@ -132,6 +132,21 @@
             self.Player.save();
         };
 
+        /******************
+         * PROTECTED METHODS
+         ******************/
+        /**
+         * @method   _onClose
+         * Closure logic to implement on termination of the controller.  The ActionController superclass runs this
+         * method against the current controller when the URL state transition dictates changing the controller.
+         *
+         * @protected
+         * @param    newState   {{module:string,controller:string,action:string}}    The state replacing current state
+         */
+        self._onClose = function(newState){
+            // nothing
+        };
+
         // Extend ActionController superclass as allowed for by AngularJS.
         // This must execute after definitions of all controller properties, setters, getters, and methods
         $controller('App_Common_Abstracts_ActionController', {$scope: $scope, self: self});

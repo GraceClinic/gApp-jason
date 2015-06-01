@@ -24,8 +24,10 @@ class Main_ErrorController extends Main_Controller_Abstract
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
                 // 404 error -- controller or action not found
                 $this->getResponse()->setHttpResponseCode(404);
-                $priority = Zend_Log::NOTICE;
-                $this->view->message = 'Page not found';
+//                $priority = Zend_Log::NOTICE;
+//                $this->view->message = 'Page not found';
+                // route to the root of the AngularJS application
+                $this->_redirect('/app.html');
                 break;
             default:
                 // application error
@@ -36,7 +38,9 @@ class Main_ErrorController extends Main_Controller_Abstract
         }
 
         // Log exception, if logger available
+        /** @var Zend_Log Handle to Zend logging object*/
         if ($log = $this->getLog()) {
+            $priority = Zend_Log::NOTICE;
             $log->log($this->view->message, $priority, $errors->exception);
             $log->log('Request Parameters', $priority, $errors->request->getParams());
         }
@@ -49,6 +53,9 @@ class Main_ErrorController extends Main_Controller_Abstract
         $this->view->request   = $errors->request;
     }
 
+    /**
+     * @return Zend_Log
+     */
     public function getLog()
     {
         $bootstrap = $this->getInvokeArg('bootstrap');

@@ -20,15 +20,12 @@
             return SysMan.state.controller == ctrl;
         };
 
-
         /*******************
          * CONSTRUCTOR LOGIC
          *******************/
         SysMan.Logger.entry('START ' + self.constructor.name + '.construct()', self.constructor.name);
 
-
         SysMan.Logger.entry('END ' + self.constructor.name + '.construct()', self.constructor.name);
-
     }
 
     // Explicitly define the constructor

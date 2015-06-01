@@ -13,12 +13,14 @@ angular.module('App')
 
     // redirect and establish catch all fallback
     $urlRouterProvider
-        .when('/','/m/wordshuffle/welcome/index')
-        .when('/m/wordshuffle','/m/wordshuffle/welcome/index')
-        .when('/m/wordshuffle/','/m/wordshuffle/welcome/index')
+        .when('/','/m/main/index/index')
+        // given module and no controller, go to main index
+        .when('/m/:module','/m/main/index/index')
+        .when('/m/:module/','/m/main/index/index')
+        // given module and controller, but not action, go to controller index
         .when('/m/:module/:controller','/m/:module/:controller/index')
         .when('/m/:module/:controller/','/m/:module/:controller/index')
-        .otherwise('/m/wordshuffle/welcome/index');
+        .otherwise('/m/main/index/index');
 
     $stateProvider
         .state('module',{

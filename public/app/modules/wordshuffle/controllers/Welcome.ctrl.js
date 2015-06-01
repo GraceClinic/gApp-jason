@@ -50,6 +50,25 @@
             }
         };
 
+        /******************
+         * PROTECTED METHODS
+         ******************/
+        /**
+         * @method   _onClose
+         * Closure logic to implement on termination of the controller
+         *
+         * @protected
+         * @param    newState   {{module:string,controller:string,action:string}}    The state replacing current state
+         */
+        self._onClose = function(newState){
+            // clear SysMan messages, they are not relevant to other controllers
+            var i = self.msg.length;
+            while(i > 0){
+                self.msg.shift();
+                i--;
+            }
+        };
+
         // Extend ActionController superclass as allowed for by AngularJS.
         // This must execute after definitions of all controller properties, setters, getters, and methods
         $controller('App_Common_Abstracts_ActionController',{$scope: $scope, self: self});
@@ -60,11 +79,11 @@
         self.SysMan.Logger.entry('START ' + self.constructor.name + '.construct()','App_Common_Abstracts_ActionController');
 
         // clear any messages left over from previous controllers
-        var i = self.msg.length;
-        while(i > 0){
-            self.msg.shift();
-            i--;
-        }
+        //var i = self.msg.length;
+        //while(i > 0){
+        //    self.msg.shift();
+        //    i--;
+        //}
         self.msg = {text:'Welcome to WordShuffle!',type:Message.prototype.TYPES.INFO};
         self.msg = {
             text:   "Please read the instructions and learn more about this exciting game!",
