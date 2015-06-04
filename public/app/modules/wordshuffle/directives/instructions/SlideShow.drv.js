@@ -17,7 +17,7 @@
             Logger.entry('START ' + self.constructor.name + '.construct()',self.constructor.name);
 
             self.restrict = 'E';    // element name type directive
-            self.templateUrl = '/app/common/directives/SlideShow.drv.html';
+            self.templateUrl = '/app/modules/wordshuffle/directives/instructions/SlideShow.drv.html';
             self.scope = {
                 pages:      '=',        // array of Page models
                 dwell:      '='         // milli-seconds to show each page

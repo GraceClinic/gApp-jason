@@ -29,4 +29,7 @@
  * @param   App_WordShuffle {App_WordShuffle}   Grace Application WordShuffle module
  *
  **/
-angular.module('App', ['ui.router','ui.bootstrap','App_WordShuffle', 'App_Main']);     // create angular Module for usage
+angular.module('App', ['ui.router','ui.bootstrap','App_Main','App_WordShuffle'])
+    .run(['App_Common_Models_SysMan',function(SysMan){
+        SysMan.Logger.entry('START gApp application');
+    }]);

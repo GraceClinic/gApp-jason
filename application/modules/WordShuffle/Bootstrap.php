@@ -37,13 +37,18 @@ class WordShuffle_Bootstrap extends Zend_Application_Module_Bootstrap
 
         // create rest route for the entire WordShuffle module
         $restRoute = new Zend_Rest_Route($frontController,array(),
-            array('WordShuffle'=>
-                array(
-                    'Game',
-                    'Player'
-                )
-            )
+            array('WordShuffle')
         );
+        // if it were necessary to specify certain controllers with the 'WordShuffle' module, this would be the syntax
+//        $restRoute = new Zend_Rest_Route($frontController,array(),
+//            array('WordShuffle'=>
+//                array(
+//                    'Game',
+//                    'Player'
+//                )
+//            )
+//        );
+
         $frontController->getRouter()->addRoute('WordShuffle', $restRoute);
     }
 }

@@ -117,5 +117,5 @@
     ];
 
     // todo: register model with Angularjs application for dependency injection as required
-    angular.module('App_WordShuffle').factory('App_Common_Models_Message', App_Common_Models_MessageFactory);
+    angular.module('App').factory('App_Common_Models_Message', App_Common_Models_MessageFactory);
 })();

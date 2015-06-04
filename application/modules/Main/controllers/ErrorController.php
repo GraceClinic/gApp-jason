@@ -25,9 +25,9 @@ class Main_ErrorController extends Main_Controller_Abstract
                 // 404 error -- controller or action not found
                 $this->getResponse()->setHttpResponseCode(404);
 //                $priority = Zend_Log::NOTICE;
-//                $this->view->message = 'Page not found';
+                $this->view->message = 'Page not found';
                 // route to the root of the AngularJS application
-                $this->_redirect('/app.html');
+//                $this->_redirect('/app.html');
                 break;
             default:
                 // application error

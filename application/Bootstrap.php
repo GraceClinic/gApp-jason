@@ -53,9 +53,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
         $params = array(
             'host'     => 'localhost',  //DO NOT CHANGE THESE SETTINGS
-            'username' => 'e4User',        //Update your mysql database to use this user
-            'password' => 'e4User2e4',
-            'dbname'   => 'e4',        //Must stay uppercase; Case sensitive in CentOS
+            'username' => 'gappUsr',        //Update your mysql database to use this user
+            'password' => 'gappUsr2gapp',
+            'dbname'   => 'gapp',        //Must stay uppercase; Case sensitive in CentOS
         );
 
         $db = Zend_Db::factory('PDO_MYSQL', $params);

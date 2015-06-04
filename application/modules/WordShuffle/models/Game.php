@@ -15,7 +15,6 @@
  * @property    string    start             date time string current game started
  * @property    string    end               date time string current game ended
  * @property    WordShuffle_Model_Game_Round[]       Rounds          array of Round objects
- * @property    int         Board
  * @property    string      state          - state of game as one of the constants: NEW_GAME, IN_PROGRESS, COMPLETED, and ABANDONED
  * @property    array       Squares         - game squares
  * @property    string         word        - current word
@@ -301,13 +300,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         }
 
         return $this->_points;
-    }
-
-    protected function setBoard($x){
-        $this->_Board = $x;
-    }
-    protected function getBoard(){
-        return $this->_Board;
     }
 
     private $_Squares = null;
