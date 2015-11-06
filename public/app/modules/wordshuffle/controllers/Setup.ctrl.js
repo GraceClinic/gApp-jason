@@ -1,35 +1,23 @@
 (function () {
 
-    // todo: document new parameters as required and provide short description
     /**
-     * << short description >>
+     * Controller for authentication and configuration of game defaults
      *
      * @constructor
      * @extends {App_Common_Abstracts_ActionController}
      * @param   {object}        $scope      - local angular scope for this controller
      * @param   {function}      $controller - angular controller service responsible for instantiating controllers
-     * @param   {WordShuffle_Models_Game}   Game    - singleton Game object, only one game active per player
-     * @param   {WordShuffle_Models_Player} Player  - singleton Player object, only one player across controllers
-     * @this    WordShuffle_Controllers_Setup
+     * @param   {function}      $state      - ui.router state service for state routing
+     * @param   {WordShuffle_Models_Game}   Game        - singleton Game object, only one game active per player
+     * @param   {WordShuffle_Models_Player} Player      - singleton Player object, only one player across controllers
+     * @param   {App_Common_Models_Message} Message     - constructor for Message object
      */
-    function WordShuffle_Controllers_Setup($scope, $controller, Game, Player) {
+    function WordShuffle_Controllers_Setup($scope, $controller, $state, Game, Player, Message) {
         var self = this;
 
         /*************************************************
          * PROPERTY DECLARATIONS with GETTERS and SETTERS
          *************************************************/
-        /**
-         * @property    WordShuffle_Controllers_Setup#Game      - player's game object
-         * @type        WordShuffle_Models_Game
-         * @public
-         **/
-        Object.defineProperty(self,'Game',{get: getGame,set: setGame});
-        function getGame(){
-            return Game;
-        }
-        function setGame(){
-            self.SysMan.Logger.entry('Game.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
-        }
         /**
          * @property    WordShuffle_Controllers_Setup#Player      - player details
          * @type        WordShuffle_Models_Player
@@ -50,6 +38,10 @@
          **/
         var _showSecret = false;
         function getShowSecret(){
+            // if user not signed-in, revert to false
+            if(Player.signInState !== self.SysMan.SIGNED_IN){
+                _showSecret = false;
+            }
             return _showSecret;
         }
         function setShowSecret(value){
@@ -81,7 +73,7 @@
         self.indexAction = function(){
             // todo: define any parameters and then code action logic
             self.Player.find();
-            if(self.Game.state == self.Game.IN_PROGRESS){
+            if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }
         };
@@ -104,11 +96,11 @@
                 self.Player.save();
                 self.Player.saveIsPending = false;
                 // routing to play controller / play action will start the game
-                self.Game.newGame = true;
+                Game.newGame = true;
                 self.goToState('wordshuffle','play','play');
             }
             else{
-                self.Game.newGame = true;
+                Game.newGame = true;
                 self.goToState('wordshuffle','play','play');
             }
         };
@@ -122,7 +114,7 @@
             self.showSecret = !self.showSecret;
         };
         /**
-         * Proxy Player.save so controller can respond to save event.
+         * Proxy Player.save() method.  Resets "showSecret" property before execution of save.
          *
          * @method   savePlayer
          * @public                     - define scope
@@ -130,6 +122,37 @@
         self.savePlayer = function(){
             self.showSecret = false;
             self.Player.save();
+        };
+
+        /**
+         * Proxy Player.logout so controller can respond to successful logout.
+         *
+         * @method   playerLogout
+         * @public
+         */
+        self.playerLogout = function(){
+            var _newState = {
+                "module":       'wordShuffle',
+                "controller":   'setup',
+                "action":       'index'
+            };
+
+            var _promise = self.Player.logout();
+
+            if(_promise !== null){
+                _promise.then(function(response){
+                    // refresh page to load the anonymous player information
+                    if(response.data.results == true){
+                        $state.go('module.controller.action',_newState,{reload:true});
+                    }else{
+                        self.msg = {
+                            text:   "Oops, logout occurred, but there was an issue!",
+                            type:   Message.prototype.TYPES.INFO
+                        };
+                    }
+                });
+            }
+
         };
 
         /******************
@@ -154,8 +177,7 @@
         /*********************
          * CONSTRUCTOR LOGIC
          *********************/
-
-
+        
         self.SysMan.Logger.entry('START ' + self.constructor.name + '.construct()', 'App_Common_Abstracts_ActionController');
 
         self.SysMan.Logger.entry('END ' + self.constructor.name + '.construct()', 'App_Common_Abstracts_ActionController');
@@ -168,8 +190,10 @@
     WordShuffle_Controllers_Setup.$inject = [
         '$scope',
         '$controller',
+        '$state',
         'WordShuffle_Models_Game',
-        'WordShuffle_Models_Player'
+        'WordShuffle_Models_Player',
+        'App_Common_Models_Message'
     ];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Setup', WordShuffle_Controllers_Setup);

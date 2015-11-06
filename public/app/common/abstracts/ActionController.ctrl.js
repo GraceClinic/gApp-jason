@@ -178,5 +178,5 @@
 
     App_Common_Abstracts_ActionController.$inject = ['App_Common_Models_SysMan','$stateParams','$state','$rootScope','$scope','self'];
 
-    angular.module('App').controller('App_Common_Abstracts_ActionController',App_Common_Abstracts_ActionController);
+    angular.module('App_Common').controller('App_Common_Abstracts_ActionController',App_Common_Abstracts_ActionController);
 })();

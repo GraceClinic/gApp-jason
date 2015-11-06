@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="/app/modules/memory/views/Play.tpl.css">
+<div ng-controller="Memory_Controllers_Play as Memory_Play">
+    <div class="controller_play view_leftPanel">
+        Setup<br>
+        and<br>
+        Stats
+    </div>
+    <div class="controller_play view_rightPanel">
+        <app-common-directives-banner msg="Memory_Play.msg" expires="5000"></app-common-directives-banner>
+        <div ui-view></div>
+    </div>
+</div>

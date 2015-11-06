@@ -156,5 +156,5 @@
         '$interval'
     ];
 
-    angular.module('App').directive('appCommonDirectivesBanner',appCommonDirectivesBannerProvider);
+    angular.module('App_Common').directive('appCommonDirectivesBanner',appCommonDirectivesBannerProvider);
 })();

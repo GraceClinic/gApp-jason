@@ -4,11 +4,10 @@
      * Player factory returns a singleton instance of the Player object.  All controllers get the same object.
      *
      * @param {App_Common_Abstracts_Model}   Model
-     * @param {object}      $state
      * @returns {WordShuffle_Models_Player}
      * @constructor
      */
-    function WordShuffle_Models_Player_Factory(Model,$state) {
+    function WordShuffle_Models_Player_Factory(Model) {
         /**
          * provide short description of model
          *
@@ -125,36 +124,21 @@
              *
              * @method   logout
              * @public                      - todo: change scoping of method as appropriate, for protected methods, prefix with "_"
-             * @return   {boolean}
+             * @return   {promise}
              */
             self.logout = function(){
                 _resetFlags();
                 var _promise = self.remove();
-                _promise.then(function(){
-                    self.msg = {"text":"Player logout successful!","type":'info'};
-                    self.name = self.defaultName;
-                    self.id = 0;
-                });
-            };
+                _promise.then(
+                    function(response){
+                        self.msg = {"text":"Player logout successful!","type":'info'};
+                        self.name = self.defaultName;
+                        self.id = 0;
 
-            /**
-             * Runs post-process activity after logout
-             *
-             * @method   _postLogout
-             * @protected                       - define scope
-             * @param    {boolean}  success     - results from backend logout process
-             */
-            self._postLogout = function(success){
-                var _newState = {
-                    "module":       'wordShuffle',
-                    "controller":   'setup',
-                    "action":       'index'
-                };
+                        return response;
+                    });
 
-                // refresh page to load the anonymous player information
-                if(success){
-                    $state.go('module.controller.action',_newState,{reload:true});
-                }
+                return _promise;
             };
 
             /**
@@ -215,6 +199,7 @@
                 _newName = false;
                 _nameIsDefault = false;
                 _saveMe = false;
+                self.signInState = self.SysMan.ANONYMOUS_PLAY;
             }
 
             /**********************************
@@ -398,8 +383,7 @@
     }
 
     WordShuffle_Models_Player_Factory.$inject = [
-        'App_Common_Abstracts_Model',
-        '$state'
+        'App_Common_Abstracts_Model'
     ];
 
     angular.module('App_WordShuffle').factory('WordShuffle_Models_Player', WordShuffle_Models_Player_Factory);

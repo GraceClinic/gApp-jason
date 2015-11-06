@@ -190,6 +190,6 @@
 
     //App_Common_Models_Tools_TimerFactory.$inject = [];
 
-    angular.module('App').factory('App_Common_Models_Tools_Timer',App_Common_Models_Tools_TimerFactory);
+    angular.module('App_Common').factory('App_Common_Models_Tools_Timer',App_Common_Models_Tools_TimerFactory);
 })();
 

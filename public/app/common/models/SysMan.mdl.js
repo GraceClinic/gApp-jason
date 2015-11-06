@@ -283,6 +283,7 @@
             function _lcFirst(x){
                 return x.charAt(0).toLowerCase() + x.slice(1);
             }
+
             /*******************
              * CONSTRUCTOR LOGIC
              *******************/
@@ -321,5 +322,5 @@
         'App_Common_Models_Message'
     ];
 
-    angular.module('App').factory('App_Common_Models_SysMan', App_Common_Models_SysManFactory);
+    angular.module('App_Common').factory('App_Common_Models_SysMan', App_Common_Models_SysManFactory);
 })();

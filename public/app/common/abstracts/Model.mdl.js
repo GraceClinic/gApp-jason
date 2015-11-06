@@ -90,6 +90,8 @@
                 _DOM = value;
             }
 
+            // TODO: Move properties on prototype here and make configurable:false
+
             /************************
              * CONSTRUCTOR LOGIC
              ************************/
@@ -167,7 +169,7 @@
         function getSysMan(){
             return SysMan;
         }
-        function setSysMan(data){
+        function setSysMan(){
             var _msg = 'Set of Model.SysMan not allowed!';
             SysMan.Logger.entry(_msg,self.constructor.name,SysMan.Logger.TYPE.ERROR,SysMan.Logger.ERRNO.MODEL_ERROR);
             //SysMan.setFromArray(data);
@@ -395,6 +397,9 @@
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '._postFind()','App_Common_Abstracts_Model');
                         self.status = self.READY;
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '.find() response process','App_Common_Abstracts_Model');
+
+                        // return the response to support daisy chaining usage as required
+                        return response;
                     },
                     function() {
                         self.status = self.POST_DISPATCH;
@@ -463,6 +468,9 @@
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '._postSave()','App_Common_Abstracts_Model');
                         self.status = self.READY;
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '.save() response process','App_Common_Abstracts_Model');
+
+                        // return the response to support daisy chaining usage as required
+                        return response;
                     },
                     function() {
                         // error processed by App Interceptor
@@ -504,7 +512,8 @@
                 url: self._rootURL,
                 method: "POST",
                 data: {
-                    model:  _getPostProps(self),
+                    //model:  _getPostProps(self),
+                    model:  self.toJSON(true),
                     method: method,
                     args:   args
                 }
@@ -568,6 +577,8 @@
                             'App_Common_Abstracts_Model'
                         );
 
+                        // return the response to support daisy chaining usage as required
+                        return response;
                     },
                     function() {
                         // error processed by App Interceptor
@@ -628,6 +639,9 @@
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '._postRemove()','App_Common_Abstracts_Model');
                         self.status = self.READY;
                         self.SysMan.Logger.entry('END ' + self.constructor.name + '.remove() post dispatch','App_Common_Abstracts_Model');
+
+                        // return the response to support daisy chaining usage as required
+                        return response;
                     },
                     function() {
                         self.status = self.POST_DISPATCH;
@@ -849,26 +863,6 @@
         function _ucFirst(x){
             return x.charAt(0).toUpperCase() + x.slice(1);
         }
-        /**
-         * Returns model properties for posting to backend
-         *
-         * @function    _getPostProps
-         * @private
-         * @param   {App_Common_Abstracts_Model}    self    - reference to calling model
-         * @returns {object}
-         */
-        function _getPostProps(self){
-            var _postProps = {};
-
-            for(var i=0; i<self.properties.length; i++){
-                var _isIncluded = _excludeFromPost[self.uid].indexOf(self.properties[i]) < 0;
-                if(_isIncluded){
-                    _postProps[self.properties[i]] = self[self.properties[i]];
-                }
-            }
-
-            return _postProps;
-        }
 
         function _processArray(arr,scrubExcludes){
             var _tmp = [];
@@ -897,5 +891,5 @@
     ];
 
     // todo: register model with Angularjs application for dependency injection as required
-    angular.module('App').factory('App_Common_Abstracts_Model', App_Common_Abstracts_ModelFactory);
+    angular.module('App_Common').factory('App_Common_Abstracts_Model', App_Common_Abstracts_ModelFactory);
 })();

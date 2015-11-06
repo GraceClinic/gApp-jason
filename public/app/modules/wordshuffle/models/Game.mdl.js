@@ -134,7 +134,8 @@
              * Public Methods declaration / definition
              *****************************************/
             /**
-             * End currently active game.
+             * End currently active game through execution of a Game.save operation to backend.  Since backend is keeper
+             * of time, the save operation will result in termination of active game.
              *
              * @method   clockExpired
              * @public
@@ -143,6 +144,53 @@
                 if(self.state != self.COMPLETED || self.state != self.ABANDONED){
                     // execute save, backend will toggle game state as appropriate
                     self.save();
+                }
+            };
+            /**
+             * Callback function registered to each Square object. Upon selection or deselection, the Square object
+             * will call this function for processing.
+             *
+             * @method   buildWord
+             * @public
+             * @param    {WordShuffle_Models_Game_Square}   Square  - game square object initiating call
+             */
+            self.buildWord = function(Square){
+                // validate state
+                if(self.state == self.COMPLETED || self.state == self.ABANDONED){
+                    // de-select square, game is over
+                    Square.isSelected = false;
+                }
+                else{
+                    if(Square.isSelected){
+                        // check for valid square, it must be adjacent to last selected square
+                        if(_wordSquares != null && _wordSquares.length > 0){
+                            var _last = _wordSquares[_wordSquares.length-1];
+                            if(Math.abs(_last.row - Square.row)<=1 && Math.abs(_last.col - Square.col)<=1){
+                                _wordSquares.push(Square);
+                                self.word = self.word.concat(Square.letter);
+                            }else{
+                                Square.isSelected = false;
+                                // todo: play audio sound
+                            }
+                        }else{
+                            _wordSquares = [Square];
+                            self.word = Square.letter;
+                        }
+                    }
+                    else{
+                        var _popSquare = _wordSquares.pop();
+                        while(_popSquare.uid != Square.uid && _wordSquares.length > 0){
+                            // remove all letters that preceded the de-selected letter
+                            self.word = self.word.substring(0,self.word.length-1);
+                            _popSquare.isSelected = false;
+                            _popSquare = _wordSquares.pop();
+                        }
+                        // remove the de-selected letter from the current word
+                        self.word = self.word.substring(0,self.word.length-1);
+                        if(_wordSquares.length == 0){
+                            self.word = '???';
+                        }
+                    }
                 }
             };
 
@@ -336,52 +384,6 @@
             function setWordSquares(value){
                 _wordSquares = value;
             }
-            /**
-             * Notification from square regarding user selection.
-             *
-             * @method   buildWord
-             * @public
-             * @param    {WordShuffle_Models_Game_Square}   Square  - game square object initiating call
-             */
-            self.buildWord = function(Square){
-                // validate state
-                if(self.state == self.COMPLETED || self.state == self.ABANDONED){
-                    // de-select square, game is over
-                    Square.isSelected = false;
-                }
-                else{
-                    if(Square.isSelected){
-                        // check for valid square, it must be adjacent to last selected square
-                        if(_wordSquares != null && _wordSquares.length > 0){
-                            var _last = _wordSquares[_wordSquares.length-1];
-                            if(Math.abs(_last.row - Square.row)<=1 && Math.abs(_last.col - Square.col)<=1){
-                                _wordSquares.push(Square);
-                                self.word = self.word.concat(Square.letter);
-                            }else{
-                                Square.isSelected = false;
-                                // todo: play audio sound
-                            }
-                        }else{
-                            _wordSquares = [Square];
-                            self.word = Square.letter;
-                        }
-                    }
-                    else{
-                        var _popSquare = _wordSquares.pop();
-                        while(_popSquare.uid != Square.uid && _wordSquares.length > 0){
-                            // remove all letters that preceded the de-selected letter
-                            self.word = self.word.substring(0,self.word.length-1);
-                            _popSquare.isSelected = false;
-                            _popSquare = _wordSquares.pop();
-                        }
-                        // remove the de-selected letter from the current word
-                        self.word = self.word.substring(0,self.word.length-1);
-                        if(_wordSquares.length == 0){
-                            self.word = '???';
-                        }
-                    }
-                }
-            };
             var _scoreBoard;
             function getScoreBoard(){
                 return _scoreBoard;

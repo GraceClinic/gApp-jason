@@ -59,9 +59,6 @@
                         // do nothing until pages have content
                     }
                     else{
-                        // as soon as pages load from backend, display in directive
-                        self.pageBody = self.pages[self.index].body;    // initialize page display to the first page
-
                         // change interval callback to update slide page, reflect directive dwell time
                         $interval.cancel(_intervalId);
                         _intervalId = $interval(_updateSlide, self.dwell);
@@ -69,17 +66,16 @@
                 }
 
                 function _updateSlide() {
-                    self.index++;
-                    if(self.index >= self.pages.length){
-                        self.index = 0;
-                    }
-
                     //set the container height as dictated by the longest page in order to stop page from bouncing
                     if(element.height() > _maxHt){
                         _maxHt = element.height();
                         element.parent().css('height',element.css('height'));
                     }
 
+                    self.index++;
+                    if(self.index >= self.pages.length){
+                        self.index = 0;
+                    }
                 }
 
                 /*******************

@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="/app/modules/memory/views/Layout.tpl.css">
+<div ng-controller="Memory_Controllers_Layout as Layout">
+    <div id="HeaderBar">
+        <div class="Left-Zone">
+            Memory
+        </div>
+        <div class="Right-Zone">
+            <ul id="Controller-Menu" class="Model Menu" >
+                <li class="Model Menu Item" >
+                    <a
+                        ui-sref='Memory.controller.action({module:"memory",controller:"welcome",action:"index"})'
+                        ng-class="{active: Layout.isActive('welcome')}"
+                    >Welcome</a>
+                </li>
+                <li class="Model Menu Item" >
+                    <a
+                            ui-sref='Memory.controller.action({module:"memory",controller:"play",action:"index"})'
+                            ng-class="{active: Layout.isActive('play')}"
+                            >Play</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="Memory_Controller" ui-view></div>
+    <div id="FooterBar">
+        <div id="copyright">Copyright 2015 by Grace Clinic Holdings LLC</div>
+    </div>
+</div>

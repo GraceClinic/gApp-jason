@@ -72,5 +72,5 @@
 
     appCommonDirectivesUtilitiesDraggableProvider.$inject = ['$document'];
 
-    angular.module('App').directive('appCommonDirectivesUtilitiesDraggable', appCommonDirectivesUtilitiesDraggableProvider);
+    angular.module('App_Common').directive('appCommonDirectivesUtilitiesDraggable', appCommonDirectivesUtilitiesDraggableProvider);
 })();

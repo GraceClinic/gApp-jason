@@ -360,5 +360,5 @@
     App_Common_Models_Tools_LoggerFactory.$inject = ['dateFilter'];
 
     // todo: register model with Angularjs application for dependency injection as required
-    angular.module('App').factory('App_Common_Models_Tools_Logger', App_Common_Models_Tools_LoggerFactory);
+    angular.module('App_Common').factory('App_Common_Models_Tools_Logger', App_Common_Models_Tools_LoggerFactory);
 })();

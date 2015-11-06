@@ -3,7 +3,12 @@
     //todo:  reference newly injected dependencies as needed
     function WordshuffleDirectivesGameSquareProvider(Logger,$interval) {
 
-        var _squareHeight = 0;
+        var _width = '20%';
+        var _heightNew = 0;
+        var _heightOld = 0;
+        var _squareCount = 0;
+        var _processed = 0;
+        var _lastProcessed = Date.now();
 
         function WordshuffleDirectivesGameSquare() {
             Logger.entry('Constructor START','WordShuffle_Directives_Game_Square',Logger.INFO);
@@ -15,7 +20,8 @@
             this.restrict = 'E';    // match on element name
             this.templateUrl = '/app/modules/wordshuffle/directives/game/Square.drv.html';
             this.scope = {
-                square:     '='
+                square:         '=',
+                countPerRow:    '='
             };
             this.link = controller;
 
@@ -29,19 +35,37 @@
             function controller(scope, element) {
                 var self = scope;
 
+                var _countPerRow = parseInt(self.countPerRow);
+
+                if(_countPerRow <= 0){
+                    _countPerRow = 5;
+                }
+
+                // increment count of total number of squares
+                _squareCount++;
+
                 self.square.idTag = 'wordshuffle-models-game-square-' + self.square.row + '-' + self.square.col;
 
                 var _intervalId = $interval(_wait, 100);
 
                 function _wait(){
                     if(self.square.DOM !== null){
-                        var _width = self.square.DOM.width();
                         // wait until element width is defined and other elements have populated and consumed row width
-                        if(typeof _width === 'undefined'){
+                        if(typeof element.parent().width() === 'undefined'){
                             // do nothing until width is defined
                         }else{
-                            // as soon width defined, adjust height
-                            _updateHeight();
+                            // set square width to equal percentage based on number of squares per row
+                            _width = parseInt(Math.floor(100/_countPerRow))+'%';
+                            self.square.DOM.outerWidth(_width);
+                            // only set height once for use by all squares
+                            if(_heightNew == 0){
+                                _heightNew = parseInt(Math.floor(self.square.DOM.outerWidth()));
+                            }
+                            self.square.DOM.outerHeight(_heightNew);
+
+                            _updateFont(_heightNew);
+
+                            console.log('Square ',self.square.idTag,' size = ',_heightNew);
 
                             // change interval callback to update slide page, reflect directive dwell time
                             $interval.cancel(_intervalId);
@@ -50,7 +74,7 @@
                 }
 
                 // adjust height on any resize of window
-                angular.element(window).on('resize',_updateHeight);
+                angular.element(window).on('resize',_resizeSquare);
 
                 element.bind('click', function(){
                     self.square.isSelected = !self.square.isSelected;
@@ -78,43 +102,55 @@
                     }
                 });
 
-                function _updateHeight() {
-                    if(self.square.DOM !== null){
-                        _squareHeight = self.square.DOM.width();
-                        // todo:  define logic
-                        if(typeof _squareHeight === 'undefined'){
-                            // do nothing
-                        }else{
-                            self.square.DOM.height(_squareHeight);
-
-                            switch(true){
-                                case _squareHeight > 80:
-                                    self.square.DOM.css('font-size','72px');
-                                    break;
-                                case _squareHeight > 70:
-                                    self.square.DOM.css('font-size','64px');
-                                    break;
-                                case _squareHeight > 60:
-                                    self.square.DOM.css('font-size','48px');
-                                    break;
-                                case _squareHeight > 50:
-                                    self.square.DOM.css('font-size','42px');
-                                    break;
-                                case _squareHeight > 40:
-                                    self.square.DOM.css('font-size','32px');
-                                    break;
-                                case _squareHeight > 30:
-                                    self.square.DOM.css('font-size','24px');
-                                    break;
-                                case _squareHeight > 10:
-                                    self.square.DOM.css('font-size','14px');
-                                    break;
-                                default:
-                                    self.square.DOM.css('font-size','8px');
-                            }
+                function _resizeSquare(){
+                    _processed++;
+                    var _now = Date.now();
+                    // if all squares processed or it has been some time since last processed,
+                    // get new height and reset processed items so width can adjust again
+                    if((_now - _lastProcessed) > 100 || _processed > _squareCount){
+                        //var _height = parseInt(Math.floor(element.parent().width()/_countPerRow));
+                        var _height = parseInt(Math.floor(self.square.DOM.outerWidth()));
+                        if(_height > 0){
+                            _heightOld = _heightNew;
+                            _heightNew = _height;
                         }
+                        _processed = 0;
+                        _lastProcessed = _now;
+                    }
+                    // given resize event, set new height as appropriate
+                    if(_heightNew !== _heightOld && _heightNew > 0){
+                        self.square.DOM.outerHeight(_heightNew);
+                        _updateFont(_heightNew);
                     }
 
+                }
+
+                function _updateFont(height) {
+                    switch(true){
+                        case height > 80:
+                            self.square.DOM.css('font-size','72px');
+                            break;
+                        case height > 70:
+                            self.square.DOM.css('font-size','64px');
+                            break;
+                        case height > 60:
+                            self.square.DOM.css('font-size','48px');
+                            break;
+                        case height > 50:
+                            self.square.DOM.css('font-size','42px');
+                            break;
+                        case height > 40:
+                            self.square.DOM.css('font-size','32px');
+                            break;
+                        case height > 30:
+                            self.square.DOM.css('font-size','24px');
+                            break;
+                        case height > 10:
+                            self.square.DOM.css('font-size','14px');
+                            break;
+                        default:
+                            self.square.DOM.css('font-size','8px');
+                    }
                 }
 
             }

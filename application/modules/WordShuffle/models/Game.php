@@ -5,24 +5,24 @@
  *
  * @package WordShuffle_Model
  *
- * @property    int         idPlayer        unique identifier for player
- * @property    int         timer           current timer count
- * @property    int         round           current round
- * @property    int         roundsPerGame   number of rounds in the game
- * @property    int         secondsPerRound seconds per round
- * @property    int         roundAvg        average score per round
- * @property    int         points          summation of points in all rounds
- * @property    string    start             date time string current game started
- * @property    string    end               date time string current game ended
- * @property    WordShuffle_Model_Game_Round[]       Rounds          array of Round objects
- * @property    string      state          - state of game as one of the constants: NEW_GAME, IN_PROGRESS, COMPLETED, and ABANDONED
+ * @property    int         idPlayer        - unique identifier for player
+ * @property    int         timeRemaining   - time remaining for active round
+ * @property    int         round           - current round
+ * @property    int         roundsPerGame   - number of rounds in the game
+ * @property    int         secondsPerRound - seconds per round
+ * @property    int         roundAvg        - average score per round
+ * @property    int         points          - summation of points in all rounds
+ * @property    string      start           - date time string current game started
+ * @property    string      end             - date time string current game ended
+ * @property    WordShuffle_Model_Game_Round[]       Rounds          -array of Round objects
+ * @property    string      state           - state of game as one of the constants: NEW_GAME, IN_PROGRESS, COMPLETED, and ABANDONED
  * @property    array       Squares         - game squares
- * @property    string         word        - current word
- * @property    array         wordSquares        - array of Square objects that created the word
+ * @property    string      word            - current word
+ * @property    array       wordSquares     - array of Square objects that created the word
  * @property    WordShuffle_Model_Mapper_Game Mapper    - explicitly define Mapper
- * @property    array         scoreBoard        - array of word scores
- * @property    boolean         newGame        - flags new game event
- * @property    boolean         newRound        - flags new round event
+ * @property    array       scoreBoard      - array of word scores
+ * @property    boolean     newGame         - flags new game event
+ * @property    boolean     newRound        - flags new round event
  */
 class WordShuffle_Model_Game extends Common_Abstracts_Model
 {
@@ -398,10 +398,6 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         return $this->_newRound;
     }
 
-    // todo: move property docblock to top of class
-    /**
-     * @property    int         timeRemaining        - time remaining for active round
-     */
     protected function setTimeRemaining(){
         // no setter
         throw new Exception('WordShuffle_Models_Game->setTimeRemaining() not allowed for this property');

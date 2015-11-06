@@ -1,0 +1,35 @@
+.controller_welcome.view_leftPanel{
+    text-align: center;
+    width: 20%;
+    float: left;
+    padding-top: 5px;
+    overflow: hidden;
+}
+.model_player_stats{
+    padding-top: 2px;
+    font-size: 10pt;
+    overflow: hidden;
+}
+.table_view{
+    margin-left: 5%;
+    margin-right: 5%;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: #a6d2cc;
+}
+.header_view{
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-top: 5px;
+    border-bottom: 1px solid #375351;
+    font: italic 14pt bold;
+}
+.controller_welcome.view_rightPanel{
+    background-color: #fdffcd;
+    width: 80%;
+    padding-left: 1%;
+    float: left;
+    box-sizing: border-box;
+    border-left: 4px solid #536865;
+    overflow: hidden;
+}
