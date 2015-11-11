@@ -25,14 +25,34 @@
  **/
 
 /**
+ * PUBLIC PROPERTIES
+ **/
+/**
  * PROPERTIES
- * @property    Logger      {App_Common_Models_Tools_Logger}    Reference to singleton Logger instance for logging messages
- * @property    msg         {App_Common_Models_Message[]}       Array of message objects, if "msg" set to string value,
+ * @property    Logger
+ * @property    msg         {App_Common_Models_Message[]}       Array of Message objects, if "msg" set to string value,
  *                                                              type assumed as INFO
  * @property    Timer       {App_Common_Models_Tools_Timer}     application wide timer
  * @property    state       {module:string,controller:string,action:string}
  *                                                              object representing current application state
  *
+ **/
+/**
+ * @property    msg
+ * Stores an array of messages for display and/or reference.  On set, it can accept a Message object or an array of such.  If
+ * it is one object, the setters will add to the current array of Messages.  The value can also be set to an object
+ * that is reflective of the Message object (meaning {{text: string, type: string}}).  The "type" value must be one of
+ * the Message class constants:  TYPES.INFO, TYPES.SUCCESS, TYPES.WARNING, and TYPES.DANGER.
+ *
+ * @type        {App_Common_Models_Message|App_Common_Models_Message[]|object|object[]}
+ * @public
+ **/
+/**
+ * @property    Logger
+ * Reference to singleton Logger instance for logging messages
+ *
+ * @type        {App_Common_Models_Tools_Logger}
+ * @public
  **/
 
 /**

@@ -22,17 +22,6 @@
  **/
 
 /**
- * CONSTANTS
- */
-/**
- * @constant    <ALL_CAPS_NAME>        value: <Value>
- * <Description>
- *
- * @type    {<type>}
- * @public
- **/
-
-/**
  * PUBLIC PROPERTIES
  **/
 /**
@@ -45,13 +34,11 @@
 
 /**
  * PUBLIC METHODS
- * There is no actual "_construct()" method.  The class constructor is the function named after the class.  The method
- * definition below serves as documentation for the constructor logic.
  */
 /**
  * @method indexAction
  * Provides logic associated with index action.  Currently, that means redirection to the "play" state if the user has
- * an active game.
+ * an active game.  This is the only reason that this controller requires the Game object passed as a dependency.
  *
  * @public
  **/
@@ -62,7 +49,7 @@
  * This controller services the "Welcome" tab of the application.  Once the specific controller template loads, it must
  * instantiate this controller.  That template will also bind the appCommonDirectivesBanner directive and pass its
  * "msg" property as input to the directive.  The specification for this template is found within the
- * WordShuffle_Views_Welcome.tpl.html wireframe page.
+ * WordShuffle_Views_Welcome.tpl.html page.
  *
  * The controller only supports one action:  index.  When the URL specifies this action, the controller will provide
  * information from the Instructions property as specified in the WordShuffle_Views_Welcome_Index.tpl.html wireframe

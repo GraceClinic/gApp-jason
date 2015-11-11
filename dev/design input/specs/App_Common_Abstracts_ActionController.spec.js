@@ -21,12 +21,25 @@
  **/
 
 /**
- * PROPERTIES
- * @property    msg {{text: string, type: string}[]}    - array of object messages to display to user formatted as associative
- * @property    SysMan {App_Common_Models_SysMan}       - reference to the SysMan singleton for sharing information across controllers and modules
- * array where index "type" is one of the SysMan constants INFO, CAUTION, or WARNING
+ * PUBLIC PROPERTIES
  **/
-
+/**
+ * @property    msg
+ * This property is just a proxy to the SysMan.msg property.  It can accept a Message object or an array of such.  If
+ * it is one object, the setters will add to the current array of Messages.  The value can also be set to an object
+ * that is reflective of the Message object (meaning {{text: string, type: string}}).  The "type" value must be one of
+ * the Message class constants:  TYPES.INFO, TYPES.SUCCESS, TYPES.WARNING, and TYPES.DANGER.
+ *
+ * @type        {App_Common_Models_Message|App_Common_Models_Message[]|object|object[]}
+ * @public
+ **/
+/**
+ * @property    SysMan
+ * Reference to the SysMan singleton for sharing information across controllers and modules
+ *
+ * @type        {App_Common_Models_SysMan}
+ * @public
+ **/
 /**
  * METHODS
  * There is no actual "_construct()" method.  The class constructor is the function named after the class.  The method

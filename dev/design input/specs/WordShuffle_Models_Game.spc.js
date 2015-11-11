@@ -205,7 +205,17 @@
  * Submit word to backend for processing if word length > 1 and the state is active.  This method is simply
  * a relay to the backend.  It does expect the model state in the response to implement follow-up logic and
  * update the UI.  Upon return from the backend, the associated post-relay method must post the "msg"
- * contained in the result to the "word" property.  This will typically be "SUCCESS!" or "REJECTED!".
+ * contained in the result to the "word" property.  The messages returned from the backend in oResults.msg follow:
+ *
+ * 1) "SUCCESS!" if submitted word validates with dictionary lookup.
+ * 2) "REJECTED!" if submitted word does not validate.
+ * 3) "DUPLICATE!" if submitted word exist in current word list.
+ * 4) "GAME OVER!" if last round and time elapsed.
+ * 5) "???" if new round.
+ *
+ * Refer to DETAILED SPECIFICATION section on BACKEND BUSINESS LOGIC ON SUBMIT WORD for explanation of backend logic
+ * requirements.
+ *
  * The method must also clear all of the selected Squares contained within "wordSquares" and empty the array.
  * The results object returning from the backend will have the following properties:
  *
@@ -248,7 +258,7 @@
  * based on the current game state.
  * 2) It validates the "signInState" stored in SysMan->Session and sets the state to ANONYMOUS_PLAY if the state is
  * not SIGNED_IN.  This explicitly identifies anonymous play if the user has not authenticated.
- * 3) Reviews the "newGame" flag and determines if game state allows new game (i.e. game not IN_PROGRESS).  It new
+ * 3) Reviews the "newGame" flag and determines if game state allows new game (i.e. game not IN_PROGRESS).  If new
  * game allowed, it resets the SysMan->Session->idGame to 0, which insures the save operation will result in the
  * creation of a new game as opposed to an update.  In all cases, it sets its "id" to that stored in session as
  * SysMan->Session->idGame.  This is because the session is the keeper of this information no matter what.
@@ -284,24 +294,39 @@
  * After successful save, if Game state is COMPLETED, post "Game Over" to the "word" property.  Otherwise, if it is
  * a new round or a new game, start the Clock, set the "word" to "???", and reset the newGame and newRound flags.
  *
- * BUSINESS LOGIC ON SUBMIT WORD
+ * BACKEND BUSINESS LOGIC ON SUBMIT WORD
  * For the frontend, the submitWord method is largely a relay method to the backend for processing.  The backend
  * applies the validation logic for word submission and returns the response as described in the "submitWord" method
  * above.  Upon submit of word, if the game state is active, the method will always execute the PROCESS GAME STATE
  * as described above.  Submissions should only occur when game state is IN_PROGRESS.  The backend will process
  * the word and build a response object based on the processing results.  The Game validates the following:
- * 1) The word consist of a minimum of 2 letters.  If it does not, the method records Game->msg INFO type message
- * that the word is too short.  The frontend must disallow submission of anything less that 2 letters, but the
+ *
+ * 1) The word consist of a minimum of 2 letters.  If it does not, the method records FALSE to response.success and
+ * records response.msg as "Word too short!".  The frontend must disallow submission of anything less that 2 letters, but the
  * backend must still check for thoroughness.
  * 2) The Game validates that the word recorded within "wordSquares" matches a valid letter pattern within the
  * SysMan->Session->Squares matrix saved to session memory.  If it does not, it sets the response.success as false
- * and records "Board Mismatch!" to response.msg.  It will do the same if "word" does not match with the letter pattern
+ * and records "Board Mismatch!" to response.msg.  It will do the same if Game.word does not match with the letter pattern
  * derived from the "wordSquares" queue.
- * 3) If the submitted word matches with an existing word submitted previously, it records response.success as false
- * and "Duplicate!" to response.txt.
+ * 3) If the submitted word matches with an existing word submitted previously, it records response.success as FALSE
+ * and "Duplicate!" to response.msg.
  * 4) If it passes the above, it validates the word with the database dictionary.  If the word exists, it records
- * true to response.success and "Success!" to response.msg.  If it does not, it records false to response.success
+ * TRUE to response.success and "Success!" to response.msg.
+ * 5) If submitted word does not validate within database dictionary, it records FALSE to response.success
  * and "Rejected!" to response.msg.
+ * 6) If the time elapsed during last round, it records FALSE to response.success and "Game Over!" to response.msg.
+ *
+ * Given successful validation of the word, the logic must score the word based on the following word length:
+ *
+ * 1) If 2 or 3, then score is equal to length.
+ * 2) If 4, 5, or 6 then score is equal to length + 2.
+ * 3) If larger, then score is length + 3.
+ *
+ * The backend must store the score word and points to session storage along with other previous scores for the round.
+ * Additionally, the Game object updates the current Round->points based on the new score and increments the
+ * Round->wordCount.  The Round information must be saved to session storage to insure proper tracking of score during
+ * anonymous play.  At this time, it is also important to execute Round->save() for the active round for those
+ * authenticated users.
  *
  * FREQUENCY OF LETTERS
  * Relative frequency of the letters in the English language, ref http://en.wikipedia.org/wiki/Letter_frequency
