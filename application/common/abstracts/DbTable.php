@@ -11,7 +11,7 @@ abstract class Common_Abstracts_DbTable extends Zend_Db_Table_Abstract
      */
     public function getPrimary(){
         if(is_array($this->_primary)){
-            $key = $this->_primary[0];
+            $key = $this->_primary[1];
         }else{
             $key = $this->_primary;
         }

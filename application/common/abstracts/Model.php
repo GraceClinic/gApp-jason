@@ -198,7 +198,10 @@ abstract class Common_Abstracts_Model
         return $this->_id;
     }
     protected function setId($x){
-        $this->_id = (int) $x;
+        // Zend DbTable will only return primary key on insert if id = null, therefore never set to 0
+        if($x != 0){
+            $this->_id = (int) $x;
+        }
     }
 
     private $_msg = null;
