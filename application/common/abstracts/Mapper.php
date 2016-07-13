@@ -214,17 +214,19 @@ abstract class Common_Abstracts_Mapper
     public function save()
     {
         $targetTable = $this->getDbTable();
-        $map = $this->_map;
         // The id property is the primary key for accessing database records
         $pk = $this->_model->id;
 
-        $data = $this->mapModel($map);
-
-        $this->_model->SysMan->Logger->info('START '.$this->_className.'->save() given table data = '.print_r($data,true),'Common_Abstracts_Mapper');
+        $this->_model->SysMan->Logger->info('START '.$this->_className.'->save()','Common_Abstracts_Mapper');
 
         $this->_model->SysMan->Logger->info('START '.$this->_className.'->_preSave()','Common_Abstracts_Mapper');
         $this->_preSave();
         $this->_model->SysMan->Logger->info('END '.$this->_className.'->_preSave()','Common_Abstracts_Mapper');
+
+        $map = $this->_map;
+        $data = $this->mapModel($map);
+
+        $this->_model->SysMan->Logger->info('Mapped data to save = '.print_r($data,true),'Common_Abstracts_Mapper');
 
         // remove primary key field for insert and update operations (for insert it insures return of $pk, for update modifying primary key not allowed
         if(isset($data[$targetTable->getPrimary()])){

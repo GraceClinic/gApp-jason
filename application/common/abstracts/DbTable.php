@@ -8,12 +8,15 @@ abstract class Common_Abstracts_DbTable extends Zend_Db_Table_Abstract
      * overwrite of the Mapper abstract, which assumes that this returns a string
      *
      * @return string
+     * @throws exception
      */
     public function getPrimary(){
-        if(is_array($this->_primary)){
+        if(is_array($this->_primary)&&(count($this->_primary)==1)&&(key($this->_primary)==1)){
             $key = $this->_primary[1];
-        }else{
+        }elseif(!is_array($this->_primary)){
             $key = $this->_primary;
+        }else{
+            throw new Exception("Table ".$this->_name." has multiple primary keys, you must overwrite abstracts to handle properly.");
         }
         return $key;
     }
