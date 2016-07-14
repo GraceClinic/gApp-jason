@@ -82,10 +82,10 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
         // this is anonymous play
         $this->_SysMan->Logger->info('START '.$this->_className.'->indexAction()','Common_Abstracts_RestController');
         $this->_model = new $this->_modelClass();
-        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->findAll()','Common_Abstracts_RestController');
-        $models = $this->_model->findAll();
+        $this->_SysMan->Logger->info('START '.$this->_modelClass.'->find()','Common_Abstracts_RestController');
+        $this->_model->find();
         $this->_SysMan->Logger->info(
-            'END '.$this->_modelClass.'->findAll(), count = '.count($models),
+            'END '.$this->_modelClass.'->find() for id = '.$this->_model->id,
             'Common_Abstracts_RestController'
         );
 
@@ -95,8 +95,7 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
             'Common_Abstracts_RestController'
         );
         $response = Array(
-
-            "models" => $models
+            "model" => $this->_model->toArray(true)
         );
         $this->_SysMan->Logger->info('END '.$this->_modelClass.'->toArray()','Common_Abstracts_RestController');
 

@@ -158,7 +158,6 @@ abstract class Common_Abstracts_Mapper
         }
 
         $result   = array();
-        $resultSet = null;
         if(count($by)>0){
             // first element is the order by
             $order = $by[0];
@@ -184,25 +183,18 @@ abstract class Common_Abstracts_Mapper
 
             $resultSet = $this->getDbTable()->fetchAll($where,$order);
 
-
-
-
-
-
+            // transform row set to an array of associative arrays representing the model
+            foreach ($resultSet as $row) {
+                $mappedRow = $this->mapModel($this->_map,$row->toArray());
+                $result[] = $mappedRow;
+            }
 
         }else{
             $this->_model->SysMan->Logger->info(
                 $this->_className.'->findAll() called with no criteria supplied in argument nor a default'.
-                '_findAllBy identified in model mapper.  Hence, method returns all records in table.'
+                '_findAllBy identified in model mapper.  Hence, method returns null.'
             );
-            $resultSet = $this->getDbTable()->fetchAll();
 //            throw new Exception($this->_className.'->findAll() called with no criteria supplied in argument nor a default '.
-        }
-
-        // transform row set to an array of associative arrays representing the model
-        foreach ($resultSet as $row) {
-            $mappedRow = $this->mapModel($this->_map,$row->toArray());
-            $result[] = $mappedRow;
         }
 
         return $result;
@@ -248,20 +240,7 @@ abstract class Common_Abstracts_Mapper
                 if(!is_array($key)){
                     $where[$key.' = ?'] = $pk;
                     $targetTable->update($data, $where);
-                }
-
-                //An extra elseif is added in case if findAll() method is used which will run _setupPrimaryKey()
-                // method of the Zend_Db_Table_Abstract which will set the primary key as an array with
-                // index 1 holding the primary key ...
-                //elseif(is_array($key)&&(count($key)==1)&&(key($key)==1))
-                //{
-                //    $key = $key['1'];
-                //    $where[$key.' = ?'] = $pk;
-                //    $targetTable->update($data, $where);
-                //}
-
-                else{
-
+                }else{
                     throw new Exception('Table '.$targetTable->getName().' has more than one primary key.  The '.
                         $this->_className.'.save() method only accounts for one.  You will need to update the abstract or override.');
                 }
