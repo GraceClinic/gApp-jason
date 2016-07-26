@@ -7,6 +7,10 @@ manual files generated or hand written.  Ideally, this directory would remain
 in your development environment only and should not be deployed with your
 application to it's final production location.
 
+This is an example implementation of the gApp project.  It is not without its flaws.
+You will find errors.  Feel free to fix as you discover.  This implementation is
+strictly a teaching tool.
+
 
 Setting Up Your VHOST
 =====================
