@@ -5,7 +5,7 @@
      * @param $interval
      * @returns {wordshuffleDirectivesInstructionsSlideShow}
      */
-    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger,$interval) {
+    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger, $interval, $timeout) {
 
         /**
          * @class wordshuffleDirectivesInstructionsSlideShow
@@ -13,6 +13,7 @@
          */
         function wordshuffleDirectivesInstructionsSlideShow() {
             var self = this;
+            var _oldDwell;
 
             Logger.entry('START ' + self.constructor.name + '.construct()',self.constructor.name);
 
@@ -20,9 +21,10 @@
             self.templateUrl = '/app/modules/wordshuffle/directives/instructions/SlideShow.drv.html';
             self.scope = {
                 pages:      '=',        // array of Page models
-                dwell:      '='         // milli-seconds to show each page
+                dwell:      '='       // milli-seconds to show each page
             };
-            self.link = controller;
+            self.link = link;
+            self.controller = controller;
 
             /**
              * Controller for the SlideShow directive
@@ -33,11 +35,16 @@
              * @param   {int}                       scope.dwell     - milliseconds to dwell on each page before switching to next one
              * @param   {Object}    element         - the DOM element attached to directive
              */
-            function controller(scope, element) {
+            function link(scope, element) {
                 var self = scope;
                 // wait for backend to load pages
                 var _intervalId = $interval(_wait, 100);
                 var _maxHt = 0;
+                // if (self.stop == undefined) {
+                //     console.log("inside if-block");
+                //     self.stop = false;
+                // }
+
 
                 /*************************************************
                  * PROPERTY DECLARATIONS with GETTERS and SETTERS
@@ -47,6 +54,7 @@
                  * @type {number}
                  */
                 self.index = 0;
+                _oldDwell = self.dwell;
 
                 /********************
                  * PRIVATE FUNCTIONS
@@ -84,14 +92,60 @@
                 element.on('$destroy', function() {
                     $interval.cancel(_intervalId);
                 });
+
+                // TODO: is there any cleanup activity?
+                scope.$watch("stop", function () {
+                    //console.log("watch called");
+                    if (scope.stop) {
+                        $interval.cancel(_intervalId);
+                    }
+                    // wait for promise to be rejected before establishing a new one
+                    // TODO:  determine is another mechanism to check promise aside from accessing private $$state
+                    else if(_intervalId.$$state.status === 2){
+                        _intervalId = $interval(_updateSlide, self.dwell);
+                    }
+                })
+            }
+
+            function controller($scope) {
+
+                /**
+                 * @property    stop
+                 * controls play of the slideshow
+                 *
+                 * @type    {boolean}
+                 * @public
+                 **/
+                Object.defineProperty($scope,'stop',{get: getStop, set: setStop, enumerable:true});
+                var _stop;
+                function getStop(){
+                    return _stop;
+                }
+                function setStop(value){
+                    _stop = value;
+                }
+
+                $scope.getValue = function(){
+                    if($scope.stop) {
+                        return "PLAY"
+                    }else{
+                        return "STOP"
+                    }
+                };
+
+                // $timeout(
+                //     function _logStopFlag() {
+                //         $scope.stop = true;
+                //         console.log("value of stop", $scope.stop);
+                //     },
+                //     10000);
             }
 
             return self;
         }
-
         return new wordshuffleDirectivesInstructionsSlideShow;
     }
-    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$interval'];
+    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$interval', '$timeout'];
 
-    angular.module('App').directive('wordshuffleDirectivesInstructionsSlideShow', wordshuffleDirectivesInstructionsSlideShowProvider);
+    angular.module('App_WordShuffle').directive('wordshuffleDirectivesInstructionsSlideShow', wordshuffleDirectivesInstructionsSlideShowProvider);
 })();
