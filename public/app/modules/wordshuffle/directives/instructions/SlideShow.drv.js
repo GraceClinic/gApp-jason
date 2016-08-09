@@ -13,7 +13,6 @@
          */
         function wordshuffleDirectivesInstructionsSlideShow() {
             var self = this;
-            var _oldDwell;
 
             Logger.entry('START ' + self.constructor.name + '.construct()',self.constructor.name);
 
@@ -24,7 +23,8 @@
                 dwell:      '='       // milli-seconds to show each page
             };
             self.link = link;
-            self.controller = controller;
+            self.require = ['^wordshuffleDirectivesInstructionsSlideShowOutline'];
+            self.transclude = false;
 
             /**
              * Controller for the SlideShow directive
@@ -33,18 +33,20 @@
              * @param   {WordShuffle_Models_Instructions_Page[]} scope.pages     - array of pages to display
              * @param   {string}                    scope.pageBody  - current page to display
              * @param   {int}                       scope.dwell     - milliseconds to dwell on each page before switching to next one
+             * @param   {object}    attrb           - directive attributes
+             * @param   {object}    ctrls     - reference to the outline controller for reaction to stop state
              * @param   {Object}    element         - the DOM element attached to directive
              */
-            function link(scope, element) {
+            function link(scope, element, attrb, ctrls) {
                 var self = scope;
                 // wait for backend to load pages
                 var _intervalId = $interval(_wait, 100);
                 var _maxHt = 0;
+                var SlideShowCtrl = ctrls[0];
                 // if (self.stop == undefined) {
                 //     console.log("inside if-block");
                 //     self.stop = false;
                 // }
-
 
                 /*************************************************
                  * PROPERTY DECLARATIONS with GETTERS and SETTERS
@@ -54,7 +56,6 @@
                  * @type {number}
                  */
                 self.index = 0;
-                _oldDwell = self.dwell;
 
                 /********************
                  * PRIVATE FUNCTIONS
@@ -84,6 +85,7 @@
                     if(self.index >= self.pages.length){
                         self.index = 0;
                     }
+
                 }
 
                 /*******************
@@ -94,9 +96,10 @@
                 });
 
                 // TODO: is there any cleanup activity?
-                scope.$watch("stop", function () {
-                    //console.log("watch called");
-                    if (scope.stop) {
+                // SlideShowCtrl is not on the directive's local scope, use a watcher connected to a function to return
+                // the value of stop from the SlideShowCtrl.  This forces the watcher to evaluate SlideShowCtrl.stop
+                scope.$watch(function(){return SlideShowCtrl.stop}, function () {
+                    if (SlideShowCtrl.stop) {
                         $interval.cancel(_intervalId);
                     }
                     // wait for promise to be rejected before establishing a new one
@@ -105,40 +108,6 @@
                         _intervalId = $interval(_updateSlide, self.dwell);
                     }
                 })
-            }
-
-            function controller($scope) {
-
-                /**
-                 * @property    stop
-                 * controls play of the slideshow
-                 *
-                 * @type    {boolean}
-                 * @public
-                 **/
-                Object.defineProperty($scope,'stop',{get: getStop, set: setStop, enumerable:true});
-                var _stop;
-                function getStop(){
-                    return _stop;
-                }
-                function setStop(value){
-                    _stop = value;
-                }
-
-                $scope.getValue = function(){
-                    if($scope.stop) {
-                        return "PLAY"
-                    }else{
-                        return "STOP"
-                    }
-                };
-
-                // $timeout(
-                //     function _logStopFlag() {
-                //         $scope.stop = true;
-                //         console.log("value of stop", $scope.stop);
-                //     },
-                //     10000);
             }
 
             return self;
