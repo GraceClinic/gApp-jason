@@ -35,7 +35,7 @@ class WordShuffle_Model_Mapper_Page extends Common_Abstracts_Mapper
         // execute parent find procedure to get relevant data
         /** @var  WordShuffle_Model_Page[] $results */
         $pages = parent::findAll($by);
-
+        sleep(2);
         // process each page and retrieve the file contents for the body
         if(count($pages) > 0){
             /** @var WordShuffle_Model_Page $page */
