@@ -1,4 +1,8 @@
-<h1>hello,this is my directive template</h1>
-<input type="button" class="btn-sm" ng-click="SlideShowCtrl.stop = !SlideShowCtrl.stop" value={{SlideShowCtrl.next}}>
-<div ng-transclude></div>
-
+<link rel="stylesheet" href="/app/modules/wordshuffle/directives/instructions/SlideShowOutline.drv.css">
+<!--<div ng-transclude></div>-->
+<h2>{{SlideShowCtrl.title}}</h2>
+<!--the getter for numPages is constantly getting called??-->
+<ul class="instructionsList" ng-repeat="n in SlideShowCtrl.numPages">
+   <li ng-click="SlideShowCtrl.displayInstruction($event)">Page {{n}}</li>
+</ul>
+<button type="button" ng-show = "SlideShowCtrl.numPages.length!= 0" class="btn btn btn-primary" ng-class="{'green': SlideShowCtrl.stop === true, 'red': SlideShowCtrl.stop === false}" ng-click="SlideShowCtrl.stopPlay()">{{SlideShowCtrl.next}}</button>
