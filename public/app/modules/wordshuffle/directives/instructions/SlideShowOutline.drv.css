@@ -1,0 +1,29 @@
+.instructionsList {
+    list-style-type: none;
+}
+
+.instructionsList > li {
+    background-color: gainsboro;
+    margin-right: 5rem;
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+}
+
+.instructionsList > li:hover {
+    box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+button.btn.btn.btn-primary {
+    -webkit-user-select: none; /* Chrome/Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: #4cae4c;
+}
