@@ -30,6 +30,10 @@
             this.controllerAs = "SlideShowCtrl";
             this.transclude = false;
 
+            /**
+             *
+             * @param $scope
+             */
             function controller($scope){
                 /**
                  * @property    stop
@@ -44,15 +48,11 @@
                     return _stop;
                 }
                 function setStop(value){
-                    console.log("stop working");
                     _stop = value;
                     if(_stop){
                         this.next = "PLAY";
                     }else{
                         this.next = "STOP";
-                    }
-                    if (!this.individualPageInstruction) {
-                        $rootScope.$emit("slideShow:stopPlay", {stop: value});
                     }
                 }
 
@@ -71,6 +71,39 @@
                 function setNext(value){
                     _next = value;
                 }
+
+                /**
+                 * @property    isCollapsed
+                 * toggles the collapsible instructions list
+                 *
+                 * @type    {boolean}
+                 * @public
+                 **/
+                Object.defineProperty(this,'isCollapsed',{get: getIsCollapsed, set: setIsCollapsed, enumerable:true});
+                var _isCollapsed = true;
+                function getIsCollapsed(){
+                    return _isCollapsed;
+                }
+                function setIsCollapsed(value){
+                    _isCollapsed = value;
+                }
+
+                /**
+                 * @property    selectedPageInstruction
+                 * this is to highlight the selected page
+                 *
+                 * @type    {int}
+                 * @public
+                 **/
+                Object.defineProperty(self,'selectedPageInstruction',{get: getSelectedPageInstruction, set: setSelectedPageInstruction, enumerable:true});
+                var _selectedPageInstruction = -1;
+                function getSelectedPageInstruction(){
+                    return _selectedPageInstruction;
+                }
+                function setSelectedPageInstruction(value){
+                    _selectedPageInstruction = value;
+                }
+
                 /**
                  * @property    numPages
                  * convert the integer value to array for ng-repeat
@@ -92,40 +125,16 @@
                 }
 
                 /**
-                 * @property    individualPageInstruction
-                 * set a flag of true or false, which can be checked for firing emit inside setStop
-                 *
-                 * @type    {boolean}
-                 * @public
-                 **/
-
-                if (typeof self.individualPageInstruction === "undefined") {
-                    Object.defineProperty(self,'individualPageInstruction',{get: getIndividualPageInstruction, set: setIndividualPageInstruction, enumerable:true});
-                    var _individualPageInstruction = false;
-                    function getIndividualPageInstruction(){
-                        return _individualPageInstruction;
-                    }
-                    function setIndividualPageInstruction(value){
-                        _individualPageInstruction = value;
-                    }
-                }
-
-
-                /**
-                 * @method   displayInstruction
+                 * @method   selectedPage
                  * stop slide show and display the clicked instruction
                  *
                  * @public                      - todo: scope as public or protected, prefix name with "_" for protected
                  * @param    {}                 - todo: document each parameter
                  * @return   {void}
                  */
-                this.displayInstruction = function($event){
-                    // todo: code method
-                    //it is assumed that page numbers are seperated by a space and it comes at the last
-                    var pageClicked = $event.target.textContent.split (" ");
-                    var nameLength = $event.target.textContent.split(" ").length;
-                    $rootScope.$emit("slideShow:stopPlay", {stop: true, index: pageClicked[nameLength - 1]});
-                    this.individualPageInstruction = true;
+                this.selectedPage = function($index){
+                    this.selectedPageInstruction = $index;
+                    $rootScope.$emit("slideShowPageSelected", {index: $index});
                     this.stop = true;
                 };
 
@@ -139,8 +148,8 @@
                  */
                 this.stopPlay = function(){
                     // todo: code method
-                    console.log("stopPlay called");
-                    this.individualPageInstruction = false;
+                    this.selectedPageInstruction = -1;
+                    $rootScope.$emit("slideShowStop", {stop: !this.stop});
                     this.stop = !this.stop;
                 };
 
