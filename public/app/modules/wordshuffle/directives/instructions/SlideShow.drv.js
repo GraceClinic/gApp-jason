@@ -5,7 +5,7 @@
      * @param $interval
      * @returns {wordshuffleDirectivesInstructionsSlideShow}
      */
-    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger, $interval, $timeout) {
+    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger,$rootScope,$interval) {
 
         /**
          * @class wordshuffleDirectivesInstructionsSlideShow
@@ -13,7 +13,6 @@
          */
         function wordshuffleDirectivesInstructionsSlideShow() {
             var self = this;
-            var _oldDwell;
 
             Logger.entry('START ' + self.constructor.name + '.construct()',self.constructor.name);
 
@@ -24,10 +23,9 @@
                 dwell:      '='       // milli-seconds to show each page
             };
             self.link = link;
-            self.controller = controller;
 
             /**
-             * Controller for the SlideShow directive
+             * Link for the SlideShow directive
              *
              * @param   {Object}                    scope           - reference to angular directive scope
              * @param   {WordShuffle_Models_Instructions_Page[]} scope.pages     - array of pages to display
@@ -40,11 +38,6 @@
                 // wait for backend to load pages
                 var _intervalId = $interval(_wait, 100);
                 var _maxHt = 0;
-                // if (self.stop == undefined) {
-                //     console.log("inside if-block");
-                //     self.stop = false;
-                // }
-
 
                 /*************************************************
                  * PROPERTY DECLARATIONS with GETTERS and SETTERS
@@ -54,7 +47,6 @@
                  * @type {number}
                  */
                 self.index = 0;
-                _oldDwell = self.dwell;
 
                 /********************
                  * PRIVATE FUNCTIONS
@@ -86,66 +78,31 @@
                     }
                 }
 
+                $rootScope.$on('slideShowStop', function (event, args) {
+                    scope.stop = args.stop;
+                    $interval.cancel(_intervalId);
+                    if (scope.stop == false) {
+                        _intervalId = $interval(_updateSlide, self.dwell);
+                    }
+                });
+
+                $rootScope.$on('slideShowPageSelected', function (event, args) {
+                    self.index = args.index - 1;
+                });
                 /*******************
                  * CONSTRUCTOR LOGIC
                  *******************/
                 element.on('$destroy', function() {
                     $interval.cancel(_intervalId);
                 });
-
-                // TODO: is there any cleanup activity?
-                scope.$watch("stop", function () {
-                    //console.log("watch called");
-                    if (scope.stop) {
-                        $interval.cancel(_intervalId);
-                    }
-                    // wait for promise to be rejected before establishing a new one
-                    // TODO:  determine is another mechanism to check promise aside from accessing private $$state
-                    else if(_intervalId.$$state.status === 2){
-                        _intervalId = $interval(_updateSlide, self.dwell);
-                    }
-                })
             }
-
-            function controller($scope) {
-
-                /**
-                 * @property    stop
-                 * controls play of the slideshow
-                 *
-                 * @type    {boolean}
-                 * @public
-                 **/
-                Object.defineProperty($scope,'stop',{get: getStop, set: setStop, enumerable:true});
-                var _stop;
-                function getStop(){
-                    return _stop;
-                }
-                function setStop(value){
-                    _stop = value;
-                }
-
-                $scope.getValue = function(){
-                    if($scope.stop) {
-                        return "PLAY"
-                    }else{
-                        return "STOP"
-                    }
-                };
-
-                // $timeout(
-                //     function _logStopFlag() {
-                //         $scope.stop = true;
-                //         console.log("value of stop", $scope.stop);
-                //     },
-                //     10000);
-            }
-
+            Logger.entry('END ' + self.constructor.name + '.construct()', self.constructor.name);
             return self;
         }
+
         return new wordshuffleDirectivesInstructionsSlideShow;
     }
-    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$interval', '$timeout'];
+    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$rootScope','$interval'];
 
-    angular.module('App_WordShuffle').directive('wordshuffleDirectivesInstructionsSlideShow', wordshuffleDirectivesInstructionsSlideShowProvider);
+    angular.module('App').directive('wordshuffleDirectivesInstructionsSlideShow', wordshuffleDirectivesInstructionsSlideShowProvider);
 })();

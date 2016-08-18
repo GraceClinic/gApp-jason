@@ -10,15 +10,23 @@
         font-family: "Times New Roman", fantasy;
         padding-left: 2%;
     }
+    .spinner {
+        font-size: 150pt;
+        margin-top: 10%;
+    }
 </style>
-<div id="WordShuffle_Controllers_Welcome_instructions"><img ng-src="{{Welcome.Instructions.picture}}"><span>{{Welcome.Instructions.title}}</span></div>
+
+
+
+
+<div id="WordShuffle_Controllers_Welcome_instructions">
+    <img ng-src="{{Welcome.Instructions.picture}}"><span>{{Welcome.Instructions.title}}</span>
+</div>
+
+<div ng-show="Welcome.spinCog" align="center">
+<span class="fa fa-cog fa-spin spinner"> </span>
+</div>
+
 <div>
-    <div class="row">
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4" id="spinnerInstructions">
-            <span ng-hide = "Welcome.Instructions.status == Welcome.Instructions.READY" align="center" us-spinner="{radius:40, width:8, length: 16}"></span>
-        </div>
-        <div class="col-sm-4"></div>
-    </div>
-    <wordshuffle-directives-instructions-slide-show pages="Welcome.Instructions.Pages" dwell="5000"></wordshuffle-directives-instructions-slide-show>
+    <wordshuffle-directives-instructions-slide-show pages="Welcome.Instructions.Pages" dwell="2000"></wordshuffle-directives-instructions-slide-show>
 </div>

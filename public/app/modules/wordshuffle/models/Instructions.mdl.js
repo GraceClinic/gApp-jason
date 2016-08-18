@@ -108,7 +108,7 @@
             Model.call(self,data);
 
             self._rootURL = '/WordShuffle/Instructions/';
-            self.find();
+            //self.find();
 
             self.SysMan.Logger.entry('END ' + self.constructor.name+'.construct()',self.constructor.name);
             // most models return itself for daisy chaining

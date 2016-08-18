@@ -1,2 +1,41 @@
-<h1>hello,this is my directive template</h1>
-<h1></h1>
+<style>
+    .active {
+        background-color: #F1C40F;
+    }
+
+    .pageList {
+        border-radius: 25px;
+        border: 2px solid #73AD21;
+        padding-top: 20px;
+        width: 200px;
+        height: 200px;
+        margin-top: 20px;
+    }
+</style>
+<div>
+    <div align="center">
+        <table>
+            <tr>
+                <th style="padding-right: 40px">
+                    <img ng-src={{SlideShowOutlineCtrl.imgToggle}} alt="Expand image" height="20" width="20"  ng-model="SlideShowOutlineCtrl.collapsed" ng-click="SlideShowOutlineCtrl.toggleOutline()">
+                </th>
+                <th>
+                    <div  ng-bind-html="SlideShowOutlineCtrl.title"></div>
+                </th>
+            </tr>
+        </table>
+    </div>
+
+    <div align="center">
+        <div class="pageList"  ng-show="SlideShowOutlineCtrl.collapsed" >
+            <div>
+                <li style="list-style-type: none" ng-repeat = "x in SlideShowOutlineCtrl.pageNum" >
+                <a ng-click = "SlideShowOutlineCtrl.selectedPage(x)" ng-class="{active : SlideShowOutlineCtrl.isSelected(x)}">Page {{x}}</a><br><br>
+                </li>
+            </div>
+        <div>
+            <input type="button" value={{SlideShowOutlineCtrl.stop}} ng-click = "SlideShowOutlineCtrl.toggleSlideShow()">
+        </div>
+        </div>
+    </div>
+</div>

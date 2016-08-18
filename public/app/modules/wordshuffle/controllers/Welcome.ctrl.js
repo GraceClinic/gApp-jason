@@ -35,6 +35,22 @@
                 self.SysMan.Logger.ERRNO.CTRL_ERROR);
         }
 
+        /**
+         * @property    spinCog
+         *
+         *
+         * @type    {boolean}
+         * @public
+         **/
+        Object.defineProperty(self,'spinCog',{get: getSpinCog, set: setSpinCog, enumerable:true});
+        var _spinCog;
+        function getSpinCog(){
+            return _spinCog;
+        }
+        function setSpinCog(value){
+            _spinCog = value;
+        }
+
         /******************
          * ACTION METHODS
          ******************/
@@ -45,11 +61,23 @@
          * @public
          */
         self.indexAction = function(){
+            self.SysMan.Logger.entry('START indexAction','App_Common_Abstracts_ActionController');
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }
-        };
 
+            self.spinCog = true;
+            var _promise = self.Instructions.find()
+                .then(
+                    function(response) {
+                        if (self.Instructions.status == self.Instructions.READY) {
+                            self.spinCog = false;
+                        }
+                    });
+            self.SysMan.Logger.entry('END indexAction','App_Common_Abstracts_ActionController');
+            return _promise;
+        };
+        
         /******************
          * PROTECTED METHODS
          ******************/
