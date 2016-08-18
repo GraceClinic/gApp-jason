@@ -8,7 +8,7 @@
      * @param   ngSanitize  {object}    reference to angularjs ngSanitize module
      *
      **/
-    angular.module('App_WordShuffle',['ui.router','ngSanitize','App_Common', 'angularSpinner']);// create angular Module for usage
+    angular.module('App_WordShuffle',['ui.router','ngSanitize','App_Common']);// create angular Module for usage
 
 
 })();
