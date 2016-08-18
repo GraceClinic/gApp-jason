@@ -1,22 +1,12 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Welcome.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Welcome as Welcome">
     <div class="controller_welcome view_leftPanel">
-        <div class="model_player_stats table_view">
-            <div class="model_player_stats header_view">Your Stats</div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundHigh">Round High:</div><div class="model_player_stats right roundHigh">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundAvg">Round Avg:</div><div class="model_player_stats right roundAvg">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left avgWord">Avg Pts per Word: </div><div class="model_player_stats right avgWord">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left longestWord">Longest Word: </div><div class="model_player_stats right longestWord">0</div>
-            </div>
-            <div class="model_player_stats footer"></div>
-        </div>
+
+        <wordshuffle-directives-instructions-slide-show-outline title ="Welcome.Instructions.title" length ="Welcome.Instructions.Pages.length" stop="true">
+
+        </wordshuffle-directives-instructions-slide-show-outline>
+
+        <div class="footer"></div>
     </div>
     <div class="controller_welcome view_rightPanel">
         <app-common-directives-banner msg="Welcome.msg" expires="5000"></app-common-directives-banner>
