@@ -5,7 +5,7 @@
      * @param $interval
      * @returns {wordshuffleDirectivesInstructionsSlideShow}
      */
-    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger,$interval) {
+    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger,$rootScope,$interval) {
 
         /**
          * @class wordshuffleDirectivesInstructionsSlideShow
@@ -20,12 +20,12 @@
             self.templateUrl = '/app/modules/wordshuffle/directives/instructions/SlideShow.drv.html';
             self.scope = {
                 pages:      '=',        // array of Page models
-                dwell:      '='         // milli-seconds to show each page
+                dwell:      '='       // milli-seconds to show each page
             };
-            self.link = controller;
+            self.link = link;
 
             /**
-             * Controller for the SlideShow directive
+             * Link for the SlideShow directive
              *
              * @param   {Object}                    scope           - reference to angular directive scope
              * @param   {WordShuffle_Models_Instructions_Page[]} scope.pages     - array of pages to display
@@ -33,7 +33,7 @@
              * @param   {int}                       scope.dwell     - milliseconds to dwell on each page before switching to next one
              * @param   {Object}    element         - the DOM element attached to directive
              */
-            function controller(scope, element) {
+            function link(scope, element) {
                 var self = scope;
                 // wait for backend to load pages
                 var _intervalId = $interval(_wait, 100);
@@ -78,6 +78,17 @@
                     }
                 }
 
+                $rootScope.$on('slideShowStop', function (event, args) {
+                    scope.stop = args.stop;
+                    $interval.cancel(_intervalId);
+                    if (scope.stop == false) {
+                        _intervalId = $interval(_updateSlide, self.dwell);
+                    }
+                });
+
+                $rootScope.$on('slideShowPageSelected', function (event, args) {
+                    self.index = args.index - 1;
+                });
                 /*******************
                  * CONSTRUCTOR LOGIC
                  *******************/
@@ -85,13 +96,13 @@
                     $interval.cancel(_intervalId);
                 });
             }
-
+            Logger.entry('END ' + self.constructor.name + '.construct()', self.constructor.name);
             return self;
         }
 
         return new wordshuffleDirectivesInstructionsSlideShow;
     }
-    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$interval'];
+    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$rootScope','$interval'];
 
     angular.module('App').directive('wordshuffleDirectivesInstructionsSlideShow', wordshuffleDirectivesInstructionsSlideShowProvider);
 })();
