@@ -19,8 +19,8 @@
             self.restrict = 'E';    // element name type directive
             self.templateUrl = '/app/modules/wordshuffle/directives/instructions/SlideShow.drv.html';
             self.scope = {
-                pages       :   '=',        // array of Page models
-                dwell       :   '='   // milli-seconds to show each page
+                pages:      '=',        // array of Page models
+                dwell:      '='       // milli-seconds to show each page
             };
             self.link = link;
 
@@ -106,4 +106,3 @@
 
     angular.module('App').directive('wordshuffleDirectivesInstructionsSlideShow', wordshuffleDirectivesInstructionsSlideShowProvider);
 })();
-

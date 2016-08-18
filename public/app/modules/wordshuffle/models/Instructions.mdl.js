@@ -50,6 +50,8 @@
              * @public
              **/
             Object.defineProperty(self,'idGame',{get: getIdGame,set: setIdGame});
+            
+
 
             /*****************************************
              * PUBLIC METHODS declaration / definition
