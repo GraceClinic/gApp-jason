@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Welcome.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Welcome as Welcome">
     <div class="controller_welcome view_leftPanel">
-        <div wordshuffle-directives-instructions-slide-show-outline title={{Welcome.Instructions.title}} pages={{Welcome.Instructions.Pages.length}}>
-        </div>
+        <wordshuffle-directives-instructions-slide-show-outline title={{Welcome.Instructions.title}} pages={{Welcome.Instructions.Pages.length}}>
+        </wordshuffle-directives-instructions-slide-show-outline>
     </div>
     <div class="controller_welcome view_rightPanel">
         <app-common-directives-banner msg="Welcome.msg" expires="5000">

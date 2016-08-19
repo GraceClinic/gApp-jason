@@ -4,6 +4,7 @@
 
     /**
      * @param {App_Common_Models_Tools_Logger}  Logger  - reference to Logger object
+     * @params $rootScope   rootscope
      * @returns {wordshuffleDirectivesInstructionsSlideShowOutline}
      */
     function wordshuffleDirectivesInstructionsSlideShowOutlineProvider(Logger, $rootScope) {
@@ -18,7 +19,7 @@
             // todo:  define static variables, shared across any functions contained herein
 
             // todo:  define the returns from the directive as expected by AngularJS
-            this.restrict = 'A';
+            this.restrict = 'E';
             this.templateUrl = '/app/modules/wordshuffle/directives/instructions/SlideShowOutline.drv.html';
             this.scope = {
                 title:      '@',
@@ -30,11 +31,7 @@
             this.controllerAs = "SlideShowCtrl";
             this.transclude = false;
 
-            /**
-             *
-             * @param $scope
-             */
-            function controller($scope){
+            function controller(){
                 /**
                  * @property    stop
                  * state of slideshow
