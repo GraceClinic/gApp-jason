@@ -1,0 +1,10 @@
+#setup-display-message, #login-register-form  {
+    position: relative;
+    top: 32rem;
+}
+
+#setup-display-message {
+    top: 23rem;
+    font-family: cursive;
+    font-size: 2rem;
+}

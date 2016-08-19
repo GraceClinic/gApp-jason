@@ -1,0 +1,13 @@
+<link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/registration.tpl.css">
+<div class="view_form_line_leftside">
+    <label for="setup-player-challenge">Challenge Question:</label>
+</div>
+
+<div>
+    <select
+            ng-model="Setup.Player.idChallenge"
+            ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
+            id="setup-player-challenge">
+        <!--<option value="">-- choose one --</option>-->
+    </select>
+</div>

@@ -101,7 +101,6 @@
                     // simply save the model and the backend will determine if a challenge is required
                     self.relay('login');
                 }
-
                 return true;
             };
 
