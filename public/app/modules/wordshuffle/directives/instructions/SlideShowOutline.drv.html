@@ -1,4 +1,13 @@
-<h1>hello,this is my directive template</h1>
-<input type="button" class="btn-sm" ng-click="SlideShowCtrl.stop = !SlideShowCtrl.stop" value={{SlideShowCtrl.next}}>
-<div ng-transclude></div>
-
+<link rel="stylesheet" href="/app/modules/wordshuffle/directives/instructions/SlideShowOutline.drv.css">
+<!--<div ng-transclude></div>-->
+<!--<h2>{{SlideShowCtrl.title}}</h2>-->
+<button ng-class="{'contentCollapsed': SlideShowCtrl.isCollapsed === true, 'contentUnCollapsed': SlideShowCtrl.isCollapsed === false}" id="howToPlay" ng-show = "SlideShowCtrl.numPages.length!= 0" class="btn btn-primary" type="button" ng-click="SlideShowCtrl.isCollapsed = !SlideShowCtrl.isCollapsed">
+  <marquee onmouseover="this.stop()" onmouseout="this.start()"> {{SlideShowCtrl.title}} </marquee>
+</button>
+<br>
+<div id="instructionsListBlock" collapse="SlideShowCtrl.isCollapsed">
+    <ul class="instructionsList" ng-repeat="n in SlideShowCtrl.numPages">
+        <li ng-class="{'selectedPageInstruction': SlideShowCtrl.selectedPageInstruction == $index}" ng-click="SlideShowCtrl.selectedPage($index)">Page {{n}}</li>
+    </ul>
+</div>
+<button type="button" ng-show = "SlideShowCtrl.numPages.length!= 0" class="btn btn btn-primary" ng-class="{'green': SlideShowCtrl.stop === true, 'red': SlideShowCtrl.stop === false}" ng-click="SlideShowCtrl.stopPlay()">{{SlideShowCtrl.next}}</button>

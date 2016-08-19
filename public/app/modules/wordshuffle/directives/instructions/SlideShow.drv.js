@@ -5,7 +5,7 @@
      * @param $interval
      * @returns {wordshuffleDirectivesInstructionsSlideShow}
      */
-    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger, $interval, $timeout) {
+    function wordshuffleDirectivesInstructionsSlideShowProvider(Logger, $interval, $rootScope) {
 
         /**
          * @class wordshuffleDirectivesInstructionsSlideShow
@@ -23,7 +23,7 @@
                 dwell:      '='       // milli-seconds to show each page
             };
             self.link = link;
-            self.require = ['^wordshuffleDirectivesInstructionsSlideShowOutline'];
+            //self.require = ['^wordshuffleDirectivesInstructionsSlideShowOutline'];
             self.transclude = false;
 
             /**
@@ -42,11 +42,6 @@
                 // wait for backend to load pages
                 var _intervalId = $interval(_wait, 100);
                 var _maxHt = 0;
-                var SlideShowCtrl = ctrls[0];
-                // if (self.stop == undefined) {
-                //     console.log("inside if-block");
-                //     self.stop = false;
-                // }
 
                 /*************************************************
                  * PROPERTY DECLARATIONS with GETTERS and SETTERS
@@ -95,26 +90,24 @@
                     $interval.cancel(_intervalId);
                 });
 
-                // TODO: is there any cleanup activity?
-                // SlideShowCtrl is not on the directive's local scope, use a watcher connected to a function to return
-                // the value of stop from the SlideShowCtrl.  This forces the watcher to evaluate SlideShowCtrl.stop
-                scope.$watch(function(){return SlideShowCtrl.stop}, function () {
-                    if (SlideShowCtrl.stop) {
-                        $interval.cancel(_intervalId);
-                    }
-                    // wait for promise to be rejected before establishing a new one
-                    // TODO:  determine is another mechanism to check promise aside from accessing private $$state
-                    else if(_intervalId.$$state.status === 2){
+                $rootScope.$on("slideShowStop", function(event, data) {
+                    $interval.cancel(_intervalId);
+                    if (!data.stop) {
                         _intervalId = $interval(_updateSlide, self.dwell);
                     }
-                })
+                });
+
+                $rootScope.$on("slideShowPageSelected", function(event, data) {
+                    self.index = data.index;
+                    $interval.cancel(_intervalId);
+                });
             }
 
             return self;
         }
         return new wordshuffleDirectivesInstructionsSlideShow;
     }
-    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$interval', '$timeout'];
+    wordshuffleDirectivesInstructionsSlideShowProvider.$inject = ['App_Common_Models_Tools_Logger','$interval', '$rootScope'];
 
     angular.module('App_WordShuffle').directive('wordshuffleDirectivesInstructionsSlideShow', wordshuffleDirectivesInstructionsSlideShowProvider);
 })();
