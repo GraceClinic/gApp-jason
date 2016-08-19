@@ -89,6 +89,7 @@
          * @return   {bool}
          */
         self.playGame = function(){
+            console.log("saveIsPending, signInState, SIGNED_IN", self.Player.saveIsPending, self.Player.signInState, self.SysMan.SIGNED_IN);
             if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
                 self.Player.login();
             }
@@ -154,6 +155,22 @@
             }
 
         };
+
+        /**
+         * @method   registerUser
+         * checks userName name available or not
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.registerUser = function(){
+            console.log("register user called");
+            Player.login();
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "registration"});
+            // todo: code method
+        };
+
 
         /******************
          * PROTECTED METHODS

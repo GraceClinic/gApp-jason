@@ -1,24 +1,48 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Setup.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Setup as Setup">
-    <div class="controller_setup view_leftPanel">
-        <div class="model_player_stats table_view">
-            <div class="model_player_stats header_view">Your Stats</div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundHigh">Round High:</div><div class="model_player_stats right roundHigh">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundAvg">Round Avg:</div><div class="model_player_stats right roundAvg">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left avgWord">Avg Pts per Word: </div><div class="model_player_stats right avgWord">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left longestWord">Longest Word: </div><div class="model_player_stats right longestWord">0</div>
-            </div>
-            <div class="model_player_stats footer"></div>
-        </div>
-    </div>
-    <div class="controller_setup view_rightPanel">
+    <div class="controller_setup col-sm-4" id="setup-view-left-panel">
         <div ui-view></div>
+    </div>
+    <div class="controller_setup col-sm-8" id="setup-view-right-panel">
+        <form id="setup-play-form">
+            <div class="form-group row setup-config">
+                <div class="col-xs-6 col-xs-offset-4">
+                    <div class="row">
+                        <label class="col-xs-9 col-form-label" for="time-per-round">Time Per Round(minutes):</label>
+                        <div class="col-xs-3">
+                            <input type="number" value="1" class="form-control" id="time-per-round">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row setup-config">
+                <div class="col-xs-6 col-xs-offset-4">
+                    <div class="row">
+                        <label class="col-xs-9 col-form-label" for="rounds-per-game">Rounds Per Game:</label>
+                        <div class="col-xs-3">
+                            <input type="number" value="3" class="form-control" id="rounds-per-game">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-xs-6 col-xs-offset-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" ng-model="termsAccepted" type="checkbox"> I accept the terms and conditions of play.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-xs-6 col-xs-offset-4">
+                    <button ng-disabled="!termsAccepted" type="submit" class="btn btn-primary">Play</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
