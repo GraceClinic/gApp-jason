@@ -56,7 +56,10 @@
         background-color: #7a61c2;
     }
     #Setup-player-login{
-        opacity: 0.7;
+        opacity: 0.95;
+    }
+    #Setup-player-register{
+        opacity: 0.95;
     }
     .fa-sign-in{
         color: darkred;
@@ -73,132 +76,52 @@
     }
 </style>
 <!-- Controller / Action content renders here -->
-<form class="view_form" ng-submit="Setup.Player.save()">
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label for="setup-player-name">Player:</label>
+
+<div class="row">
+    <div class="form-group">
+        <label class="control-label col-md-2">&nbsp;</label>
+        <label class="control-label col-md-5" style="text-align: center">You are playing anonymously, create a player name to enhance your game experience with statistics and head to head play. If you already have a player name, enter it now to login!
+        </label>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="form-group">
+        <div class="setup_player_msg">
+            <alert
+                    ng-repeat="pmsg in Setup.Player.msg track by $index"
+                    type="{{pmsg.type}}"
+                    close="Setup.Player.removeMsg($index)"
+                    ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
+                {{pmsg.text}}
+            </alert>
         </div>
-        <div class="view_form_line_rightside">
-            <input id="setup-player-name" ng-model="Setup.Player.name" type="text" name="name">
-            <button
+    </div>
+</div>
+<div class="row">
+    <div class="form-group">
+        <label class="control-label col-md-2">&nbsp;</label>
+        <div class="col-md-5">
+            <input class="form-control" id="setup-player-name" placeholder="Enter Player Name"  ng-model="Setup.Player.name"  type="text" name="name">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="form-group">
+        <label class="control-label col-md-3">&nbsp;</label>
+        <input
                 id="Setup-player-login"
                 type="button"
-                class="btn btn-warning btn-xs"
-                ng-click="Setup.Player.login()"
-                ng-show="Setup.Player.signInState > Setup.SysMan.ANONYMOUS_PLAY && Setup.Player.signInState < Setup.SysMan.NEW_SIGN_IN"
-                tooltip="Submit user name for validation and/or creation as required"
-                tooltip-placement="top">
-                    <i class="fa fa-sign-in"></i>
-            </button>
-            <i class="fa fa-info-circle" tooltip="Enter a player name if you wish to store your stats!" tooltip-placement="bottom"></i>
-            <i class="fa fa-user-secret clickable"
-               tooltip="Show/hide secret question"
-               tooltip-placement="top"
-               ng-click="Setup.toggleShowSecret()"
-               ng-show="Setup.Player.signInState == Setup.SysMan.SIGNED_IN"></i>
-            &nbsp;&nbsp;
-            <i class="fa fa-sign-out clickable"
-               tooltip="Sign out"
-               tooltip-placement="bottom"
-               ng-click="Setup.playerLogout()"
-               ng-show="Setup.Player.signInState == Setup.SysMan.SIGNED_IN">sign out</i>
-        </div>
+                value="Login"
+                class="btn btn-success btn-md"
+                ng-click="Setup.PlayerLogin()">
+        <label class="control-label">&nbsp;or&nbsp;</label>
+        <input
+                id="Setup-player-register"
+                type="button"
+                value="Register"
+                class="btn btn-success btn-md"
+                ng-click="Setup.RegisterNewPlayer()">
     </div>
-    <div class="setup_player_msg">
-        <alert
-                ng-repeat="pmsg in Setup.Player.msg track by $index"
-                type="{{pmsg.type}}"
-                close="Setup.Player.removeMsg($index)"
-                ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
-            {{pmsg.text}}
-        </alert>
-    </div>
-    <div class="view_form_line" ng-show="Setup.Player.signInState == Setup.SysMan.NEW_SIGN_IN || Setup.showSecret">
-        <div class="view_form_line_leftside">
-            <label for="setup-player-challenge">Challenge Question:</label>
-        </div>
-        <div class="view_form_line_rightside">
-            <select
-                    ng-model="Setup.Player.idChallenge"
-                    ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
-                    id="setup-player-challenge">
-                <!--<option value="">-- choose one --</option>-->
-            </select>
-        </div>
-    </div>
-    <div class="view_form_line" ng-show="Setup.Player.signInState == Setup.SysMan.SECRET_PENDING">
-        <div class="view_form_line_leftside">
-            <i class="fa fa-user-secret" tooltip="Halt! Who goes there!" tooltip-placement="bottom"></i>
-        </div>
-        <div class="view_form_line_rightside">
-            {{Setup.Player.challenge}}
-        </div>
-    </div>
-    <div class="view_form_line" ng-show="Setup.showSecret || (Setup.Player.signInState > Setup.SysMan.NAME_PENDING  && Setup.Player.signInState < Setup.SysMan.SIGNED_IN)">
-        <div class="view_form_line_leftside">
-            <label for="setup-player-secret">Secret:</label>
-        </div>
-        <div class="view_form_line_rightside">
-            <input id="setup-player-secret" ng-model="Setup.Player.secret" type="text" name="name">
-            <button
-                    class="btn btn-warning btn-xs"
-                    type="button"
-                    ng-click="Setup.Player.login()"
-                    tooltip="Enter the answer to your secret question"
-                    tooltip-placement="top">
-                <i class="fa fa-sign-in"></i>
-            </button>
-            <i class="fa fa-info-circle" tooltip="Enter a player name if you wish to store your stats!" tooltip-placement="bottom"></i>
-        </div>
-    </div>
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label for="setup-game-minutesPerRound">Timer:</label>
-            <!--                <input type="text" name="Timer">-->
-        </div>
-        <div class="view_form_line_rightside">
-            <select id="setup-game-minutesPerRound" ng-model="Setup.minutesPerRound" name="minutesPerRound">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
-            &nbsp;minutes
-            <i class="fa fa-info-circle" tooltip="Round duration" tooltip-placement="bottom"></i>
-        </div>
-    </div>
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label for="setup-game-totalRounds">Rounds:</label>
-            <!--                <input type="text" name="Rounds">-->
-        </div>
-        <div class="view_form_line_rightside">
-            <select id="setup-game-totalRounds" ng-model="Setup.Player.roundsPerGame" name="roundsPerGame">
-                <option value=1>1</option>
-                <option value=2>2</option>
-                <option value=3>3</option>
-                <option value=4>4</option>
-                <option value=5>5</option>
-            </select>
-            <i class="fa fa-info-circle" tooltip="Number of rounds within an entire game" tooltip-placement="bottom"></i>
-        </div>
-    </div>
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label>&nbsp;</label>
-            <!--<input id="Play" type="submit" value="Play">-->
-            <button id="Setup-playGame" type="button" class="btn btn-success btn-lg" ng-click="Setup.playGame()">Play</button>
-            &nbsp;&nbsp;
-        </div>
-        <div class="view_form_line_rightside">
-            <button
-                    id="setup-player-save"
-                    class="btn btn-success btn-lg"
-                    type="submit"
-                    ng-disabled="Setup.Player.signInState < Setup.SysMan.NAME_PENDING">
-                Save
-            </button>
-            &nbsp;
-        </div>
-    </div>
-</form>
-
+</div>

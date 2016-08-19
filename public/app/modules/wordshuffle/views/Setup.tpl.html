@@ -1,24 +1,60 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Setup.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Setup as Setup">
-    <div class="controller_setup view_leftPanel">
-        <div class="model_player_stats table_view">
-            <div class="model_player_stats header_view">Your Stats</div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundHigh">Round High:</div><div class="model_player_stats right roundHigh">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundAvg">Round Avg:</div><div class="model_player_stats right roundAvg">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left avgWord">Avg Pts per Word: </div><div class="model_player_stats right avgWord">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left longestWord">Longest Word: </div><div class="model_player_stats right longestWord">0</div>
-            </div>
-            <div class="model_player_stats footer"></div>
-        </div>
-    </div>
-    <div class="controller_setup view_rightPanel">
-        <div ui-view></div>
-    </div>
+
+            <form class="form-horizontal" role="form" ng-submit="Setup.Player.save()">
+
+                    <div class="col-md-4">
+                        <div ui-view></div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="form-group">
+                                    <label class="control-label col-md-3" for="setup-game-minutesPerRound">Timer per round(minutes):</label>
+                                    <!--                <input type="text" name="Timer">-->
+                            <div class="col-md-1">
+                                <select class="form-control" id="setup-game-minutesPerRound" ng-model="Setup.minutesPerRound" name="minutesPerRound">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                                <i class="fa fa-info-circle col-md-1" tooltip="Round duration" tooltip-placement="bottom"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                    <label class="control-label col-md-3">Rounds per game:</label>
+                                    <!--                <input type="text" name="Rounds">-->
+                                <div class="col-md-1">
+                                    <select class="form-control" id="setup-game-totalRounds" ng-model="Setup.Player.roundsPerGame" name="roundsPerGame">
+                                        <option value=1>1</option>
+                                        <option value=2>2</option>
+                                        <option value=3>3</option>
+                                        <option value=4>4</option>
+                                        <option value=5>5</option>
+                                    </select>
+                                </div>
+                                <i class="fa fa-info-circle col-md-1" tooltip="Number of rounds within an entire game" tooltip-placement="bottom"></i>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-offset-1 col-md-6">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox"> <strong>I accept the terms and conditions of play</strong></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-7"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <!--<input id="Play" type="submit" value="Play">-->
+                                <label class="control-label col-md-5">&nbsp;</label>
+                                <input id="Setup-playGame" type="button" value="Play" class="btn btn-success btn-md" ng-click="Setup.playGame()">&nbsp;
+                            </div>
+                        </div>
+                    </div>
+            </form>
 </div>
