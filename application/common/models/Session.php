@@ -27,6 +27,7 @@
  * @property    int     points          - game points
  * @property    array   scoreBoard      - array of scores for the current game
  * @property    int     round           - current game round
+ * @property    int         acceptedTOS        determines login, registration or anonymous play
  */
 class Common_Models_Session
 {
@@ -104,7 +105,8 @@ class Common_Models_Session
             'secondsPerRound:     ' . $this->secondsPerRound . PHP_EOL .
             'idGame:       ' . $this->idGame . PHP_EOL .
             'signInState:     ' . $this->signInState . PHP_EOL .
-            'Msg:          ' . $this->msg . PHP_EOL;
+            'Msg:          ' . $this->msg . PHP_EOL.
+            'acceptedTOS    ' . $this->acceptedTOS . PHP_EOL;
     }
 
     protected function setIdPlayer($x)
@@ -274,6 +276,15 @@ class Common_Models_Session
         return $msg;
     }
 
+    private $_acceptedTOS = 0;
+    protected function setacceptedTOS($value){
+        self::$Session->acceptedTOS = $value;
+    }
+    protected function getacceptedTOS(){
+        return self::$Session->acceptedTOS;
+    }
+
+
     /**
      * @param int   $i  - round index
      * @param string    $field  - round field name
@@ -357,6 +368,7 @@ class Common_Models_Session
             self::$Session->gameEnd = null;
             self::$Session->gameState = null;
             self::$Session->scoreBoard = Array();
+           self::$Session->acceptedTOS = false;
         }
 
         return self::$Session;

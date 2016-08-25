@@ -13,6 +13,7 @@
  * @property    datetime    modifyDate          date time round will end
  * @property    int         signInState         - flags state of sign-in for display of needed information
  * @property    array       challenges          - the secret questions to secure player user
+ * @property    string      actionState
  * @property WordShuffle_Model_Mapper_Player Mapper
  *
  */
@@ -34,6 +35,9 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     const MSG_SUCCESS = 'success';
     const MSG_WARNING = 'warning';
     const MSG_DANGER = 'danger';
+    const ALREADY_REGISTERED_MSG = 'Sorry this username is already taken';
+    const USER_NOT_FOUND_MSG = 'Sorry, the requested username is not found, go back to register';
+    const ANON_PLAY_MSG = 'Playing anonymously';
 
     // variable serving class properties
     private
@@ -68,7 +72,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         // validate that name change did not occur during sign-in process
         if($this->_nameChanged){
             $inProcessSignIn =
-                $this->signInState > Common_Models_SysMan::ANONYMOUS_PLAY && $this->signInState < Common_Models_SysMan::SIGNED_IN;
+                $this->signInState > Common_Models_SysMan::ANONYMOUS_PLAY && $this->signInState < Common_Models_SysMan::SIGNED_IN && $this->signInState != Common_Models_SysMan::NAME_PENDING_REGISTER && $this->signInState != Common_Models_SysMan::NAME_PENDING_LOGIN;
             if($inProcessSignIn){
                 // set the state back to name pending and erase the challenge question
                 $this->signInState = Common_Models_SysMan::NAME_PENDING;
@@ -77,6 +81,19 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         $this->SysMan->Logger->info('END WordShuffle_Model_Player.init()');
 
     }
+
+//    // todo: move property docblock to top of class
+//    /**
+//     * @property    string         actionState        this tells, whether login, registration or anonymous
+//     */
+//    private $_actionState = null;
+//    protected function setActionState($value){
+//        $this->_actionState = (string) $value;
+//    }
+//    protected function getActionState(){
+//        return $this->_actionState;
+//    }
+
 
     private $_name = null;
     protected function setName($x){
@@ -106,6 +123,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         return $this->_secret;
     }
     protected function setIdChallenge($value){
+        $this->SysMan->Logger->info('value of challenge = ' . $value);
         if(!empty($value)){
             $this->SysMan->Session->idChallenge = (int) $value;;
         }
@@ -226,14 +244,31 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     public function login(){
         $success = false;
         $this->SysMan->Logger->info('Player->login(), signInState = '.$this->signInState);
-
         switch($this->signInState){
+            case Common_Models_SysMan::ANONYMOUS_PLAY:
+//                $this->SysMan->Logger->info('inside anonymous = '.$this->signInState . "  " . $this->SysMan->Session->actionState);
+//                if ($this->actionState == "anonymous") {
+//                    $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::ANON_PLAY_MSG);
+//                    $this->SysMan->Session->actionState = $this->SysMan->Session->actionState ? 0 : Common_Models_SysMan::ANONYMOUS_STATE;
+//                }
+//                $this->actionState = $this->SysMan->Session->actionState;
+//                $this->SysMan->Logger->info('inside anonymous after set = '.$this->signInState . "  " . $this->SysMan->Session->actionState);
+                break;
             // get user's challenge information
             case Common_Models_SysMan::NAME_PENDING:
                 $players = $this->Mapper->findAll();
                 if(count($players) == 0){
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
                     $this->msg = '';
+//                    if ($this->actionState == "login") {
+//                        $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::USER_NOT_FOUND_MSG);
+//                        $success = false;
+//                    }
+//                    else if ($this->actionState == "register") {
+//                        $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::NEW_LOGIN_MSG);
+//                        $success = true;
+//                    }
+
                     $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::NEW_LOGIN_MSG);
                     $success = true;
                 }elseif(count($players) == 1){
@@ -242,9 +277,59 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                     // set the idPlayer session variable, this location stores the true id which the Player model references
                     $this->SysMan->Session->idPlayer = $this->id;
                     $this->msg = '';
-                    $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::WELCOME_BACK_MSG);
+//                    if ($this->actionState == "login") {
+//                        $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::WELCOME_BACK_MSG);
+//                        $this->SysMan->Session->actionState = Common_Models_SysMan::LOGIN_STATE;
+//                    }
+//                    else if ($this->actionState == "register") {
+//                        $this->msg = array('type'=>self::MSG_WARNING, 'text'=>self::ALREADY_REGISTERED_MSG);
+//                        $this->SysMan->Session->actionState = Common_Models_SysMan::REGISTER_STATE;
+//                    }
+//                    $this->actionState = $this->SysMan->Session->actionState;
                     $success = true;
                 }else{
+                    throw new Exception(
+                        'Query for players with name = '.$this->name.' resulted in multiple hits.  This is not expected.'
+                    );
+                }
+                break;
+            case Common_Models_SysMan::NAME_PENDING_REGISTER:
+                $players = $this->Mapper->findAll();
+                if (count($players) == 0) {
+                    $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
+                    $this->msg = '';
+                    $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::NEW_LOGIN_MSG);
+                    $success = true;
+                }
+                else if (count($players) == 1) {
+                    $this->msg = "";
+                    $this->msg = array('type'=>self::MSG_WARNING, 'text'=>self::ALREADY_REGISTERED_MSG);
+                    $this->signInState = Common_Models_SysMan::NAME_PENDING;
+                    $success = false;
+                }
+                else {
+                    throw new Exception(
+                        'Query for players with name = '.$this->name.' resulted in multiple hits.  This is not expected.'
+                    );
+                }
+                break;
+            case Common_Models_SysMan::NAME_PENDING_LOGIN:
+                $players = $this->Mapper->findAll();
+                if (count($players) == 0) {
+                    $this->msg = "";
+                    $this->msg = array('type'=>self::MSG_WARNING, 'text'=>self::USER_NOT_FOUND_MSG);
+                    $this->signInState = Common_Models_SysMan::NAME_PENDING;
+                }
+                else if (count($players) == 1) {
+                    $this->signInState = Common_Models_SysMan::SECRET_PENDING;
+                    // set the idPlayer session variable, this location stores the true id which the Player model references
+                    //$this->SysMan->Session->idPlayer = $this->id;
+                    $this->setFromArray($players[0]);
+                    $this->msg = '';
+                    $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::WELCOME_BACK_MSG);
+                    $success = true;
+                }
+                else{
                     throw new Exception(
                         'Query for players with name = '.$this->name.' resulted in multiple hits.  This is not expected.'
                     );
@@ -266,15 +351,9 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                     }else{
                         $this->msg = array('type'=>self::MSG_DANGER, 'text'=>self::PLAYER_SAVE_ERROR);
                     }
-                }elseif(count($players) == 1){
-                    $this->setFromArray($players[0]);
-                    $this->signInState = Common_Models_Sysman::SECRET_PENDING;
-                    $this->msg = '';
-                    $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::WELCOME_BACK_MSG);
-                    $success = true;
                 }else {
                     throw new Exception(
-                        'Query for players with name = ' . $this->name . ' resulted in multiple hits.  This is not expected.'
+                        'Query for players with name = ' . $this->name . 'Registering, resulted in one or multiple hits.  This is not expected.'
                     );
                 }
                 break;
@@ -295,6 +374,13 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
             case Common_Models_SysMan::SIGNED_IN:
                 // treat this like a save event
                 $this->save();
+                break;
+            case Common_Models_SysMan::SIGNED_IN_EDITING:
+                $players = $this->Mapper->findAll();
+                if (count($players) === 1 && $this->Mapper->secretIsValid() ) {
+                    $this->signInState = Common_Models_SysMan::SIGNED_IN;
+                }
+                else $this->signInState = Common_Models_SysMan::SIGNED_IN_EDIT_NOT_ALLOWED;
                 break;
             default:
                 // todo: this should not happen,click session and revert back to Anonymous Play

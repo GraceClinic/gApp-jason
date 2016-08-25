@@ -1,7 +1,11 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Setup.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Setup as Setup">
     <div class="controller_setup col-sm-4" id="setup-view-left-panel">
-        <div ui-view></div>
+        <div id="action-container">
+            <div ui-view>
+
+            </div>
+        </div>
     </div>
     <div class="controller_setup col-sm-8" id="setup-view-right-panel">
         <form id="setup-play-form">
@@ -31,7 +35,7 @@
                         <div class="col-xs-12">
                             <div class="form-check">
                                 <label class="form-check-label">
-                                    <input class="form-check-input" ng-model="termsAccepted" type="checkbox"> I accept the terms and conditions of play.
+                                    <input class="form-check-input" type="checkbox" ng-disabled="Setup.Player.signInState != 0" ng-click="Setup.acceptTerms()"> I accept the terms and conditions of play.
                                 </label>
                             </div>
                         </div>
@@ -40,7 +44,8 @@
             </div>
             <div class="form-group row">
                 <div class="col-xs-6 col-xs-offset-4">
-                    <button ng-disabled="!termsAccepted" type="submit" class="btn btn-primary">Play</button>
+                    <!--<button ng-disabled="Setup.Player.actionState != 1" ng-click="Setup.playGame()" type="submit" class="btn btn-primary">Play</button>-->
+                    <button ng-click="Setup.playGame()" type="submit" class="btn btn-primary">Play</button>
                 </div>
             </div>
         </form>

@@ -49,7 +49,7 @@
                     <!--ng-model="Setup.Player.idChallenge"-->
                     <!--ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"-->
                     <!--id="setup-player-challenge">-->
-                <!--&lt;!&ndash;<option value="">&#45;&#45; choose one &#45;&#45;</option>&ndash;&gt;-->
+                <!--&lt;!&ndash;<option value="">-- choose one --</option>&ndash;&gt;-->
             <!--</select>-->
         <!--</div>-->
     <!--</div>-->
@@ -130,29 +130,50 @@
 <!--</form>-->
 
 
-
-<div id="setup-display-message">
-    <!--{{Setup.Player.signInState}} signIn State {{Setup.SysMan.SIGNED_IN}}-->
-    <div ng-show="Setup.Player.signInState != Setup.SysMan.SIGNED_IN">
-        You are playing anonymously, create a Player name to enhance your game experience with statistics and head to head play. If you already have a player name, enter it now to login!
+{{Setup.Player.signInState}} this is the signIn State
+<div class="setup-display-message">
+    <div class="row" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN">
+        <alert
+                ng-repeat="pmsg in Setup.Player.msg track by $index"
+                type="{{pmsg.type}}"
+                close="Setup.Player.removeMsg($index)"
+                ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
+            {{pmsg.text}}
+        </alert>
+        <div class="col-xs-12">
+            <b>username: {{Setup.Player.name}}</b>
+        </div>
+        <div class="col-xs-12">
+            <b>Challenge Question: {{Setup.Player.challenge}}</b>
+        </div>
+        <div class="col-xs-12" align="center">
+            <button type="button" id="edit-profile" ng-click="Setup.goToEdit()">Edit Profile</button>
+            <button type="button" id="logout-button" ng-click="Setup.playerLogout()">Logout</button>
+        </div>
     </div>
 </div>
-<form id="login-register-form">
-    <div class="form-group row">
-        <div class="col-sm-12">
-            <input type="text" class="form-control form-control-lg" id="setup-username" placeholder="Enter Player Name" name="username" ng-model="inputUserName" required>
-            <span class="help-inline" ng-if="inputUserName.length <= 1">Name Too Short</span>
-        </div>
+<div ng-show="Setup.Player.signInState != Setup.SysMan.SIGNED_IN">
+    <div class="setup-display-message">
+        You are playing anonymously, create a Player name to enhance your game experience with statistics and head to head play. If you already have a player name, enter it now to login!
     </div>
-    <div class="form-group row">
-        <div align="center" class="col-sm-12">
-            <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"login"})'>
-                <button type="button" id="login-button">Login</button>
-            </a>
-            &nbsp; or &nbsp;
-            <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
-                <button type="submit" id="register-button" ng-click="inputUserName.length > 1 && Setup.registerUser()" >Register</button>
-            <!--</a>-->
+
+    <form id="login-register-form" name="loginRegisterForm">
+        <div class="form-group row" ng-class="{'has-error': loginRegisterForm.username.$invalid && !loginRegisterForm.username.$pristine}">
+            <div class="col-sm-12">
+                <input type="text" class="form-control form-control-lg" id="setup-username" placeholder="Enter Player Name" name="username" ng-model="Setup.Player.name" ng-minlength="2" required>
+                <p ng-show="loginRegisterForm.username.$error.minlength" class="help-block">Username is too short.</p>
+            </div>
         </div>
-    </div>
-</form>
+        <div class="form-group row">
+            <div align="center" class="col-sm-12">
+                <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"login"})'>
+                    <button type="submit" id="login-button" ng-disabled="loginRegisterForm.$invalid" ng-click="Setup.loginUser()">Login</button>
+                </a>
+                &nbsp; or &nbsp;
+                <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
+                <button type="submit" id="register-button" ng-click= "Setup.registerUser()" ng-disabled="loginRegisterForm.$invalid" >Register</button>
+                <!--</a>-->
+            </div>
+        </div>
+    </form>
+</div>

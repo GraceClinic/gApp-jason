@@ -92,7 +92,9 @@
                  * @type    {int}
                  * @public
                  **/
-                Object.defineProperty(self,'selectedPageInstruction',{get: getSelectedPageInstruction, set: setSelectedPageInstruction, enumerable:true});
+                if (!self.selectedPageInstruction) {
+                    Object.defineProperty(self,'selectedPageInstruction',{get: getSelectedPageInstruction, set: setSelectedPageInstruction, enumerable:true});
+                }
                 var _selectedPageInstruction = -1;
                 function getSelectedPageInstruction(){
                     return _selectedPageInstruction;
