@@ -59,6 +59,23 @@
         function setMinutesPerRound(value){
             self.Player.secondsPerRound = value*60;
         }
+        
+        /**
+         * @property    tempUserName
+         * this is to create one-way binding from <input... username> to Setup.Player.name, or else default name appears
+         *
+         * @type    {text}
+         * @public
+         **/
+        Object.defineProperty(self,'tempUserName',{get: getTempUserName, set: setTempUserName, enumerable:true});
+        var _tempUserName;
+        function getTempUserName(){
+            return _tempUserName;
+        }
+        function setTempUserName(value){
+            _tempUserName = value;
+        }
+        
         // todo: use ng_prop to create complete properties, otherwise create simply, uncontrolled properties off of self
 
         /****************************
@@ -72,11 +89,55 @@
          */
         self.indexAction = function(){
             // todo: define any parameters and then code action logic
-            self.Player.find();
+            console.log("before find, signIn State", self.Player.signInState);
+            if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
+                var _promise = self.Player.find();
+                _promise.then(
+                    function(response) {
+                        if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
+                            Player.name = "";
+                        }
+                    },function (reason) {
+                        console.log("sorry your find failed - reason",reason);
+                    }
+                );
+            }
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }
         };
+        
+        /**
+         * @method   loginAction
+         * this is the loginAction for you
+         *
+         * @public                  
+         * @param 
+         * @return   {}
+         */
+        self.loginAction = function(){
+            // todo: code method
+            self.Player.find();
+        };
+        
+
+        /**
+         * @method   editProfile
+         * this will enable you to edit the user profile of already registered users
+         *
+         * @public 
+         * @return   {void}
+         */
+        self.editProfileAction = function(){
+            console.log("inside editProfile", self.Player.signInState, self.Player);
+        };
+        
+        self.goToEdit = function () {
+            console.log("log before going to editProfile, signInState", self.Player.signInState);
+            self.Player.signInState = self.SysMan.SIGNED_IN_EDITING; // editing profile
+            console.log("log before setting, signInState", self.Player.signInState);
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "editProfile"});
+        }
 
         /****************************
          * PUBLIC METHODS DEFINITION
@@ -157,6 +218,34 @@
         };
 
         /**
+         * @method   goToIndex
+         * sets signIn state to 0 an brings back to the index page
+         *
+         * @public
+         * @return   {void}
+         */
+        self.goToIndex = function(){
+            // todo: code method
+            // self.Player.name = "Player";
+            self.Player.signInState = self.SysMan.SIGNED_IN;
+
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"})
+        };
+
+        /**
+         * @method   saveProfileChanges
+         * if the profile is edited, save it to the backend, but how to check? todo: find out!
+         *
+         * @public
+         * @return   {}
+         */
+        self.saveProfileChanges = function(){
+            // todo: code method
+            self.Player.save();
+        };
+
+        
+        /**
          * @method   registerUser
          * checks userName name available or not
          *
@@ -165,11 +254,51 @@
          * @return   {boolean}
          */
         self.registerUser = function(){
-            console.log("register user called");
+            // if ($scope.loginRegisterForm.$valid) {
+            //     alert('our form is amazing');
+            // }
+            //Player.actionState = "register";
+            //$scope doesn't get the form?? and shouldn't but how are they getting at : http://codepen.io/sevilayha/pen/xFcdI ??
+            //Player.name = self.tempUserName;
+            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+                self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
+            }
+            console.log("clicking register", self.Player.signInState);
             Player.login();
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "registration"});
             // todo: code method
         };
+
+        /**
+         * @method   loginUser
+         * calls methos login, sets actionState to login
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {void}
+         */
+        self.loginUser = function(){
+            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+                self.signInState = self.SysMan.NAME_PENDING_LOGIN;
+            }
+            Player.login();
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "login"});
+        };
+
+        /**
+         * @method   acceptTerms
+         * accept terms of play
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {void}
+         */
+        self.acceptTerms = function(){
+            //Player.actionState = "anonymous";
+            console.log("player name", Player.name);
+            Player.login();
+        };
+
 
 
         /******************

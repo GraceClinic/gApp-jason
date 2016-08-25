@@ -1,6 +1,3 @@
-.controller_setup#setup-view-left-panel {
-    height: 88.3vh;
-}
 
 /*.controller_setup#setup-view-left-panel #setup-display-message, .controller_setup#setup-view-left-panel #login-register-form  {*/
     /*position: relative;*/
@@ -14,9 +11,20 @@
 /*}*/
 
 .controller_setup#setup-view-right-panel {
+    display: table;
     height: 88.3vh;
     background-color: #fdffcd;
     border-left: solid;
+}
+
+.controller_setup#setup-view-left-panel {
+    height: 88.3vh;
+    display: table;
+}
+
+.controller_setup #action-container {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 button#register-button {
@@ -35,6 +43,11 @@ button#login-button {
     width: 8.5rem;
     border-radius: 0.5rem;
     color: white;
+}
+
+#setup-play-form {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 
@@ -114,9 +127,5 @@ alert
 }
 .setup-config {
     font-size: 2rem;
-}
-#setup-play-form {
-    position: relative;
-    top: 32rem;
 }
 /*index.css ends here*/

@@ -1,13 +1,58 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/registration.tpl.css">
-<div class="view_form_line_leftside">
-    <label for="setup-player-challenge">Challenge Question:</label>
-</div>
-
-<div>
-    <select
-            ng-model="Setup.Player.idChallenge"
-            ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
-            id="setup-player-challenge">
-        <!--<option value="">-- choose one --</option>-->
-    </select>
+<form name="registrationForm" id="registration-form" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
+    <div class="row">
+        <div class="col-xs-12">
+            message length {{Setup.Player.msg.length}}
+            signInState {{Setup.Player.signInState}}
+            <alert
+                    ng-repeat="pmsg in Setup.Player.msg track by $index"
+                    type="{{pmsg.type}}"
+                    close="Setup.Player.removeMsg($index)"
+                    ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
+                {{pmsg.text}}
+            </alert>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-xs-12">
+            <p><b>Requested User Name: {{Setup.Player.name}}</b></p>
+            <label for="setup-player-challenge">Challenge Question:</label>
+            <div>
+                <select
+                        ng-model="Setup.Player.idChallenge"
+                        ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
+                        id="setup-player-challenge">
+                    <!--<option value="">-- choose one --</option>-->
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        {{Setup.Player.signInState}} this is the current signIN State
+        <div class="col-xs-12" ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING && Setup.Player.signInState < Setup.SysMan.SIGNED_IN">
+            <label for="player-secret" type="text">Set your secret answer here: </label>
+            <input type="text" ng-model="Setup.Player.secret" id="player-secret">
+        </div>
+    </div>
+    <div class="form-group row">
+        <div align="center" class="col-xs-12">
+            <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
+                <button type="button" id="back-button" title="go back to change user Name">back</button>
+            </a>
+            &nbsp; or &nbsp;
+            <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
+            <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
+                <button type="submit" id="submit-register-button" ng-click="Setup.Player.save()" ng-disabled="Setup.Player.signInState < Setup.SysMan.NAME_PENDING" title="click here to finish your registration">Finish Register</button>
+            </a>
+            <!--</a>-->
+        </div>
+    </div>
+</form>
+<div id="alert-already-registered">
+    <alert
+            ng-repeat="pmsg in Setup.Player.msg track by $index"
+            type="{{pmsg.type}}"
+            close="Setup.Player.removeMsg($index)"
+        >{{pmsg.text}}
+    </alert>
 </div>

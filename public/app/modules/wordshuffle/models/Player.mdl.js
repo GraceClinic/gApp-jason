@@ -86,6 +86,65 @@
              * @public
              **/
             Object.defineProperty(self,'saveIsPending',{get: getSaveIsPending});
+            // /**
+            //  * @property    actionState
+            //  * this tells whether the player is playing anonymously, or has logged-In or registered in
+            //  *
+            //  * @type    {string}
+            //  * @public
+            //  **/
+            // Object.defineProperty(self,'actionState',{get: getActionState, set: setActionState, enumerable:true});
+            // var _actionState;
+            // function getActionState(){
+            //     return _actionState;
+            // }
+            // function setActionState(value){
+            //     _actionState = value;
+            // }
+            
+            /**
+             * @method   authenticateUser
+             * authenticate the user if he/she is trying to change his/her profile configs
+             *
+             * @public                      - todo: scope as public or protected, prefix name with "_" for protected                  
+             * @param    {}                 - todo: document each parameter
+             * @return   {boolean}
+             */
+            self.authenticateUser = function(){
+                console.log("inside authenticateUser signInState and secret", self.signInState, self.secret);
+                // todo: code method
+                var _promise = self.relay("login");
+                console.log("returned promise in authenticate user", _promise);
+                _promise.then(
+                    function(response) {
+                        if (parseInt(self.signInState) === self.SysMan.SIGNED_IN) {
+                            console.log("secret validated, please write the next action");
+                        }
+                        else if (parseInt(self.signInState) === self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
+                            console.log("entered wrong secret, not allowed");
+                        }
+                        else {
+                            console.log("something else is wrong, signInState", self.signInState);
+                        }
+                    }
+                );
+
+            };
+
+            /**
+             * @method   editProfile
+             * action for editProfile
+             *
+             * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+             * @param    {}                 - todo: document each parameter
+             * @return   {boolean}
+             */
+            self.editProfile = function(){
+                // todo: code method
+                return true;
+            };
+
+            
 
             /**
              * Submits request to login with Player name
@@ -95,12 +154,12 @@
              * @return   {boolean}
              */
             self.login = function(){
-                if(self.signInState){
+                // if(self.signInState){
                     // clear current messages
-                    self.msg = [];
-                    // simply save the model and the backend will determine if a challenge is required
-                    self.relay('login');
-                }
+                // }
+                self.msg = [];
+                // simply save the model and the backend will determine if a challenge is required
+                console.log("this value after login", self.relay('login'));
                 return true;
             };
 
@@ -115,6 +174,7 @@
                     // clear secret field
                     self.secret = '';
                 }
+                //console.log("inside post-login", self.actionState);
 
             };
 
@@ -211,7 +271,6 @@
             function setName(value){
                 _newName = value !== '' && value !== _name;
                 _nameIsDefault = value == self.defaultName;
-
                 if(_newName){
                     // clear the secret entry
                     self.secret = '';
@@ -229,6 +288,7 @@
                 return _secret;
             }
             function setSecret(value){
+                console.log("set secret  called, signedIn", self.signInState);
                 if(_secret !== value){
                     _secret = value;
                     _saveMe = true;
@@ -239,6 +299,7 @@
                 return _idChallenge;
             }
             function setIdChallenge(value){
+                console.log("id challenge value", value);
                 _idChallenge = value;
             }
             var _signInState = false;
@@ -360,6 +421,15 @@
          */
         WordShuffle_Models_Player.prototype._preDispatch = function(){
             // clear any current Player messages, then run superclass save
+            // if(this.actionState == "login") {
+            //     this.SysMan.playerActionState = "login";
+            // }
+            // else if (this.actionState == "register") {
+            //     this.SysMan.playerActionState = "register";
+            // }
+            // else if (this.actionState == "anonymous") {
+            //     this.SysMan.playerActionState = "anonymous";
+            // }
             this.msg = [];
             return true;
         };
