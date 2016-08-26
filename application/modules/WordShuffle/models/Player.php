@@ -82,17 +82,21 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
 
     }
 
-//    // todo: move property docblock to top of class
-//    /**
-//     * @property    string         actionState        this tells, whether login, registration or anonymous
-//     */
-//    private $_actionState = null;
-//    protected function setActionState($value){
-//        $this->_actionState = (string) $value;
-//    }
-//    protected function getActionState(){
-//        return $this->_actionState;
-//    }
+    // todo: move property docblock to top of class
+    /**
+     * @property    boolean         acceptedTOS        - terms of service
+     */
+    private $_acceptedTOS = null;
+    protected function setAcceptedTOS($value){
+        $this->_acceptedTOS = (boolean) $value;
+        $this->SysMan->Session->acceptedTOS = $value;
+    }
+    protected function getAcceptedTOS(){
+        if (!$this->_acceptedTOS) {
+            return $this->SysMan->Session->acceptedTOS;
+        }
+        return $this->_acceptedTOS;
+    }
 
 
     private $_name = null;
@@ -147,14 +151,18 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     }
     protected function setSignInState($state){
         // SIGNED_IN state only set through logon() method
+        $this->SysMan->Logger->info('session signInState, state ' . $this->SysMan->Session->signInState . " " . $state);
         if($this->SysMan->Session->signInState < Common_Models_SysMan::SIGNED_IN && $state >= Common_Models_SysMan::SIGNED_IN){
+
             $this->msg = array(
                 'type'=>self::MSG_DANGER,
                 'text'=>'Player sign-in state does not validate with session state.  Setting state to session state.'
             );
             $this->SysMan->Session->signInState;
+            echo "inside if";
         }else{
             $this->SysMan->Session->signInState = (int) $state;
+            $this->SysMan->Logger->info("signInSetter, session, model ". $this->SysMan->Session->signInState . "  " . "$this->signInState" );
         }
     }
     protected function getSignInState(){
@@ -245,15 +253,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         $success = false;
         $this->SysMan->Logger->info('Player->login(), signInState = '.$this->signInState);
         switch($this->signInState){
-            case Common_Models_SysMan::ANONYMOUS_PLAY:
-//                $this->SysMan->Logger->info('inside anonymous = '.$this->signInState . "  " . $this->SysMan->Session->actionState);
-//                if ($this->actionState == "anonymous") {
-//                    $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::ANON_PLAY_MSG);
-//                    $this->SysMan->Session->actionState = $this->SysMan->Session->actionState ? 0 : Common_Models_SysMan::ANONYMOUS_STATE;
-//                }
-//                $this->actionState = $this->SysMan->Session->actionState;
-//                $this->SysMan->Logger->info('inside anonymous after set = '.$this->signInState . "  " . $this->SysMan->Session->actionState);
-                break;
             // get user's challenge information
             case Common_Models_SysMan::NAME_PENDING:
                 $players = $this->Mapper->findAll();
@@ -315,10 +314,12 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 break;
             case Common_Models_SysMan::NAME_PENDING_LOGIN:
                 $players = $this->Mapper->findAll();
+                $this->SysMan->Logger->info('count players' . count($players));
                 if (count($players) == 0) {
                     $this->msg = "";
                     $this->msg = array('type'=>self::MSG_WARNING, 'text'=>self::USER_NOT_FOUND_MSG);
                     $this->signInState = Common_Models_SysMan::NAME_PENDING;
+                    $this->SysMan->Logger->info('signInState and sysman value' . $this->signInState . " " . Common_Models_SysMan::NAME_PENDING);
                 }
                 else if (count($players) == 1) {
                     $this->signInState = Common_Models_SysMan::SECRET_PENDING;
@@ -406,6 +407,20 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
 
         return true;
     }
+
+    /**
+     * anonymousPlay
+     *
+     * @public
+     * @param               - todo: document all parameters
+     * @return void
+     */
+    public function anonymousPlay()
+    {
+        $this->SysMan->Session->acceptedTOS = $this->acceptedTOS;
+        $this->SysMan->Logger->info('starting anonymous function',$this->SysMan->Session);
+    }
+
 
     public function save(){
         // if name changed during login process or after sign-in, check if name exist

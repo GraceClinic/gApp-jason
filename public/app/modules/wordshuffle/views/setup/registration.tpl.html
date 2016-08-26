@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/registration.tpl.css">
+{{Setup.Player.signInState}} this is the current signIN State
 <form name="registrationForm" id="registration-form" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
     <div class="row">
         <div class="col-xs-12">
@@ -14,45 +15,51 @@
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-xs-12">
-            <p><b>Requested User Name: {{Setup.Player.name}}</b></p>
+        <div class="col-xs-5">
+            <p><b>Requested User Name:</b></p>
+        </div>
+        <div class="col-xs-7">
+            <p><b>{{Setup.Player.name}}</b></p>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-xs-5">
             <label for="setup-player-challenge">Challenge Question:</label>
-            <div>
-                <select
-                        ng-model="Setup.Player.idChallenge"
-                        ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
-                        id="setup-player-challenge">
-                    <!--<option value="">-- choose one --</option>-->
-                </select>
-            </div>
+        </div>
+        <div class="col-xs-7">
+            <select
+                    ng-model="Setup.Player.idChallenge"
+                    ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
+                    id="setup-player-challenge"
+                    class="form-control">
+
+            </select>
         </div>
     </div>
-    <div class="form-group row">
-        {{Setup.Player.signInState}} this is the current signIN State
-        <div class="col-xs-12" ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING && Setup.Player.signInState < Setup.SysMan.SIGNED_IN">
+    <div class="form-group row" ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING && Setup.Player.signInState < Setup.SysMan.SIGNED_IN">
+        <div class="col-xs-5">
             <label for="player-secret" type="text">Set your secret answer here: </label>
-            <input type="text" ng-model="Setup.Player.secret" id="player-secret">
+        </div>
+        <div class="col-xs-7">
+            <input class="form-control" type="text" ng-model="Setup.Player.secret" id="player-secret">
         </div>
     </div>
     <div class="form-group row">
-        <div align="center" class="col-xs-12">
+        <div class="col-xs-7 col-xs-offset-5">
+            <button type="button" class="btn btn-primary" id="back-button" title="go back to change user Name" ng-click="Setup.goToIndex()">Back</button>
+            &nbsp;  &nbsp;
             <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
-                <button type="button" id="back-button" title="go back to change user Name">back</button>
+                <button type="submit" class="btn btn-success" id="submit-register-button" ng-click="Setup.Player.save()" ng-disabled="Setup.Player.signInState < Setup.SysMan.NAME_PENDING" title="click here to finish your registration">Finish Register</button>
             </a>
-            &nbsp; or &nbsp;
-            <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
-            <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
-                <button type="submit" id="submit-register-button" ng-click="Setup.Player.save()" ng-disabled="Setup.Player.signInState < Setup.SysMan.NAME_PENDING" title="click here to finish your registration">Finish Register</button>
-            </a>
-            <!--</a>-->
         </div>
     </div>
 </form>
-<div id="alert-already-registered">
-    <alert
-            ng-repeat="pmsg in Setup.Player.msg track by $index"
-            type="{{pmsg.type}}"
-            close="Setup.Player.removeMsg($index)"
-        >{{pmsg.text}}
-    </alert>
+{{Setup.Player.signInState}} is the state
+<div align="center" id="already-registered" ng-show="Setup.Player.signInState === Setup.SysMan.NAME_PENDING">
+    <div>
+        <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+            {{pmsg.text}}
+        </p>
+        <button type="button" class="go-back-button btn" ng-click="Setup.goToIndex()">go Back</button>
+    </div>
 </div>

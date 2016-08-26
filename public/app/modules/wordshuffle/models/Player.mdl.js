@@ -86,28 +86,22 @@
              * @public
              **/
             Object.defineProperty(self,'saveIsPending',{get: getSaveIsPending});
-            // /**
-            //  * @property    actionState
-            //  * this tells whether the player is playing anonymously, or has logged-In or registered in
-            //  *
-            //  * @type    {string}
-            //  * @public
-            //  **/
-            // Object.defineProperty(self,'actionState',{get: getActionState, set: setActionState, enumerable:true});
-            // var _actionState;
-            // function getActionState(){
-            //     return _actionState;
-            // }
-            // function setActionState(value){
-            //     _actionState = value;
-            // }
+
+            /**
+             * @property    acceptedTOS
+             * this is a check for letting a person play
+             *
+             * @type    {boolean}
+             * @public
+             **/
+            Object.defineProperty(self,'acceptedTOS',{get: getAcceptedTOS, set: setAcceptedTOS, enumerable:true});
+
             
             /**
              * @method   authenticateUser
              * authenticate the user if he/she is trying to change his/her profile configs
              *
-             * @public                      - todo: scope as public or protected, prefix name with "_" for protected                  
-             * @param    {}                 - todo: document each parameter
+             * @public
              * @return   {boolean}
              */
             self.authenticateUser = function(){
@@ -154,13 +148,14 @@
              * @return   {boolean}
              */
             self.login = function(){
-                // if(self.signInState){
-                    // clear current messages
-                // }
-                self.msg = [];
-                // simply save the model and the backend will determine if a challenge is required
-                console.log("this value after login", self.relay('login'));
-                return true;
+                // login should not be called in anonymous state
+                var _promise = {}
+                if(self.signInState){
+                    //clear current messages
+                    self.msg = [];
+                    _promise = self.relay('login');
+                }
+                return _promise;
             };
 
             /**
@@ -193,12 +188,34 @@
                         self.msg = {"text":"Player logout successful!","type":'info'};
                         self.name = self.defaultName;
                         self.id = 0;
-
                         return response;
                     });
 
                 return _promise;
             };
+            
+            /**
+             * @method   accceptTerms       - accept terms of play
+             * @public
+             * @return   {boolean}
+             */
+            self.acceptTerms = function(){
+                //self.acceptedTOS = !self.acceptedTOS;
+                if (self.signInState >= self.SysMan.SIGNED_IN && self.signInState < self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
+                    //the person is signed in, only allow this, if the user has not aacepted it yet
+                    self.save();
+                }
+                else {
+                    console.log("comes here");
+                    // it should be anonymous
+                    self.saveIsPending = false;
+                    self.name = self.defaultName;
+                    self.signInState = 0;
+                    self.relay("anonymousPlay");
+                }
+                return true;
+            };
+            
 
             /**
              * Validates player state and adjusts as necessary
@@ -352,6 +369,14 @@
                 return _saveMe;
             }
 
+            var _acceptedTOS = false;
+            function getAcceptedTOS(){
+                return _acceptedTOS;
+            }
+            function setAcceptedTOS(value){
+                _acceptedTOS = value;
+            }
+
             /*******************
              * CONSTRUCTOR LOGIC
              *******************/
@@ -381,7 +406,7 @@
          * @protected
          * @return   {boolean}
          */
-        WordShuffle_Models_Player.prototype._postFind = function(){
+        WordShuffle_Models_Player.prototype._postFind = function() {
             return true;
         };
 

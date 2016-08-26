@@ -1,44 +1,60 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/editProfile.tpl.css">
-{{Setup.Player.signInState}}
-<div id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
-    <p>Alert!! You entered the wrong secret</p>
-    <div id="alert-buttons" align="center" class="row">
-        <button class="col-xs-6" type="button" ng-click="Setup.goToIndex()">go back</button>
-        <button class="col-xs-6" type="button" ng-click="Setup.goToEdit()">re-Enter</button>
+{{Setup.Player.signInState}} signIn state
+<!--<div id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">-->
+    <!--<p>Alert!! You entered the wrong secret</p>-->
+    <!--<div id="alert-buttons" align="center" class="row">-->
+        <!--<button class="col-xs-6" type="button" ng-click="Setup.goToIndex()">go back</button>-->
+        <!--<button class="col-xs-6" type="button" ng-click="Setup.goToEdit()">re-Enter</button>-->
+    <!--</div>-->
+<!--</div>-->
+
+
+
+<div align="center" id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
+    <div>
+        <p>Alert!! You entered the wrong secret</p>
+        <button class="col-xs-6" class="btn btn-danger" type="button" ng-click="Setup.goToIndex()">go back</button>
+        <button class="col-xs-6" class="btn btn-primary" type="button" ng-click="Setup.goToEdit()">re-Enter</button>
     </div>
 </div>
+
+
+
 <form ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDITING">
-    <div class="form-group">
-        <label for="current-user">UserName: </label>
-        <span id="current-user">{{Setup.Player.name}}</span>
+    <div class="form-group row">
+        <label class="col-xs-5" for="current-user">UserName: </label>
+        <span class="col-xs-7" id="current-user">{{Setup.Player.name}}</span>
     </div>
-    <div class="form-group">
-        <label for="current-secret">Please enter the answer below to authenticate!</label>
-        <input id="current-secret" type="password" placeholder="Secret here" ng-model="Setup.Player.secret">
+    <div class="form-group row">
+        <label class="col-xs-5" for="current-secret">Please enter the answer below to authenticate!</label>
+        <input class="col-xs-7 form-control" id="current-secret" type="password" placeholder="Secret here" ng-model="Setup.Player.secret">
     </div>
-    <button type="button" ng-click="Setup.Player.authenticateUser()">Authenticate</button>
+    <div align="center">
+        <button type="button" class="go-back-button btn btn-primary" ng-click="Setup.goToIndex()">go Back</button>
+        <button type="button" class="btn btn-success" ng-click="Setup.Player.authenticateUser()">Authenticate</button>
+    </div>
 </form>
 <form ng-show="Setup.Player.signInState == Setup.SysMan.SIGNED_IN">
-    <div class="form-group">
-        <label for="username">User Name</label>
-        <div id="username">
-            <input type="text" ng-model="Setup.Player.name"/>
-        </div>
+    <div class="form-group row">
+        <label class="col-xs-5" for="username">User Name</label>
+        <input id="username" class="col-xs-7 form-control" type="text" ng-model="Setup.Player.name"/>
     </div>
-    <div class="form-group">
-        <label for="setup-player-challenge">Challenge Question</label>
+    <div class="form-group row">
+        <label class="col-xs-5" for="setup-player-challenge">Challenge Question</label>
         <select
                 ng-model="Setup.Player.idChallenge"
                 ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
-                id="setup-player-challenge">
+                id="setup-player-challenge"
+                class="col-xs-7 form-control">
             <!--<option value="">-- choose one --</option>-->
         </select>
     </div>
-    <div class="form-group">
-        <label for="new-secret">Enter the new Secret</label>
-        <input type="password" ng-model="Setup.Player.secret" id="new-secret" placeholder="new current secret"/>
+    <div class="form-group row">
+        <label class="col-sm-5" for="new-secret">Enter the new Secret</label>
+        <input class="col-sm-7 form-control" type="password" ng-model="Setup.Player.secret" id="new-secret" placeholder="new current secret"/>
     </div>
     <div id="save-changes">
-        <button type="text" ng-click="Setup.saveProfileChanges()">save changes</button>
+        <button type="button" class="go-back-button btn btn-primary" ng-click="Setup.goToIndex()">go Back</button>
+        <button class="btn btn-success" type="text" ng-click="Setup.saveProfileChanges()">save changes</button>
     </div>
 </form>
