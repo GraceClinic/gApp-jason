@@ -88,8 +88,6 @@
          * @public
          */
         self.indexAction = function(){
-            // todo: define any parameters and then code action logic
-            console.log("before find, signIn State", self.Player.signInState);
             if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
                 var _promise = self.Player.find();
                 _promise.then(
@@ -111,14 +109,57 @@
          * @method   loginAction
          * this is the loginAction for you
          *
-         * @public                  
-         * @param 
+         * @public
          * @return   {}
          */
         self.loginAction = function(){
-            // todo: code method
-            self.Player.find();
+            if (self.Player.signInState == false || self.Player.name.length <= 1) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
+            else if (self.Player.signInState === self.SysMan.NAME_PENDING_LOGIN) {
+                // NAME_PENDING changed to NAME_PENDING_LOGIN on hit on login on index
+                self.Player.login();
+            }
+            else if (self.Player.signInState === self.SysMan.SECRET_PENDING) {
+                //inside your login template, you verify for the secret, if successful, change state to SIGNED_IN
+                var _promise = self.Player.relay("login");
+                _promise.then(
+                    function(response) {
+                        if (self.Player.signInState === self.SysMan.SIGNED_IN) {
+                            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                        }
+                    }
+                )
+            }
         };
+
+        /**
+         * @method   registrationAction
+         * action for new user registrations
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {}
+         */
+        self.registrationAction = function(){
+            if (self.Player.signInState == false || self.Player.name.length <= 1) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
+            else if (self.Player.signInState === self.SysMan.NAME_PENDING_REGISTER) {
+                self.Player.login();
+            }
+            else if (self.Player.signInState === self.SysMan.NEW_SIGN_IN) {
+                var _promise = self.Player.login();
+                _promise.then(
+                    function(response) {
+                        if (self.Player.signInState === self.SysMan.SIGNED_IN) {
+                            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                        }
+                    }
+                )
+            }
+        };
+
         
 
         /**
@@ -129,15 +170,11 @@
          * @return   {void}
          */
         self.editProfileAction = function(){
-            console.log("inside editProfile", self.Player.signInState, self.Player);
+            if (self.Player.signInState == false || self.Player.name.length <= 1) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
         };
-        
-        self.goToEdit = function () {
-            console.log("log before going to editProfile, signInState", self.Player.signInState);
-            self.Player.signInState = self.SysMan.SIGNED_IN_EDITING; // editing profile
-            console.log("log before setting, signInState", self.Player.signInState);
-            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "editProfile"});
-        }
+
 
         /****************************
          * PUBLIC METHODS DEFINITION
@@ -149,6 +186,19 @@
          * @public
          * @return   {bool}
          */
+        
+        /**
+         * @method   closeAlert
+         * close alert doalogue boxes
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected                  
+         * @param    {}                 - todo: document each parameter
+         * @return   {void}
+         */
+        self.closeAlert = function($event){
+            $($event.toElement.parentElement).css("visibility", "hidden");
+        };
+
         self.playGame = function(){
             console.log("saveIsPending, signInState, SIGNED_IN", self.Player.saveIsPending, self.Player.signInState, self.SysMan.SIGNED_IN);
             if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
@@ -166,6 +216,12 @@
                 self.goToState('wordshuffle','play','play');
             }
         };
+
+        self.goToEdit = function () {
+            self.Player.signInState = self.SysMan.SIGNED_IN_EDITING; // editing profile
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "editProfile"});
+        }
+
         /**
          * Toggles display of secret fields when the Player is signed-in
          *
@@ -225,11 +281,19 @@
          * @return   {void}
          */
         self.goToIndex = function(){
-            // todo: code method
-            // self.Player.name = "Player";
-            self.Player.signInState = self.SysMan.SIGNED_IN;
+            // console.log("hahahahahahahah");
+            // console.log("signInState before going to index", self.Player.signInState);
+            // if (self.Player.signInState === self.SysMan.SECRET_PENDING) {
+            //     self.Player.signInState = self.SysMan.NAME_PENDING;
+            // }
+            // else self.Player.signInState = self.SysMan.SIGNED_IN;
+            var _promise = self.Player.relay("logout")
+            _promise.then(
+                function(response) {
+                    $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                }
+            );
 
-            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"})
         };
 
         /**
@@ -249,24 +313,16 @@
          * @method   registerUser
          * checks userName name available or not
          *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
+         * @public
          * @return   {boolean}
          */
         self.registerUser = function(){
-            // if ($scope.loginRegisterForm.$valid) {
-            //     alert('our form is amazing');
-            // }
-            //Player.actionState = "register";
             //$scope doesn't get the form?? and shouldn't but how are they getting at : http://codepen.io/sevilayha/pen/xFcdI ??
             //Player.name = self.tempUserName;
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
             }
-            console.log("clicking register", self.Player.signInState);
-            Player.login();
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "registration"});
-            // todo: code method
         };
 
         /**
@@ -279,26 +335,10 @@
          */
         self.loginUser = function(){
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
-                self.signInState = self.SysMan.NAME_PENDING_LOGIN;
+                self.Player.signInState = self.SysMan.NAME_PENDING_LOGIN;
             }
-            Player.login();
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "login"});
         };
-
-        /**
-         * @method   acceptTerms
-         * accept terms of play
-         *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
-         * @return   {void}
-         */
-        self.acceptTerms = function(){
-            //Player.actionState = "anonymous";
-            console.log("player name", Player.name);
-            Player.login();
-        };
-
 
 
         /******************

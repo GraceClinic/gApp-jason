@@ -1,42 +1,49 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/login.tpl.css">
-<form id="login-form" name="loginForm" ng-show="Set">
-    <alert
-            ng-repeat="pmsg in Setup.Player.msg track by $index"
-            type="{{pmsg.type}}"
-            close="Setup.Player.removeMsg($index)"
-            ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
-        {{pmsg.text}}
-    </alert>
-    <div ng-show="Setup.Player.signInState === Setup.SysMan.SECRET_PENDING">
+{{Setup.Player.signInState}} signInState in login page
+<form id="login-form" name="loginForm" ng-show="Setup.Player.signInState === Setup.SysMan.SECRET_PENDING" class="row">
+    <!--<div class="alert-msg-div" align="center">-->
+        <!--<p ng-repeat="pmsg in Setup.Player.msg track by $index">-->
+            <!--{{pmsg.text}}-->
+        <!--</p>-->
+        <!--<button ng-click="Setup.closeAlert($event)">ok</button>-->
+    <!--</div>-->
+
+    <div class="col-xs-9 col-xs-offset-2">
         <div class="form-group row">
-            <div class="col-xs-12">
-                <label for="username">UserName: </label>
-                <span id="username">
+                <label class="col-xs-4" for="username">UserName: </label>
+                <span class="col-xs-8" id="username">
                     {{Setup.Player.name}}
                 </span>
-            </div>
         </div>
         <div class="form-group row">
-            <div class="col-xs-12">
-                <label for="challenge-question">Challenge Question: </label>
-                <span id="challenge-question">
+                <label for="challenge-question" class="col-xs-4">Challenge Question: </label>
+                <span class="col-xs-8" id="challenge-question">
                     {{Setup.Player.challenge}}
                 </span>
-            </div>
         </div>
         <div class="form-group row">
-            <div class="col-xs-12">
-                <label for="user-secret">Secret</label>
-                <input id="user-secret" ng-model="Setup.Player.secret" type="password" palceholder="Enter your secret here">
+                <div class="col-xs-4">
+                    <label class="col-xs-4" for="user-secret">Secret</label>
+                </div>
+                <div class="col-xs-6">
+                    <input class="form-control" id="user-secret" ng-model="Setup.Player.secret" type="password" palceholder="Enter your secret here">
+                </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-xs-offset-4 ">
+                <button type="button" class="go-back-button btn btn-primary" ng-click="Setup.goToIndex()">go Back</button>
+                <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
+                    <button type="button" class="btn btn-success" ng-click="Setup.Player.save()">Login</button>
+                </a>
             </div>
         </div>
-        <div align="center">
-            <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
-                <button type="button" ng-click="Setup.Player.save()">Login</button>
-            </a>
-        </div>
-    </div>
-    <div ng-show="Setup.Player.signInState == Setup.SysMan.NEW_SIGN_IN">
-        <button type="button" ng-click="Setup.goToIndex()">go Back</button>
     </div>
 </form>
+<div id="user-not-found" ng-show="Setup.Player.signInState === Setup.SysMan.NAME_PENDING" align="center">
+    <div>
+        <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+            {{pmsg.text}}
+        </p>
+        <button type="button" class="go-back-button btn" ng-click="Setup.goToIndex()">go Back</button>
+    </div>
+</div>
