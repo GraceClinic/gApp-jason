@@ -201,20 +201,26 @@
 
         self.playGame = function(){
             console.log("saveIsPending, signInState, SIGNED_IN", self.Player.saveIsPending, self.Player.signInState, self.SysMan.SIGNED_IN);
-            if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
-                self.Player.login();
+            // if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
+            //     self.Player.login();
+            // }
+            // else if(self.Player.saveIsPending){
+            //     self.Player.save();
+            //     self.Player.saveIsPending = false;
+            //     // routing to play controller / play action will start the game
+            //     Game.newGame = true;
+            //     self.goToState('wordshuffle','play','play');
+            // }
+            // else{
+            //     Game.newGame = true;
+            //     self.goToState('wordshuffle','play','play');
+            // }
+            Game.newGame = true;
+            if (self.Player.signInState < self.SysMan.SIGNED_IN) {
+                self.Player.signInState = 0;
+                self.Player.relay("anonymousPlay");
             }
-            else if(self.Player.saveIsPending){
-                self.Player.save();
-                self.Player.saveIsPending = false;
-                // routing to play controller / play action will start the game
-                Game.newGame = true;
-                self.goToState('wordshuffle','play','play');
-            }
-            else{
-                Game.newGame = true;
-                self.goToState('wordshuffle','play','play');
-            }
+            self.goToState('wordshuffle','play','play');
         };
 
         self.goToEdit = function () {
@@ -339,6 +345,43 @@
             }
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "login"});
         };
+
+        /**
+         * @method   anonymousCheckbox
+         * activates the Play button, if the user is not logged In
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.anonymousCheckbox = function(){
+            return $('#anonymous-checkbox').is(":checked") || (self.Player.signInState >= self.SysMan.SIGNED_IN && self.Player.signInState <= self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED && self.Player.acceptedTOS);
+        };
+
+        /**
+         * @method   registerCheckbox
+         * accepting terms and conditions while registering
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.registerCheckbox = function(){
+            return $("#register-tos-checkbox").is(":checked");
+        };
+
+        /**
+         * @method   acceptedTOSValue
+         * this should handle the double checking in the checkbox in the setup.html, when registration checkbox is changed
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.acceptedTOSValue = function(){
+            return self.Player.acceptedTOS;
+        };
+
 
 
         /******************

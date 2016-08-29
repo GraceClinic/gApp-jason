@@ -139,9 +139,6 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
         $this->_SysMan->Logger->info(
             'START '.$this->_className.'->postAction() for method '.$method.'; arguments ='.PHP_EOL.'{'.print_r($args,true).'}',
             'Common_Abstracts_RestController');
-//        echo "model called";
-//        print_r($model);
-//        exit();
         $this->_model = new $this->_modelClass($model);
         $this->_SysMan->Logger->info('START '.$this->_modelClass.'->'.$method.'()','Common_Abstracts_RestController');
         $results = $this->_model->$method($args);

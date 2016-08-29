@@ -86,9 +86,10 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     /**
      * @property    boolean         acceptedTOS        - terms of service
      */
-    private $_acceptedTOS = null;
+    private $_acceptedTOS = false;
     protected function setAcceptedTOS($value){
-        $this->_acceptedTOS = (boolean) $value;
+        $this->SysMan->Logger->info("this is the TOS value obtained" . $value);
+        $this->_acceptedTOS = $value;
         $this->SysMan->Session->acceptedTOS = $value;
     }
     protected function getAcceptedTOS(){
@@ -365,6 +366,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                     $success = true;
                     // setting signInState to SIGNED_IN only allowed through Session object
                     $this->SysMan->Session->signInState = Common_Models_Sysman::SIGNED_IN;
+                    $this->SysMan->Session->idPlayer = $this->id;
                 }else{
                     $this->msg = '';
                     $this->msg = array('type'=>self::MSG_DANGER, 'text'=>self::LOGIN_FAILURE);
@@ -412,12 +414,10 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
      * anonymousPlay
      *
      * @public
-     * @param               - todo: document all parameters
      * @return void
      */
     public function anonymousPlay()
     {
-        $this->SysMan->Session->acceptedTOS = $this->acceptedTOS;
         $this->SysMan->Logger->info('starting anonymous function',$this->SysMan->Session);
     }
 

@@ -194,27 +194,27 @@
                 return _promise;
             };
             
-            /**
-             * @method   accceptTerms       - accept terms of play
-             * @public
-             * @return   {boolean}
-             */
-            self.acceptTerms = function(){
-                //self.acceptedTOS = !self.acceptedTOS;
-                if (self.signInState >= self.SysMan.SIGNED_IN && self.signInState < self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
-                    //the person is signed in, only allow this, if the user has not aacepted it yet
-                    self.save();
-                }
-                else {
-                    console.log("comes here");
-                    // it should be anonymous
-                    self.saveIsPending = false;
-                    self.name = self.defaultName;
-                    self.signInState = 0;
-                    self.relay("anonymousPlay");
-                }
-                return true;
-            };
+            // /**
+            //  * @method   accceptTerms       - accept terms of play
+            //  * @public
+            //  * @return   {boolean}
+            //  */
+            // self.acceptTerms = function(){
+            //     //self.acceptedTOS = !self.acceptedTOS;
+            //     if (self.signInState >= self.SysMan.SIGNED_IN && self.signInState < self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
+            //         //the person is signed in, only allow this, if the user has not aacepted it yet
+            //         self.save();
+            //     }
+            //     else {
+            //         console.log("comes here");
+            //         // it should be anonymous
+            //         self.saveIsPending = false;
+            //         self.name = self.defaultName;
+            //         self.signInState = 0;
+            //         self.relay("anonymousPlay");
+            //     }
+            //     return true;
+            // };
             
 
             /**
@@ -371,9 +371,11 @@
 
             var _acceptedTOS = false;
             function getAcceptedTOS(){
+                console.log("tos GET", _acceptedTOS);
                 return _acceptedTOS;
             }
             function setAcceptedTOS(value){
+                console.log("TOS set", value);
                 _acceptedTOS = value;
             }
 

@@ -51,6 +51,17 @@ button#login-button {
     text-align: right;
 }
 
+.logged-in-user {
+    color: #5cb85c;
+}
+
+.anonymous-user {
+    color: mediumpurple;
+}
+
+#anonymous-registered-message {
+    border-bottom: solid;
+}
 
 
 /*index.css appended here*/

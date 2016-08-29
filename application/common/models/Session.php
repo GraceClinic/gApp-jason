@@ -312,7 +312,8 @@ class Common_Models_Session
             'round'=> $this->round,
             'Squares'=>  $sqLetters,
             'Rounds'=>  $this->Rounds,
-            'Msg'=> $this->msg
+            'Msg'=> $this->msg,
+            'acceptedTOS' => $this->acceptedTOS
         );
 
         return $ret;

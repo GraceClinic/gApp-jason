@@ -442,7 +442,6 @@
                 }
             };
             var _promise = null;
-
             self.SysMan.Logger.entry('START ' + self.constructor.name + '.save()','App_Common_Abstracts_Model');
 
 
