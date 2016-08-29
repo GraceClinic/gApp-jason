@@ -1,5 +1,12 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/index.tpl.css">
 {{Setup.Player.signInState}} this is the signIn State
+<alert
+        ng-repeat="pmsg in Setup.Player.msg track by $index"
+        type="{{pmsg.type}}"
+        close="Setup.Player.removeMsg($index)"
+        ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
+    {{pmsg.text}}
+</alert>
 <div>
     <div class="row" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN">
         <!--<alert-->
@@ -14,20 +21,6 @@
                 {{pmsg.text}}
             </span>
         </div>
-        <!--<div class="row">-->
-            <!--<div class="col-xs-5">username:</div>-->
-            <!--<div class="col-xs-7">{{Setup.Player.name}}</div>-->
-        <!--</div>-->
-        <!--<div class="row">-->
-            <!--<div class="col-xs-5">Challenge Question:</div>-->
-            <!--<div class="col-xs-7">{{Setup.Player.challenge}}</div>-->
-        <!--</div>-->
-        <!--<div class="row">-->
-            <!--<div class="col-xs-7 col-xs-offset-5">-->
-                <!--<button type="button" id="edit-profile" class="btn btn-primary" ng-click="Setup.goToEdit()">Edit Profile</button>-->
-                <!--<button type="button" id="logout-button" class="btn btn-primary" ng-click="Setup.playerLogout()">Logout</button>-->
-            <!--</div>-->
-        <!--</div>-->
         <div class="col-xs-4 col-xs-offset-2">
             <b>{{Setup.Player.name}}</b> Logged In!
         </div>
