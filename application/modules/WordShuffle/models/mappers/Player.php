@@ -21,7 +21,8 @@ class WordShuffle_Model_Mapper_Player extends WordShuffle_Model_Mapper_Abstract
         'secret'            => 'secret',
         'name'              => 'name',
         'createDate'        => 'createDate',
-        'modifyDate'        => 'modifyDate'
+        'modifyDate'        => 'modifyDate',
+        'termsAccepted'     => 'acceptedTOS'
     );
 
     protected $_findAllBy = array(

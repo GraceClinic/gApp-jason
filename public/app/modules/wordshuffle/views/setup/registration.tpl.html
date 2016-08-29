@@ -28,10 +28,13 @@
         </div>
         <div class="col-xs-7">
             <select
+                    name="registerCQuestions"
                     ng-model="Setup.Player.idChallenge"
                     ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
                     id="setup-player-challenge"
-                    class="form-control">
+                    class="form-control"
+                    required
+            >
 
             </select>
         </div>
@@ -41,15 +44,24 @@
             <label for="player-secret" type="text">Set your secret answer here: </label>
         </div>
         <div class="col-xs-7">
-            <input class="form-control" type="text" ng-model="Setup.Player.secret" id="player-secret">
+            <input class="form-control" type="password" ng-model="Setup.Player.secret" id="player-secret" required>
         </div>
     </div>
+
+    <div class="form-group row">
+        <div class="col-xs-7 col-xs-offset-5 form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" id="register-tos-checkbox" type="checkbox" ng-click="Setup.Player.acceptedTOS = !Setup.Player.acceptedTOS"> I accept the terms and conditions of play.
+            </label>
+        </div>
+    </div>
+
     <div class="form-group row">
         <div class="col-xs-7 col-xs-offset-5">
             <button type="button" class="btn btn-primary" id="back-button" title="go back to change user Name" ng-click="Setup.goToIndex()">Back</button>
             &nbsp;  &nbsp;
             <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
-                <button type="submit" class="btn btn-success" id="submit-register-button" ng-click="Setup.Player.save()" ng-disabled="Setup.Player.signInState < Setup.SysMan.NAME_PENDING" title="click here to finish your registration">Finish Register</button>
+                <button type="submit" class="btn btn-success" id="submit-register-button" ng-click="Setup.Player.save()" ng-disabled="!Setup.registerCheckbox() || registrationForm.$invalid || registrationForm.registerCQuestions.$error.required" title="click here to finish your registration">Finish Register</button>
             </a>
         </div>
     </div>
