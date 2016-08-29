@@ -88,17 +88,23 @@
          * @public
          */
         self.indexAction = function(){
-            if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
-                var _promise = self.Player.find();
-                _promise.then(
+            console.log("inside indexAction", self.Player.signInState);
+            if (self.Player.signInState === 0) {
+                var _logoutPromise = self.Player.relay("logout");
+                _logoutPromise.then(
                     function(response) {
-                        if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
-                            Player.name = "";
-                        }
-                    },function (reason) {
-                        console.log("sorry your find failed - reason",reason);
+                        var _promise = self.Player.find();
+                        _promise.then(
+                            function(response) {
+                                if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
+                                    Player.name = "";
+                                }
+                            },function (reason) {
+                                console.log("sorry your find failed - reason",reason);
+                            }
+                        );
                     }
-                );
+                )
             }
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
@@ -287,12 +293,6 @@
          * @return   {void}
          */
         self.goToIndex = function(){
-            // console.log("hahahahahahahah");
-            // console.log("signInState before going to index", self.Player.signInState);
-            // if (self.Player.signInState === self.SysMan.SECRET_PENDING) {
-            //     self.Player.signInState = self.SysMan.NAME_PENDING;
-            // }
-            // else self.Player.signInState = self.SysMan.SIGNED_IN;
             var _promise = self.Player.relay("logout")
             _promise.then(
                 function(response) {

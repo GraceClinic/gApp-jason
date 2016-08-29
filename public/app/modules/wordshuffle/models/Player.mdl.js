@@ -435,7 +435,6 @@
                 // clear secret field
                 this.secret = '';
             }
-
             return true;
         };
 
