@@ -1,14 +1,27 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/index.tpl.css">
-{{Setup.Player.signInState}} this is the signIn State
-<alert
-        ng-repeat="pmsg in Setup.Player.msg track by $index"
-        type="{{pmsg.type}}"
-        close="Setup.Player.removeMsg($index)"
-        ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
-    {{pmsg.text}}
-</alert>
+<!--{{Setup.Player.signInState}} this is the signIn State-->
+
+<div class="row alert-container-div" align="center" ng-show="Setup.Player.signInState === Setup.SysMan.ANONYMOUS_PLAY && Setup.Player.msg.length !== 0">
+    <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+        <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+            {{pmsg.text}}
+        </p>
+        <button class="btn btn-primary" ng-click="Setup.closeAlert($event)">ok</button>
+    </div>
+</div>
+
 <div>
     <div class="row" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN">
+
+        <div class="row alert-container-div" align="center">
+            <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+                <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+                    {{pmsg.text}}
+                </p>
+                <button class="btn btn-primary" ng-click="Setup.closeAlert($event)">ok</button>
+            </div>
+        </div>
+
         <!--<alert-->
                 <!--ng-repeat="pmsg in Setup.Player.msg track by $index"-->
                 <!--type="{{pmsg.type}}"-->
@@ -16,17 +29,27 @@
                 <!--ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">-->
             <!--{{pmsg.text}}-->
         <!--</alert>-->
-        <div class="col-xs-12 setup-display-message">
-            <span ng-repeat="pmsg in Setup.Player.msg track by $index">
-                {{pmsg.text}}
-            </span>
-        </div>
-        <div class="col-xs-4 col-xs-offset-2">
-            <b>{{Setup.Player.name}}</b> Logged In!
-        </div>
-        <div class="col-xs-4 col-xs-offset-2">
-            <button type="button" id="edit-profile" class="btn btn-primary" ng-click="Setup.goToEdit()">Edit Profile</button>
-            <button type="button" id="logout-button" class="btn btn-primary" ng-click="Setup.playerLogout()">Logout</button>
+
+        <!--<div class="col-xs-12 setup-display-message">-->
+            <!--<span ng-repeat="pmsg in Setup.Player.msg track by $index">-->
+                <!--{{pmsg.text}}-->
+            <!--</span>-->
+        <!--</div>-->
+        <div id="user-signed-in" class="row">
+            <div class="col-xs-4 col-xs-offset-2">
+                <b>{{Setup.Player.name}}</b> Logged In!
+            </div>
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-6" align="right">
+                        <button type="button" id="edit-profile" class="btn btn-primary" ng-click="Setup.goToEdit()">Edit Profile</button>
+                    </div>
+                    <div class="col-xs-6" align="left">
+                        <button type="button" id="logout-button" class="btn btn-primary" ng-click="Setup.playerLogout()">Logout</button>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
@@ -44,10 +67,10 @@
         </div>
         <div class="form-group row">
             <div align="center" class="col-sm-12">
-                <button type="submit" id="login-button" ng-disabled="loginRegisterForm.$invalid" ng-click="Setup.loginUser()">Login</button>
+                <button type="submit" class="btn btn-success" ng-disabled="loginRegisterForm.$invalid" ng-click="Setup.loginUser()">Login</button>
                 &nbsp; or &nbsp;
                 <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
-                <button type="submit" id="register-button" ng-click= "Setup.registerUser()" ng-disabled="loginRegisterForm.$invalid" >Register</button>
+                <button type="submit" class="btn btn-primary" ng-click= "Setup.registerUser()" ng-disabled="loginRegisterForm.$invalid" >Register</button>
                 <!--</a>-->
             </div>
         </div>

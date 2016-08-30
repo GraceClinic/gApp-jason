@@ -16,7 +16,7 @@
                             <b>Welcome {{Setup.Player.name}}! Setup Game configurations and hit "Play"</b>
                         </div>
                         <div class="anonymous-user" ng-show="(Setup.Player.signInState < Setup.SysMan.SIGNED_IN || Setup.Player.signInState > Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) && Setup.Player.signInState !== Setup.SysMan.NEW_SIGN_IN">
-                            <b> Play Anonymously! or  Register </b>
+                            <b> &#8592 Register or Play Anonymously! &#8628 </b>
                         </div>
                         <div class="text-danger" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
                             Can't play anonymnously now, either finish registration or go back!

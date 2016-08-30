@@ -1,12 +1,14 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/login.tpl.css">
-{{Setup.Player.signInState}} signInState in login page
+<!--{{Setup.Player.signInState}} signInState in login page-->
 <form id="login-form" name="loginForm" ng-show="Setup.Player.signInState === Setup.SysMan.SECRET_PENDING" class="row">
-    <!--<div class="alert-msg-div" align="center">-->
-        <!--<p ng-repeat="pmsg in Setup.Player.msg track by $index">-->
-            <!--{{pmsg.text}}-->
-        <!--</p>-->
-        <!--<button ng-click="Setup.closeAlert($event)">ok</button>-->
-    <!--</div>-->
+    <div class="row alert-container-div" align="center">
+        <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+            <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+                {{pmsg.text}}
+            </p>
+            <button class="btn btn-primary" ng-click="Setup.closeAlert($event)">ok</button>
+        </div>
+    </div>
 
     <div class="col-xs-9 col-xs-offset-2">
         <div class="form-group row">

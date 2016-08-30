@@ -84,11 +84,12 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
 
     // todo: move property docblock to top of class
     /**
-     * @property    boolean         acceptedTOS        - terms of service
+     * @property    int         acceptedTOS        - terms of service
      */
-    private $_acceptedTOS = false;
+    private $_acceptedTOS = 0;
     protected function setAcceptedTOS($value){
         $this->SysMan->Logger->info("this is the TOS value obtained" . $value);
+        $value = $value ? 1 : 0;
         $this->_acceptedTOS = $value;
         $this->SysMan->Session->acceptedTOS = $value;
     }
@@ -369,6 +370,11 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                     $this->SysMan->Session->idPlayer = $this->id;
                 }else{
                     $this->msg = '';
+                    $this->SysMan->Session->signInState = Common_Models_Sysman::ANONYMOUS_PLAY;
+                    $this->SysMan->Session->idPlayer = 0;// check if this gives you an error, try logging In, with wrong password and then register a new user! check if player name overwritten or error thrown
+                    $this->SysMan->Session->idChallenge = 0;
+                    $this->SysMan->Session->playerName = " ";
+                    //$this->logout();
                     $this->msg = array('type'=>self::MSG_DANGER, 'text'=>self::LOGIN_FAILURE);
                     $success = false;
                 }

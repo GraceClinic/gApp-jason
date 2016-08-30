@@ -16,3 +16,9 @@
     height: 30rem;
 }
 
+#user-signed-in {
+    position: absolute;
+    top: 1rem;
+    left: 0;
+    right: 0;
+}

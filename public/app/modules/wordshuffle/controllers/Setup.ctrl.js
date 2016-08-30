@@ -197,7 +197,7 @@
          * @return   {void}
          */
         self.closeAlert = function($event){
-            $($event.toElement.parentElement).css("visibility", "hidden");
+            $($event.toElement.parentElement).css("display", "none");
         };
 
         self.playGame = function(){
@@ -307,6 +307,7 @@
         self.saveProfileChanges = function(){
             // todo: code method
             self.Player.save();
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
         };
 
         
@@ -323,6 +324,7 @@
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
             }
+            self.Player.acceptedTOS = self.SysMan.ANONYMOUS_PLAY;
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "registration"});
         };
 

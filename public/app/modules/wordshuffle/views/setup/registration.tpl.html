@@ -1,17 +1,29 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/registration.tpl.css">
-{{Setup.Player.signInState}} this is the current signIN State
+<!--{{Setup.Player.signInState}} this is the current signIN State-->
 <form name="registrationForm" id="registration-form" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
     <div class="row">
         <div class="col-xs-12">
-            message length {{Setup.Player.msg.length}}
-            signInState {{Setup.Player.signInState}}
-            <alert
-                    ng-repeat="pmsg in Setup.Player.msg track by $index"
-                    type="{{pmsg.type}}"
-                    close="Setup.Player.removeMsg($index)"
-                    ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
-                {{pmsg.text}}
-            </alert>
+
+            <!--message length {{Setup.Player.msg.length}}-->
+            <!--signInState {{Setup.Player.signInState}}-->
+
+            <!--<alert-->
+                    <!--ng-repeat="pmsg in Setup.Player.msg track by $index"-->
+                    <!--type="{{pmsg.type}}"-->
+                    <!--close="Setup.Player.removeMsg($index)"-->
+                    <!--ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">-->
+                <!--{{pmsg.text}}-->
+            <!--</alert>-->
+
+            <div class="row alert-container-div" align="center">
+                <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+                    <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+                        {{pmsg.text}}
+                    </p>
+                    <button class="btn btn-primary" ng-click="Setup.closeAlert($event)">ok</button>
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="form-group row">
@@ -39,12 +51,13 @@
             </select>
         </div>
     </div>
-    <div class="form-group row" ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING && Setup.Player.signInState < Setup.SysMan.SIGNED_IN">
+    <div class="form-group row" ng-class="{'has-error': registrationForm.secret.$invalid && !loginRegisterForm.secret.$pristine}" ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING && Setup.Player.signInState < Setup.SysMan.SIGNED_IN">
         <div class="col-xs-5">
             <label for="player-secret" type="text">Set your secret answer here: </label>
         </div>
         <div class="col-xs-7">
-            <input class="form-control" type="password" ng-model="Setup.Player.secret" id="player-secret" required>
+            <input class="form-control" name="secret" type="password" ng-minlength="8" ng-model="Setup.Player.secret" id="player-secret" required>
+            <p ng-show="registrationForm.secret.$error.minlength" class="help-block">Secret is too short.</p>
         </div>
     </div>
 
@@ -66,7 +79,7 @@
         </div>
     </div>
 </form>
-{{Setup.Player.signInState}} is the state
+<!--{{Setup.Player.signInState}} is the state-->
 <div align="center" id="already-registered" ng-show="Setup.Player.signInState === Setup.SysMan.NAME_PENDING">
     <div>
         <p ng-repeat="pmsg in Setup.Player.msg track by $index">

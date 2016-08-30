@@ -376,6 +376,7 @@
             }
             function setAcceptedTOS(value){
                 console.log("TOS set", value);
+                //_acceptedTOS = value ? 1 : 0;
                 _acceptedTOS = value;
             }
 
