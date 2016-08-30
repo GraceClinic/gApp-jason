@@ -276,7 +276,7 @@ class Common_Models_Session
         return $msg;
     }
 
-    private $_acceptedTOS = false;
+    private $_acceptedTOS = 0;
     protected function setacceptedTOS($value){
         self::$Session->acceptedTOS = $value;
     }
@@ -369,7 +369,7 @@ class Common_Models_Session
             self::$Session->gameEnd = null;
             self::$Session->gameState = null;
             self::$Session->scoreBoard = Array();
-            self::$Session->acceptedTOS = false;
+            self::$Session->acceptedTOS = 0;
         }
 
         return self::$Session;

@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/editProfile.tpl.css">
-{{Setup.Player.signInState}} signIn state
+<!--{{Setup.Player.signInState}} signIn state-->
+
 <!--<div id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">-->
     <!--<p>Alert!! You entered the wrong secret</p>-->
     <!--<div id="alert-buttons" align="center" class="row">-->
@@ -10,12 +11,16 @@
 
 
 
-<div align="center" id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
-    <div>
-        <p>Alert!! You entered the wrong secret</p>
-        <button class="col-xs-6" class="btn btn-danger" type="button" ng-click="Setup.goToIndex()">go back</button>
-        <button class="col-xs-6" class="btn btn-primary" type="button" ng-click="Setup.goToEdit()">re-Enter</button>
-    </div>
+<div align="center" class="row" id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
+        <div class="col-xs-12">
+            <p>Alert!! You entered the wrong secret</p>
+        </div>
+        <div class="col-xs-6 col-xs-offset-3">
+            <div class="row">
+                <button class="col-xs-6 btn btn-danger" type="button" ng-click="Setup.goToIndex()">go back</button>
+                <button class="col-xs-6 btn btn-primary" type="button" ng-click="Setup.goToEdit()">re-Enter</button>
+            </div>
+        </div>
 </div>
 
 
