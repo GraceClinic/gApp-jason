@@ -13,7 +13,7 @@
 <div>
     <div class="row" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN">
 
-        <div class="row alert-container-div" align="center">
+        <div class="row alert-container-div" align="center" ng-show="Setup.Player.msg.length > 0">
             <div class="alert-msg-div col-xs-8 col-xs-offset-2">
                 <p ng-repeat="pmsg in Setup.Player.msg track by $index">
                     {{pmsg.text}}
@@ -35,7 +35,7 @@
                 <!--{{pmsg.text}}-->
             <!--</span>-->
         <!--</div>-->
-        <div id="user-signed-in" class="row">
+        <div class="row">
             <div class="col-xs-4 col-xs-offset-2">
                 <b>{{Setup.Player.name}}</b> Logged In!
             </div>
@@ -53,26 +53,27 @@
         </div>
     </div>
 </div>
-<div ng-show="Setup.Player.signInState != Setup.SysMan.SIGNED_IN">
-    <div class="setup-display-message">
+<div ng-show="Setup.Player.signInState != Setup.SysMan.SIGNED_IN" class="row">
+    <div class="setup-display-message col-xs-8 col-xs-offset-2">
         You are playing anonymously, create a Player name to enhance your game experience with statistics and head to head play. If you already have a player name, enter it now to login!
     </div>
-
-    <form id="login-register-form" name="loginRegisterForm">
-        <div class="form-group row" ng-class="{'has-error': loginRegisterForm.username.$invalid && !loginRegisterForm.username.$pristine}">
-            <div class="col-sm-12">
-                <input type="text" class="form-control form-control-lg" id="setup-username" placeholder="Enter Player Name" name="username" ng-model="Setup.Player.name" ng-minlength="2" required>
-                <p ng-show="loginRegisterForm.username.$error.minlength" class="help-block">Username is too short.</p>
+    <div class="col-xs-2"></div>
+    <div class="col-xs-8 col-xs-offset-2 zero-padding">
+        <form id="login-register-form" name="loginRegisterForm">
+            <div class="form-group row" ng-class="{'has-error': loginRegisterForm.username.$invalid && !loginRegisterForm.username.$pristine}">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control form-control-lg" id="setup-username" placeholder="Enter Player Name" name="username" ng-model="Setup.Player.name" ng-minlength="2" required>
+                    <p ng-show="loginRegisterForm.username.$error.minlength" class="help-block">Username is too short.</p>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <div align="center" class="col-sm-12">
-                <button type="submit" class="btn btn-success" ng-disabled="loginRegisterForm.$invalid" ng-click="Setup.loginUser()">Login</button>
-                &nbsp; or &nbsp;
-                <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
-                <button type="submit" class="btn btn-primary" ng-click= "Setup.registerUser()" ng-disabled="loginRegisterForm.$invalid" >Register</button>
-                <!--</a>-->
+            <div class="form-group row">
+                <div align="center" class="col-sm-12">
+                    <button type="submit" class="btn btn-success" ng-disabled="loginRegisterForm.$invalid" ng-click="Setup.loginUser()">Login</button>
+                    <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
+                    <button type="submit" class="btn btn-primary" ng-click= "Setup.registerUser()" ng-disabled="loginRegisterForm.$invalid" >Register</button>
+                    <!--</a>-->
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>

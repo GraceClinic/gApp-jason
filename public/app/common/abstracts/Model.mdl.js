@@ -387,6 +387,7 @@
                         if('model' in response.data){
                             self.SysMan.Logger.entry('START ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
                             self.setFromArray(response.data.model);
+                            console.log("inside find", response.data.model);
                             self.SysMan.Logger.entry('END ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
                         }
                         self.SysMan.Logger.entry('START ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
