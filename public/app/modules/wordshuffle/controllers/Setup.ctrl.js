@@ -101,6 +101,7 @@
                     }
                 );
             }
+            accessMsg = self.Player.msg;
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }
@@ -288,12 +289,17 @@
          * @return   {void}
          */
         self.goToIndex = function(){
-            var _promise = self.Player.relay("logout")
-            _promise.then(
-                function(response) {
-                    $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
-                }
-            );
+            if (self.Player.signInState >= self.SysMan.SIGNED_IN) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
+            else {
+                var _promise = self.Player.relay("logout")
+                _promise.then(
+                    function(response) {
+                        $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                    }
+                );
+            }
 
         };
 
@@ -378,6 +384,26 @@
         self.acceptedTOSValue = function(){
             return self.Player.acceptedTOS;
         };
+
+        /**
+         * @method   checkLogin
+         * if login is successfull, send to the index page, or stay in the login page
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {}
+         */
+        self.checkLogin = function(){
+            var _promise = self.Player.login();
+            _promise.then(
+                function(response) {
+                    if (self.Player.signInState === self.SysMan.SIGNED_IN) {
+                        $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                    }
+                }
+            )
+        };
+
 
 
 
