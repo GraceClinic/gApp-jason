@@ -225,10 +225,10 @@ class Common_Models_Session
         return self::$Session->gameState;
     }
     protected function setSignInState($state){
-        if($state !== $this->_oldSignInState){
+//        if($state !== $this->_oldSignInState){
             $this->_oldSignInState = self::$Session->signInState;
             self::$Session->signInState = (int) $state;
-        }
+//        }
     }
     protected function getSignInState(){
         return (int) self::$Session->signInState;

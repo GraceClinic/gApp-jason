@@ -234,13 +234,14 @@
                         break;
                     case self.SysMan.NAME_PENDING:
                         // toggle state if user selected a new name
+                        console.log("name_pending case called everytime now??");
                         if(_nameIsDefault){
                             // if id not set and user changes name, request login
                             self.signInState = self.SysMan.ANONYMOUS_PLAY;
                         }
                         break;
                     case self.SysMan.NEW_SIGN_IN:
-                        // step backwards in process if user changed name while pending New_Sign_In in progress
+                        //step backwards in process if user changed name while pending New_Sign_In in progress
                         if(_newName && !_nameIsDefault){
                             // if id not set and user changes name, request login
                             self.signInState = self.SysMan.NAME_PENDING;
@@ -258,6 +259,12 @@
                         break;
                     case self.SysMan.SIGNED_IN:
                         // do as you like, player name change will validate if it is available
+                        break;
+                    case self.SysMan.NAME_PENDING_REGISTER:
+                        //this state should only be checked in the backend, but after you have a keyUp event registered
+                        //on player name, if the requested user name for registration is already present. first keyup method is getting called and then setName,
+                        //and now as there is no case this state, it makes it anonymous.
+                        self.signInState = self.SysMan.NEW_SIGN_IN
                         break;
                     default:
                         // typically hit this state during first load from backend before all properties set
@@ -297,6 +304,7 @@
                     }
                 }
                 _name = value;
+                console.log("signInState in setName", self.signInState);
 
                 _validateState();
             }
