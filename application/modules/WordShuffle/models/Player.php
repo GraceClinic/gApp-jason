@@ -155,17 +155,16 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         // SIGNED_IN state only set through logon() method
         $this->SysMan->Logger->info('session signInState, state ' . $this->SysMan->Session->signInState . " " . $state);
         if($this->SysMan->Session->signInState < Common_Models_SysMan::SIGNED_IN && $state >= Common_Models_SysMan::SIGNED_IN){
-
             $this->msg = array(
                 'type'=>self::MSG_DANGER,
                 'text'=>'Player sign-in state does not validate with session state.  Setting state to session state.'
             );
             $this->SysMan->Session->signInState;
-            echo "inside if";
         }else{
             $this->SysMan->Session->signInState = (int) $state;
             $this->SysMan->Logger->info("signInSetter, session, model ". $this->SysMan->Session->signInState . "  " . "$this->signInState" );
         }
+        $this->SysMan->Logger->info('session signInState, state ' . $this->SysMan->Session->signInState . " " . $state);
     }
     protected function getSignInState(){
         return $this->SysMan->Session->signInState;
@@ -254,7 +253,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     public function login(){
         $success = false;
         $this->SysMan->Logger->info('Player->login(), signInState = '.$this->signInState);
-        switch($this->signInState){
+        switch((int)$this->signInState){
             // get user's challenge information
             case Common_Models_SysMan::NAME_PENDING:
                 $players = $this->Mapper->findAll();
@@ -295,9 +294,11 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 }
                 break;
             case Common_Models_SysMan::NAME_PENDING_REGISTER:
+                $this->SysMan->Logger->info('inside name_pending_register case = '.$this->signInState);
                 $players = $this->Mapper->findAll();
                 if (count($players) == 0) {
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
+                    $this->SysMan->Logger->info('inside 0 players case = '.$this->signInState);
                     $this->msg = '';
                     $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::NEW_LOGIN_MSG);
                     $success = true;

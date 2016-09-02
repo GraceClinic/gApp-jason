@@ -144,6 +144,7 @@
          * @return   {}
          */
         self.registrationAction = function(){
+            console.log("registration action called");
             if (self.Player.signInState == false || self.Player.name.length <= 1) {
                 $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
             }
@@ -327,12 +328,31 @@
         self.registerUser = function(){
             //$scope doesn't get the form?? and shouldn't but how are they getting at : http://codepen.io/sevilayha/pen/xFcdI ??
             //Player.name = self.tempUserName;
+            console.log("register user called");
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
             }
             self.Player.acceptedTOS = self.SysMan.ANONYMOUS_PLAY;
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "registration"});
         };
+
+        /**
+         * @method   checkNameAvailable
+         * once you are inside registration action, it seems regisatrationAction() won't be called again and again
+         *
+         * @public
+         * @return   {}
+         */
+        self.checkNameAvailable = function(){
+            // console.log("signInState in checkNameAvailable", self.Player.signInState);
+            // self.Player.signInState = self.SysMan.NAME_PENDING
+            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+                self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
+                // alert("changed "+ self.Player.signInState);
+                self.Player.login();
+            }
+        };
+
 
         /**
          * @method   loginUser
