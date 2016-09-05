@@ -1,204 +1,79 @@
-<style>
-    alert
-    {
-        font-size: 8pt;
-        margin-bottom: 0;
-        width: 50%;
-    }
-    .view_form
-    {
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        font-size: 16pt;
-        width: auto;
-    }
-    .view_form_line
-    {
-        overflow: auto;  /*this "clears" the floated elements*/
-        padding-bottom: 20px;
-        width: 100%;
-    }
-    .setup_player_msg
-    {
-        width: 50%;
-        display: block;
-        font-size: 14pt;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 0 0 0 0;
-    }
-    .view_form_line_leftside
-    {
-        float: left;
-        padding-right: 3px;
-        width: 35%;
-        text-align:right;
-        box-sizing: border-box;
-    }
-    .view_form_line_rightside
-    {
-        float: left;
-        width: 63%;
-        padding-right: 2%;
-        text-align:left;
-        box-sizing: border-box;
-    }
-    #Setup-playGame{
-        background-color: mediumpurple;
-        border-color: purple;
-        color: white;
-    }
-    #Setup-playGame:hover{
-        background-color: #7a61c2;
-    }
-    #Setup-player-login{
-        opacity: 0.7;
-    }
-    .fa-sign-in{
-        color: darkred;
-        font-size: 14pt;
-    }
-    .tooltip{
-        font-family: "Times New Roman", sans-serif;
-        font-size: 12pt;
-        z-index:100;
-    }
-    .clickable:hover{
-        cursor: pointer;
-        opacity: 0.7;
-    }
-</style>
-<!-- Controller / Action content renders here -->
-<form class="view_form" ng-submit="Setup.Player.save()">
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label for="setup-player-name">Player:</label>
-        </div>
-        <div class="view_form_line_rightside">
-            <input id="setup-player-name" ng-model="Setup.Player.name" type="text" name="name">
-            <button
-                id="Setup-player-login"
-                type="button"
-                class="btn btn-warning btn-xs"
-                ng-click="Setup.Player.login()"
-                ng-show="Setup.Player.signInState > Setup.SysMan.ANONYMOUS_PLAY && Setup.Player.signInState < Setup.SysMan.NEW_SIGN_IN"
-                tooltip="Submit user name for validation and/or creation as required"
-                tooltip-placement="top">
-                    <i class="fa fa-sign-in"></i>
-            </button>
-            <i class="fa fa-info-circle" tooltip="Enter a player name if you wish to store your stats!" tooltip-placement="bottom"></i>
-            <i class="fa fa-user-secret clickable"
-               tooltip="Show/hide secret question"
-               tooltip-placement="top"
-               ng-click="Setup.toggleShowSecret()"
-               ng-show="Setup.Player.signInState == Setup.SysMan.SIGNED_IN"></i>
-            &nbsp;&nbsp;
-            <i class="fa fa-sign-out clickable"
-               tooltip="Sign out"
-               tooltip-placement="bottom"
-               ng-click="Setup.playerLogout()"
-               ng-show="Setup.Player.signInState == Setup.SysMan.SIGNED_IN">sign out</i>
-        </div>
-    </div>
-    <div class="setup_player_msg">
-        <alert
-                ng-repeat="pmsg in Setup.Player.msg track by $index"
-                type="{{pmsg.type}}"
-                close="Setup.Player.removeMsg($index)"
-                ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">
-            {{pmsg.text}}
-        </alert>
-    </div>
-    <div class="view_form_line" ng-show="Setup.Player.signInState == Setup.SysMan.NEW_SIGN_IN || Setup.showSecret">
-        <div class="view_form_line_leftside">
-            <label for="setup-player-challenge">Challenge Question:</label>
-        </div>
-        <div class="view_form_line_rightside">
-            <select
-                    ng-model="Setup.Player.idChallenge"
-                    ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
-                    id="setup-player-challenge">
-                <!--<option value="">-- choose one --</option>-->
-            </select>
-        </div>
-    </div>
-    <div class="view_form_line" ng-show="Setup.Player.signInState == Setup.SysMan.SECRET_PENDING">
-        <div class="view_form_line_leftside">
-            <i class="fa fa-user-secret" tooltip="Halt! Who goes there!" tooltip-placement="bottom"></i>
-        </div>
-        <div class="view_form_line_rightside">
-            {{Setup.Player.challenge}}
-        </div>
-    </div>
-    <div class="view_form_line" ng-show="Setup.showSecret || (Setup.Player.signInState > Setup.SysMan.NAME_PENDING  && Setup.Player.signInState < Setup.SysMan.SIGNED_IN)">
-        <div class="view_form_line_leftside">
-            <label for="setup-player-secret">Secret:</label>
-        </div>
-        <div class="view_form_line_rightside">
-            <input id="setup-player-secret" ng-model="Setup.Player.secret" type="text" name="name">
-            <button
-                    class="btn btn-warning btn-xs"
-                    type="button"
-                    ng-click="Setup.Player.login()"
-                    tooltip="Enter the answer to your secret question"
-                    tooltip-placement="top">
-                <i class="fa fa-sign-in"></i>
-            </button>
-            <i class="fa fa-info-circle" tooltip="Enter a player name if you wish to store your stats!" tooltip-placement="bottom"></i>
-        </div>
-    </div>
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label for="setup-game-minutesPerRound">Timer:</label>
-            <!--                <input type="text" name="Timer">-->
-        </div>
-        <div class="view_form_line_rightside">
-            <select id="setup-game-minutesPerRound" ng-model="Setup.minutesPerRound" name="minutesPerRound">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
-            &nbsp;minutes
-            <i class="fa fa-info-circle" tooltip="Round duration" tooltip-placement="bottom"></i>
-        </div>
-    </div>
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label for="setup-game-totalRounds">Rounds:</label>
-            <!--                <input type="text" name="Rounds">-->
-        </div>
-        <div class="view_form_line_rightside">
-            <select id="setup-game-totalRounds" ng-model="Setup.Player.roundsPerGame" name="roundsPerGame">
-                <option value=1>1</option>
-                <option value=2>2</option>
-                <option value=3>3</option>
-                <option value=4>4</option>
-                <option value=5>5</option>
-            </select>
-            <i class="fa fa-info-circle" tooltip="Number of rounds within an entire game" tooltip-placement="bottom"></i>
-        </div>
-    </div>
-    <div class="view_form_line">
-        <div class="view_form_line_leftside">
-            <label>&nbsp;</label>
-            <!--<input id="Play" type="submit" value="Play">-->
-            <button id="Setup-playGame" type="button" class="btn btn-success btn-lg" ng-click="Setup.playGame()">Play</button>
-            &nbsp;&nbsp;
-        </div>
-        <div class="view_form_line_rightside">
-            <button
-                    id="setup-player-save"
-                    class="btn btn-success btn-lg"
-                    type="submit"
-                    ng-disabled="Setup.Player.signInState < Setup.SysMan.NAME_PENDING">
-                Save
-            </button>
-            &nbsp;
-        </div>
-    </div>
-</form>
+<link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/index.tpl.css">
+<!--{{Setup.Player.signInState}} this is the signIn State-->
 
+<div class="row alert-container-div" align="center" ng-show="Setup.Player.signInState === Setup.SysMan.ANONYMOUS_PLAY && Setup.Player.msg.length !== 0">
+    <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+        <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+            {{pmsg.text}}
+        </p>
+        <button class="btn btn-primary" ng-click="Setup.closeAlert($event)">ok</button>
+    </div>
+</div>
+
+<div>
+    <div class="row" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN">
+
+        <div class="row alert-container-div" align="center" ng-show="Setup.Player.msg.length > 0">
+            <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+                <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+                    {{pmsg.text}}
+                </p>
+                <button class="btn btn-primary" ng-click="Setup.closeAlert($event)">ok</button>
+            </div>
+        </div>
+
+        <!--<alert-->
+                <!--ng-repeat="pmsg in Setup.Player.msg track by $index"-->
+                <!--type="{{pmsg.type}}"-->
+                <!--close="Setup.Player.removeMsg($index)"-->
+                <!--ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">-->
+            <!--{{pmsg.text}}-->
+        <!--</alert>-->
+
+        <!--<div class="col-xs-12 setup-display-message">-->
+            <!--<span ng-repeat="pmsg in Setup.Player.msg track by $index">-->
+                <!--{{pmsg.text}}-->
+            <!--</span>-->
+        <!--</div>-->
+        <div class="row">
+            <div class="col-xs-4 col-xs-offset-2">
+                <b>{{Setup.Player.name}}</b> Logged In!
+            </div>
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-6" align="right">
+                        <button type="button" id="edit-profile" class="btn btn-primary" ng-click="Setup.goToEdit()">Edit Profile</button>
+                    </div>
+                    <div class="col-xs-6" align="left">
+                        <button type="button" id="logout-button" class="btn btn-primary" ng-click="Setup.playerLogout()">Logout</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-show="Setup.Player.signInState != Setup.SysMan.SIGNED_IN" class="row">
+    <div class="setup-display-message col-xs-8 col-xs-offset-2">
+        You are playing anonymously, create a Player name to enhance your game experience with statistics and head to head play. If you already have a player name, enter it now to login!
+    </div>
+    <div class="col-xs-2"></div>
+    <div class="col-xs-8 col-xs-offset-2 zero-padding">
+        <form id="login-register-form" name="loginRegisterForm">
+            <div class="form-group row" ng-class="{'has-error': loginRegisterForm.username.$invalid && !loginRegisterForm.username.$pristine}">
+                <div class="col-sm-12">
+                    <input type="text" class="form-control form-control-lg" id="setup-username" placeholder="Enter Player Name" name="username" ng-model="Setup.Player.name" ng-minlength="2" required>
+                    <p ng-show="loginRegisterForm.username.$error.minlength" class="help-block">Username is too short.</p>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div align="center" class="col-sm-12">
+                    <button type="submit" class="btn btn-success" ng-disabled="loginRegisterForm.$invalid" ng-click="Setup.loginUser()">Login</button>
+                    <!--<a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"registration"})'>-->
+                    <button type="submit" class="btn btn-primary" ng-click= "Setup.registerUser()" ng-disabled="loginRegisterForm.$invalid" >Register</button>
+                    <!--</a>-->
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

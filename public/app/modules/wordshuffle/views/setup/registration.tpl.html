@@ -1,0 +1,120 @@
+<link rel="stylesheet" href="/app/modules/wordshuffle/views/setup/registration.tpl.css">
+<!--{{Setup.Player.signInState}} this is the current signIN State-->
+<form name="registrationForm" id="registration-form" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN || Setup.Player.signInState === Setup.SysMan.NAME_PENDING || Setup.Player.signInState === Setup.SysMan.NAME_PENDING_REGISTER">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <!--message length {{Setup.Player.msg.length}}-->
+            <!--signInState {{Setup.Player.signInState}}-->
+
+            <!--<alert-->
+                    <!--ng-repeat="pmsg in Setup.Player.msg track by $index"-->
+                    <!--type="{{pmsg.type}}"-->
+                    <!--close="Setup.Player.removeMsg($index)"-->
+                    <!--ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING">-->
+                <!--{{pmsg.text}}-->
+            <!--</alert>-->
+
+            <div class="row alert-container-div" align="center">
+                <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+                    <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+                        {{pmsg.text}}
+                    </p>
+                    <button class="btn btn-primary" ng-click="Setup.closeAlert($event)">ok</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="row">
+                <div class="col-xs-5">
+                    <p><b>Requested User Name:</b></p>
+                </div>
+                <div class="col-xs-7">
+                    <!--<p><b>{{Setup.Player.name}}</b></p>-->
+                    <input type="text" class="form-control" ng-model="Setup.Player.name" ng-keyup="Setup.checkNameAvailable()"/>
+                    <span ng-show="Setup.Player.signInState === Setup.SysMan.NAME_PENDING" class="text-danger">username not available</span>
+                    <span ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN" class="text-success">username available</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="col-xs-12">-->
+        <!--edit here: <input type="text" ng-model="Setup.Player.name" ng-keyup="Setup.checkNameAvailable()"/>-->
+        <!--&lt;!&ndash;<button type="button" ng-click="Setup.checkNameAvailable()">checkName</button>&ndash;&gt;-->
+        <!--msg obtained : {{Setup.Player.msg[0].text}}-->
+    <!--</div>-->
+
+    <div class="form-group row" ng-class="{'has-error': !registrationForm.registerCQuestions.$dirty}" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="row">
+                <div class="col-xs-5">
+                    <label for="setup-player-challenge">Challenge Question:</label>
+                </div>
+                <div class="col-xs-7">
+                    <select
+                            name="registerCQuestions"
+                            ng-model="Setup.Player.idChallenge"
+                            ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
+                            id="setup-player-challenge"
+                            class="form-control"
+                            required
+                    >
+
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row" ng-class="{'has-error': registrationForm.secret.$invalid && !loginRegisterForm.secret.$pristine}" ng-show="Setup.Player.signInState > Setup.SysMan.NAME_PENDING && Setup.Player.signInState < Setup.SysMan.SIGNED_IN">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="row">
+                <div class="col-xs-5">
+                    <label for="player-secret" type="text">Set your secret answer here: </label>
+                </div>
+                <div class="col-xs-7">
+                    <input class="form-control" name="secret" type="password" ng-minlength="8" ng-model="Setup.Player.secret" id="player-secret" required>
+                    <p ng-show="registrationForm.secret.$error.minlength" class="help-block">Secret is too short.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="row">
+                <div class="col-xs-7 col-xs-offset-5 form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" id="register-tos-checkbox" type="checkbox" ng-click="Setup.Player.acceptedTOS = !Setup.Player.acceptedTOS"> I accept the terms and conditions of play.
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="row">
+                <div class="col-xs-7 col-xs-offset-5">
+                    <button type="button" class="btn btn-primary" id="back-button" title="go back to change user Name" ng-click="Setup.goToIndex()">Back</button>
+                    &nbsp;  &nbsp;
+                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
+                        <button type="submit" class="btn btn-success" id="submit-register-button" ng-click="Setup.Player.save()" ng-disabled="!Setup.registerCheckbox() || registrationForm.$invalid || registrationForm.registerCQuestions.$error.required || !registrationForm.registerCQuestions.$dirty" title="click here to finish your registration">Finish Register</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--{{Setup.Player.signInState}} is the state-->
+<!--<div align="center" id="already-registered" ng-show="Setup.Player.signInState === Setup.SysMan.NAME_PENDING">-->
+    <!--<div>-->
+        <!--<p ng-repeat="pmsg in Setup.Player.msg track by $index">-->
+            <!--{{pmsg.text}}-->
+        <!--</p>-->
+        <!--<button type="button" class="go-back-button btn" ng-click="Setup.goToIndex()">go Back</button>-->
+    <!--</div>-->
+<!--</div>-->
