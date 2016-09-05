@@ -129,7 +129,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         return $this->_secret;
     }
     protected function setIdChallenge($value){
-        $this->SysMan->Logger->info('value of challenge = ' . $value);
         if(!empty($value)){
             $this->SysMan->Session->idChallenge = (int) $value;;
         }
@@ -153,7 +152,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     }
     protected function setSignInState($state){
         // SIGNED_IN state only set through logon() method
-        $this->SysMan->Logger->info('session signInState, state ' . $this->SysMan->Session->signInState . " " . $state);
         if($this->SysMan->Session->signInState < Common_Models_SysMan::SIGNED_IN && $state >= Common_Models_SysMan::SIGNED_IN){
             $this->msg = array(
                 'type'=>self::MSG_DANGER,
@@ -162,9 +160,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
             $this->SysMan->Session->signInState;
         }else{
             $this->SysMan->Session->signInState = (int) $state;
-            $this->SysMan->Logger->info("signInSetter, session, model ". $this->SysMan->Session->signInState . "  " . "$this->signInState" );
         }
-        $this->SysMan->Logger->info('session signInState, state ' . $this->SysMan->Session->signInState . " " . $state);
     }
     protected function getSignInState(){
         return $this->SysMan->Session->signInState;
@@ -260,15 +256,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 if(count($players) == 0){
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
                     $this->msg = '';
-//                    if ($this->actionState == "login") {
-//                        $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::USER_NOT_FOUND_MSG);
-//                        $success = false;
-//                    }
-//                    else if ($this->actionState == "register") {
-//                        $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::NEW_LOGIN_MSG);
-//                        $success = true;
-//                    }
-
                     $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::NEW_LOGIN_MSG);
                     $success = true;
                 }elseif(count($players) == 1){
@@ -277,15 +264,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                     // set the idPlayer session variable, this location stores the true id which the Player model references
                     $this->SysMan->Session->idPlayer = $this->id;
                     $this->msg = '';
-//                    if ($this->actionState == "login") {
-//                        $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::WELCOME_BACK_MSG);
-//                        $this->SysMan->Session->actionState = Common_Models_SysMan::LOGIN_STATE;
-//                    }
-//                    else if ($this->actionState == "register") {
-//                        $this->msg = array('type'=>self::MSG_WARNING, 'text'=>self::ALREADY_REGISTERED_MSG);
-//                        $this->SysMan->Session->actionState = Common_Models_SysMan::REGISTER_STATE;
-//                    }
-//                    $this->actionState = $this->SysMan->Session->actionState;
                     $success = true;
                 }else{
                     throw new Exception(
@@ -294,11 +272,9 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 }
                 break;
             case Common_Models_SysMan::NAME_PENDING_REGISTER:
-                $this->SysMan->Logger->info('inside name_pending_register case = '.$this->signInState);
                 $players = $this->Mapper->findAll();
                 if (count($players) == 0) {
                     // toremove:
-                    $this->SysMan->Logger->info("see the player inside name_pending_register" . print_r($this->toArray(true),true));
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
                     $this->SysMan->Logger->info('inside 0 players case = '.$this->signInState);
                     $this->msg = '';
@@ -319,7 +295,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 break;
             case Common_Models_SysMan::NAME_PENDING_LOGIN:
                 $players = $this->Mapper->findAll();
-                $this->SysMan->Logger->info('count players' . count($players));
                 if (count($players) == 0) {
                     $this->msg = "";
                     $this->msg = array('type'=>self::MSG_WARNING, 'text'=>self::USER_NOT_FOUND_MSG);
@@ -419,14 +394,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         $this->SysMan->Logger->info('Execute logout, destroy session',$this->className);
         $this->name = $this->defaultName;
         $this->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
-        //$this->idChallenge = 0;
-        //unset($GLOBALS[$this->id]);
-        //$this->SysMan->Logger->info("model id after logout" . $this->id);
-
         Zend_Session::destroy(TRUE);
-
-        $this->SysMan->Logger->info("model id after logout" . $this->id);
-
         return true;
     }
 
@@ -438,7 +406,9 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
      */
     public function anonymousPlay()
     {
-        $this->SysMan->Logger->info('starting anonymous function',$this->SysMan->Session);
+        $this->SysMan->Logger->info('START anonymous function',$this->SysMan->Session);
+        // find a better solution, you are simply calling this, for something related to session and aceptedTOS
+        $this->SysMan->Logger->info('END anonymous function',$this->SysMan->Session);
     }
 
 

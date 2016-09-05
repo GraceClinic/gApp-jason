@@ -60,22 +60,6 @@
             self.Player.secondsPerRound = value*60;
         }
         
-        /**
-         * @property    tempUserName
-         * this is to create one-way binding from <input... username> to Setup.Player.name, or else default name appears
-         *
-         * @type    {text}
-         * @public
-         **/
-        Object.defineProperty(self,'tempUserName',{get: getTempUserName, set: setTempUserName, enumerable:true});
-        var _tempUserName;
-        function getTempUserName(){
-            return _tempUserName;
-        }
-        function setTempUserName(value){
-            _tempUserName = value;
-        }
-        
         // todo: use ng_prop to create complete properties, otherwise create simply, uncontrolled properties off of self
 
         /****************************
@@ -88,7 +72,6 @@
          * @public
          */
         self.indexAction = function(){
-            console.log("inside indexAction", self.Player.signInState);
             if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
                 var _promise = self.Player.find();
                 _promise.then(
@@ -97,11 +80,10 @@
                             Player.name = "";
                         }
                     },function (reason) {
-                        console.log("sorry your find failed - reason",reason);
+                        console.log("sorry your find failed - reason", reason);
                     }
                 );
             }
-            accessMsg = self.Player.msg;
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }
@@ -144,7 +126,6 @@
          * @return   {}
          */
         self.registrationAction = function(){
-            console.log("registration action called");
             if (self.Player.signInState == false || self.Player.name.length <= 1) {
                 $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
             }
@@ -330,7 +311,6 @@
             //$scope doesn't get the form?? and shouldn't but how are they getting at : http://codepen.io/sevilayha/pen/xFcdI ??
             //Player.name = self.tempUserName;
             
-            console.log("register user called");
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
             }
@@ -346,11 +326,8 @@
          * @return   {}
          */
         self.checkNameAvailable = function(){
-            // console.log("signInState in checkNameAvailable", self.Player.signInState);
-            // self.Player.signInState = self.SysMan.NAME_PENDING
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
-                // alert("changed "+ self.Player.signInState);
                 self.Player.login();
             }
         };

@@ -105,20 +105,17 @@
              * @return   {boolean}
              */
             self.authenticateUser = function(){
-                console.log("inside authenticateUser signInState and secret", self.signInState, self.secret);
-                // todo: code method
                 var _promise = self.relay("login");
-                console.log("returned promise in authenticate user", _promise);
                 _promise.then(
                     function(response) {
                         if (parseInt(self.signInState) === self.SysMan.SIGNED_IN) {
-                            console.log("secret validated, please write the next action");
+                            //console.log("secret validated, please write the next action");
                         }
                         else if (parseInt(self.signInState) === self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
-                            console.log("entered wrong secret, not allowed");
+                            //console.log("entered wrong secret, not allowed");
                         }
                         else {
-                            console.log("something else is wrong, signInState", self.signInState);
+                            //console.log("something else is wrong, signInState", self.signInState);
                         }
                     }
                 );
@@ -169,7 +166,6 @@
                     // clear secret field
                     self.secret = '';
                 }
-                //console.log("inside post-login", self.actionState);
 
             };
 
@@ -194,28 +190,6 @@
                 return _promise;
             };
             
-            // /**
-            //  * @method   accceptTerms       - accept terms of play
-            //  * @public
-            //  * @return   {boolean}
-            //  */
-            // self.acceptTerms = function(){
-            //     //self.acceptedTOS = !self.acceptedTOS;
-            //     if (self.signInState >= self.SysMan.SIGNED_IN && self.signInState < self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
-            //         //the person is signed in, only allow this, if the user has not aacepted it yet
-            //         self.save();
-            //     }
-            //     else {
-            //         console.log("comes here");
-            //         // it should be anonymous
-            //         self.saveIsPending = false;
-            //         self.name = self.defaultName;
-            //         self.signInState = 0;
-            //         self.relay("anonymousPlay");
-            //     }
-            //     return true;
-            // };
-            
 
             /**
              * Validates player state and adjusts as necessary
@@ -234,7 +208,6 @@
                         break;
                     case self.SysMan.NAME_PENDING:
                         // toggle state if user selected a new name
-                        console.log("name_pending case called everytime now??");
                         if(_nameIsDefault){
                             // if id not set and user changes name, request login
                             self.signInState = self.SysMan.ANONYMOUS_PLAY;
@@ -304,8 +277,6 @@
                     }
                 }
                 _name = value;
-                console.log("signInState in setName", self.signInState);
-
                 _validateState();
             }
             var _secret = '';
@@ -313,7 +284,6 @@
                 return _secret;
             }
             function setSecret(value){
-                console.log("set secret  called, signedIn", self.signInState);
                 if(_secret !== value){
                     _secret = value;
                     _saveMe = true;
@@ -324,7 +294,6 @@
                 return _idChallenge;
             }
             function setIdChallenge(value){
-                console.log("id challenge value", value);
                 _idChallenge = value;
             }
             var _signInState = false;
@@ -379,11 +348,9 @@
 
             var _acceptedTOS = false;
             function getAcceptedTOS(){
-                console.log("tos GET", _acceptedTOS);
                 return _acceptedTOS;
             }
             function setAcceptedTOS(value){
-                console.log("TOS set", value);
                 //_acceptedTOS = value ? 1 : 0;
                 _acceptedTOS = value;
             }
@@ -456,15 +423,6 @@
          */
         WordShuffle_Models_Player.prototype._preDispatch = function(){
             // clear any current Player messages, then run superclass save
-            // if(this.actionState == "login") {
-            //     this.SysMan.playerActionState = "login";
-            // }
-            // else if (this.actionState == "register") {
-            //     this.SysMan.playerActionState = "register";
-            // }
-            // else if (this.actionState == "anonymous") {
-            //     this.SysMan.playerActionState = "anonymous";
-            // }
             this.msg = [];
             return true;
         };

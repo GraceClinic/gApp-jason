@@ -253,7 +253,6 @@ abstract class Common_Abstracts_Mapper
 //                }
 
                 // Otherwise, the data is new and should be entered into a new database table row.
-                $this->_model->SysMan->Logger->info("it is targetTable" .  print_r($targetTable, true));
                 $pk = $targetTable->insert($data);
                 // set the model's id to primary key for usage is postSave methods as required
                 $this->_model->id = $pk;
