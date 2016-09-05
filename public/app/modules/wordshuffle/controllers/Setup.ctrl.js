@@ -294,6 +294,7 @@
                 $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
             }
             else {
+                self.Player.id = "";
                 var _promise = self.Player.relay("logout")
                 _promise.then(
                     function(response) {
@@ -363,7 +364,7 @@
          * @param    {}                 - todo: document each parameter
          * @return   {void}
          */
-        self.loginUser = function(){
+            self.loginUser = function(){
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_LOGIN;
             }
