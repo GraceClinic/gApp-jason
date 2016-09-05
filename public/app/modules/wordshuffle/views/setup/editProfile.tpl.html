@@ -10,8 +10,8 @@
 <!--</div>-->
 
 
-
-<div align="center" class="row" id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
+<div class="row">
+    <div align="center" class="col-xs-8 col-xs-offset-2 alert-msg-div" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
         <div class="col-xs-12">
             <p>Alert!! You entered the wrong secret</p>
         </div>
@@ -21,6 +21,7 @@
                 <button class="col-xs-6 btn btn-primary" type="button" ng-click="Setup.goToEdit()">re-Enter</button>
             </div>
         </div>
+    </div>
 </div>
 
 
@@ -56,14 +57,18 @@
             <b>{{Setup.Player.challenge}}</b>
         </div>
     </div>
-    <div class="form-group row">
-        <label class="col-sm-5" for="new-secret">Enter the new Secret</label>
-        <div class="col-sm-7">
-            <input class="form-control" type="password" ng-model="Setup.Player.secret" id="new-secret" placeholder="new current secret"/>
+    <div class="row">
+        <div class="col-xs-5">
+            <label for="new-secret">Enter the new Secret</label>
+        </div>
+        <div class="col-xs-7">
+            <input class="form-control" type="password" ng-model="Setup.Player.secret" id="new-secret" placeholder="new secret"/>
         </div>
     </div>
-    <div id="save-changes" class="col-xs-7 col-xs-offset-5">
-        <button type="button" class="go-back-button btn btn-primary" ng-click="Setup.goToIndex()">go Back</button>
-        <button class="btn btn-success" type="text" ng-click="Setup.saveProfileChanges()">save changes</button>
+    <div class="row">
+        <div id="save-changes" class="col-xs-7 col-xs-offset-5">
+            <button type="button" class="go-back-button btn btn-primary" ng-click="Setup.goToIndex()">go Back</button>
+            <button class="btn btn-success" type="text" ng-click="Setup.saveProfileChanges()">save changes</button>
+        </div>
     </div>
 </form>

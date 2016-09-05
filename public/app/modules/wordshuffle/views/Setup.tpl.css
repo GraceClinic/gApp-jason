@@ -18,7 +18,7 @@
 
 .controller_setup#setup-view-left-panel {
     height: 88.3vh;
-    display: table;
+    display: flex;
 }
 
 #container-div {
@@ -28,8 +28,13 @@
 }
 
 .controller_setup #action-container {
-    display: table-cell;
-    vertical-align: middle;
+    /*display: table-cell;*/
+    /*vertical-align: middle;*/
+    max-height: 88.3vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: auto;
+
 }
 
 button#register-button {
