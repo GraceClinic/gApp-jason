@@ -297,6 +297,8 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 $this->SysMan->Logger->info('inside name_pending_register case = '.$this->signInState);
                 $players = $this->Mapper->findAll();
                 if (count($players) == 0) {
+                    // toremove:
+                    $this->SysMan->Logger->info("see the player inside name_pending_register" . print_r($this->toArray(true),true));
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
                     $this->SysMan->Logger->info('inside 0 players case = '.$this->signInState);
                     $this->msg = '';
@@ -328,7 +330,9 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                     $this->signInState = Common_Models_SysMan::SECRET_PENDING;
                     // set the idPlayer session variable, this location stores the true id which the Player model references
                     //$this->SysMan->Session->idPlayer = $this->id;
-                    $this->setFromArray($players[0]);
+                    //$this->setFromArray($players[0]);
+                    $this->idChallenge = $players[0]["idChallenge"];
+                    $this->id = $players[0]["id"];
                     $this->msg = '';
                     $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::WELCOME_BACK_MSG);
                     $success = true;
@@ -415,10 +419,13 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         $this->SysMan->Logger->info('Execute logout, destroy session',$this->className);
         $this->name = $this->defaultName;
         $this->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
-        $this->idChallenge = 0;
-        $this->id = 0;
+        //$this->idChallenge = 0;
+        //unset($GLOBALS[$this->id]);
+        //$this->SysMan->Logger->info("model id after logout" . $this->id);
 
         Zend_Session::destroy(TRUE);
+
+        $this->SysMan->Logger->info("model id after logout" . $this->id);
 
         return true;
     }
