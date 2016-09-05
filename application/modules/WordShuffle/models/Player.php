@@ -340,6 +340,12 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 }
                 break;
             case Common_Models_SysMan::NEW_SIGN_IN:
+                //Check if all the necessary fields are passed to the backend
+                if (!($this->name != "" && gettype($this->idChallenge) == "integer" && $this->secret != "" && $this->acceptedTOS == 1)) {
+                    throw new Exception(
+                        "you didn't fill the required fields properly"
+                    );
+                }
                 $players = $this->Mapper->findAll();
 
                 if(count($players) == 0){

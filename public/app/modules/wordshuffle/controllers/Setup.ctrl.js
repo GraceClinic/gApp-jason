@@ -328,6 +328,7 @@
         self.registerUser = function(){
             //$scope doesn't get the form?? and shouldn't but how are they getting at : http://codepen.io/sevilayha/pen/xFcdI ??
             //Player.name = self.tempUserName;
+            
             console.log("register user called");
             if (self.Player.signInState === self.SysMan.NAME_PENDING) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
