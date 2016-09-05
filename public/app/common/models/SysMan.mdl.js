@@ -136,22 +136,6 @@
                 }
             }
 
-            /**
-             * @property    playerActionState
-             * this is to identify if player is playing anonymously or has logged-In or registered as a new User
-             *
-             * @type    {string}
-             * @public
-             **/
-            // Object.defineProperty(self,'playerActionState',{get: getPlayerActionState, set: setPlayerActionState, enumerable:true});
-            // var _playerActionState;
-            // function getPlayerActionState(){
-            //     return _playerActionState;
-            // }
-            // function setPlayerActionState(value){
-            //     _playerActionState = value;
-            // }
-
 
             /**
              * @property    App_Common_Models_SysMan#Timer      - application wide timer
