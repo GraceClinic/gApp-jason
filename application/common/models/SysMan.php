@@ -47,9 +47,6 @@ final class Common_Models_SysMan
     const NEW_SIGN_IN = 5;
     const SECRET_PENDING = 10;
     const SIGNED_IN = 20;
-    const ANONYMOUS_STATE = 1; //todo: remove this
-    const REGISTER_STATE = 2; //todo: remove this
-    const LOGIN_STATE = 3; //todo: remove this
     const SIGNED_IN_EDITING = 21;
     const SIGNED_IN_EDIT_NOT_ALLOWED = 22;
 
