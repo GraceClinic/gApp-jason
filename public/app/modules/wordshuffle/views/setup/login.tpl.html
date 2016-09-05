@@ -43,11 +43,13 @@
         </div>
     </div>
 </form>
-<div id="user-not-found" ng-show="Setup.Player.signInState === Setup.SysMan.NAME_PENDING" align="center">
-    <div>
-        <p ng-repeat="pmsg in Setup.Player.msg track by $index">
-            {{pmsg.text}}
-        </p>
-        <button type="button" class="go-back-button btn" ng-click="Setup.goToIndex()">go Back</button>
+<div class="row">
+    <div class="col-xs-8 col-xs-offset-2 alert-msg-div" ng-show="Setup.Player.signInState === Setup.SysMan.NAME_PENDING" align="center">
+        <div>
+            <p ng-repeat="pmsg in Setup.Player.msg track by $index">
+                {{pmsg.text}}
+            </p>
+            <button type="button" class="go-back-button btn" ng-click="Setup.goToIndex()">go Back</button>
+        </div>
     </div>
 </div>
