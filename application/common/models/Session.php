@@ -27,6 +27,7 @@
  * @property    int     points          - game points
  * @property    array   scoreBoard      - array of scores for the current game
  * @property    int     round           - current game round
+ * @property    boolean         tos      -terms of service agreement by player
  */
 class Common_Models_Session
 {
@@ -104,7 +105,8 @@ class Common_Models_Session
             'secondsPerRound:     ' . $this->secondsPerRound . PHP_EOL .
             'idGame:       ' . $this->idGame . PHP_EOL .
             'signInState:     ' . $this->signInState . PHP_EOL .
-            'Msg:          ' . $this->msg . PHP_EOL;
+            'Msg:          ' . $this->msg . PHP_EOL.
+            'tos:          ' .$this->tos . PHP_EOL;
     }
 
     protected function setIdPlayer($x)
@@ -223,10 +225,7 @@ class Common_Models_Session
         return self::$Session->gameState;
     }
     protected function setSignInState($state){
-        if($state !== $this->_oldSignInState){
-            $this->_oldSignInState = self::$Session->signInState;
             self::$Session->signInState = (int) $state;
-        }
     }
     protected function getSignInState(){
         return (int) self::$Session->signInState;
@@ -274,6 +273,14 @@ class Common_Models_Session
         return $msg;
     }
 
+    protected function setTos($value){
+        self::$Session->tos = (bool) $value;
+        return $this;
+    }
+    protected function getTos(){
+        return self::$Session->tos;
+    }
+
     /**
      * @param int   $i  - round index
      * @param string    $field  - round field name
@@ -301,7 +308,8 @@ class Common_Models_Session
             'round'=> $this->round,
             'Squares'=>  $sqLetters,
             'Rounds'=>  $this->Rounds,
-            'Msg'=> $this->msg
+            'Msg'=> $this->msg,
+            'tos'=> $this->tos
         );
 
         return $ret;
@@ -357,6 +365,7 @@ class Common_Models_Session
             self::$Session->gameEnd = null;
             self::$Session->gameState = null;
             self::$Session->scoreBoard = Array();
+            self::$Session->tos = false;
         }
 
         return self::$Session;

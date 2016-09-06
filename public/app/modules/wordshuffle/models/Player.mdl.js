@@ -86,6 +86,12 @@
              * @public
              **/
             Object.defineProperty(self,'saveIsPending',{get: getSaveIsPending});
+            /**
+             * @property    WordShuffle_Models_Player#tos           -  terms of service agreement by player
+             * @type        boolean
+             * @public
+             **/
+            Object.defineProperty(self,'tos',{get: getTos, set: setTos});
 
             /**
              * Submits request to login with Player name
@@ -99,10 +105,13 @@
                     // clear current messages
                     self.msg = [];
                     // simply save the model and the backend will determine if a challenge is required
-                    self.relay('login');
+                   var _promise = self.relay('login');
+                    _promise.then(
+                        function (response) {
+                            return response;
+                        });
                 }
-
-                return true;
+                return _promise;
             };
 
             /**
@@ -134,12 +143,30 @@
                         self.msg = {"text":"Player logout successful!","type":'info'};
                         self.name = self.defaultName;
                         self.id = 0;
-
+                        self.tos = false;
                         return response;
                     });
 
                 return _promise;
             };
+
+            /**
+             * @method   nameExists
+             * check if Player name exists in database
+             * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+             * @param    {}                 - todo: document each parameter
+             * @return   {boolean}
+             */
+            self.nameExists = function(){
+                var _promise = self.relay('playerNameExists');
+                _promise.then(
+                    function (response) {
+                        console.log('Response data from nameExists method is ',response);
+                        return response;
+                    });
+                return _promise;
+            };
+
 
             /**
              * Validates player state and adjusts as necessary
@@ -151,7 +178,7 @@
                 switch(self.signInState){
                     case self.SysMan.ANONYMOUS_PLAY:
                         // toggle state if user selected a new name
-                        if(_newName && !_nameIsDefault){
+                        if(!_nameIsDefault){
                             // if id not set and user changes name, request login
                             self.signInState = self.SysMan.NAME_PENDING;
                         }
@@ -292,6 +319,14 @@
                 return _saveMe;
             }
 
+            var _tos = 0;
+            function getTos(){
+                return _tos;
+            }
+            function setTos(value){
+                _tos = value;
+            }
+
             /*******************
              * CONSTRUCTOR LOGIC
              *******************/
@@ -333,7 +368,12 @@
             //    console.log('player.save');
             //    Model.prototype.save.call(this);
             //}
-            Model.prototype.save.call(this);
+            var _promise = Model.prototype.save.call(this);
+            _promise.then(
+                function (response) {
+                    return response;
+                });
+            return _promise;
         };
 
         /**
@@ -378,6 +418,13 @@
             return true;
         };
 
+        /*****************************************
+         * PROTOTYPE CONSTANTS
+         *****************************************/
+        Object.defineProperty(WordShuffle_Models_Player.prototype,"NEW_LOGIN_MSG",{value: "Good news!  The user name is available, please pick your secret question to secure your new user!", writable: false});
+        Object.defineProperty(WordShuffle_Models_Player.prototype,"WELCOME_BACK_MSG",{value: "Welcome back!  Please answer your secret question to start playing!", writable: false});
+        Object.defineProperty(WordShuffle_Models_Player.prototype,"LOGIN_FAILURE",{value: "Secret rejected!  Please try again!", writable: false});
+        Object.defineProperty(WordShuffle_Models_Player.prototype,"PLAYER_NAME_EXIST",{value: "Your new name is already in use, please pick another", writable: false});
         // return constructor for dependency injection and extension of class, prefix with "new" if it should be a singleton
         return new WordShuffle_Models_Player;
     }

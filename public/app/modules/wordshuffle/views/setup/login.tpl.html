@@ -1,0 +1,96 @@
+<link rel="stylesheet" href="/login.tpl.css">
+
+<div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3">&nbsp;</label>
+            <div class="col-md-6">
+                <div class="setup_player_msg_login">
+                    <alert
+                            ng-repeat="pmsg in Setup.Player.msg track by $index"
+                            type="{{pmsg.type}}"
+                            ng-show="pmsg.text == Setup.Player.NEW_LOGIN_MSG">
+                        Login not found
+                        <label ng-bind = "Setup.Player.name"></label>!!!
+                    </alert>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="setup_player_msg_login">
+                    <alert
+                            ng-repeat="pmsg in Setup.Player.msg track by $index"
+                            type="{{pmsg.type}}"
+                            close="true"
+                            ng-show="pmsg.text == Setup.Player.WELCOME_BACK_MSG">
+                        Welcome Back
+                        <label ng-bind = "Setup.Player.name"></label>!!!
+                    </alert>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="setup_player_msg_login">
+                    <alert
+                            ng-repeat="pmsg in Setup.Player.msg track by $index"
+                            type="{{pmsg.type}}"
+                            close="true"
+                            ng-show="pmsg.text == Setup.Player.LOGIN_FAILURE">
+                        {{pmsg.text}}
+                    </alert>
+                </div>
+            </div>
+        </div>
+    </div>
+  <!--  <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3" >&nbsp;</label>
+            <label class="control-label col-md-5 label-font-setup" style="text-align:center" ng-bind = "Setup.Player.name"></label>
+        </div>
+    </div>-->
+    <div class="row">
+        <div class="form-group" ng-show="Setup.Player.signInState == Setup.SysMan.SECRET_PENDING">
+            <label class="control-label col-md-3">&nbsp;</label>
+            <div class="col-md-6 label-font-setup">
+                <strong>
+                {{Setup.Player.challenge}}
+                </strong>
+            </div>
+        </div>
+    </div>
+    <div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3 label-font-setup"></label>
+            <div  class="col-md-6">
+                <input id="setup-player-secret" class="form-control" ng-model="Setup.Player.secret" type="password" tooltip="Enter the secret to authenticate player."
+                       ng-repeat="pmsg in Setup.Player.msg track by $index" placeholder="Enter your Secret"
+                       name="setup_secret_login" ng-required="pmsg.text == Setup.Player.WELCOME_BACK_MSG"
+                       ng-hide="pmsg.text == Setup.Player.NEW_LOGIN_MSG">
+                <ng-messages for="setUpForm.setup_secret_login.$error" style="color:red" role="alert">
+                    <ng-message when="required" >Please enter your secret</ng-message >
+                </ng-messages>
+                <label style="color:red" ng-repeat="pmsg in Setup.Player.msg track by $index" ng-show="pmsg.text == Setup.Player.LOGIN_FAILURE">Please re-enter your secret</label>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3">&nbsp;</label>
+            <div class="col-md-6">
+                <input
+                        class="btn btn-success btn-md"
+                        type="button"
+                        value="Submit"
+                        ng-repeat="pmsg in Setup.Player.msg track by $index"
+                        ng-disabled="setUpForm.setup_secret_login.$invalid"
+                        ng-hide="pmsg.text == Setup.Player.NEW_LOGIN_MSG"
+                        ng-click="Setup.savePlayer()">
+                <input
+                        class="btn btn-success btn-md col-md-offset-1"
+                        type="button"
+                        value="Go Back and Register"
+                        ng-click="Setup.goBackPreviousScreen()">
+            </div>
+        </div>
+    </div>
+</div>

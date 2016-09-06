@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="/registration.tpl.css" xmlns="http://www.w3.org/1999/html">
+<div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3">&nbsp;</label>
+            <div class="col-md-6">
+                <div class="setup_player_msg_registration">
+                    <alert
+                            ng-repeat="pmsg in Setup.Player.msg track by $index"
+                            type="{{pmsg.type}}"
+                            close="Setup.Player.removeMsg($index)"
+                            ng-show="pmsg.text == Setup.Player.NEW_LOGIN_MSG">
+                        Player name available
+                    </alert>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="setup_player_msg_registration">
+                    <alert
+                            ng-repeat="pmsg in Setup.Player.msg track by $index"
+                            type="danger"
+                            close="Setup.Player.removeMsg($index)"
+                            ng-show="pmsg.text == Setup.Player.WELCOME_BACK_MSG || pmsg.text == Setup.Player.PLAYER_NAME_EXIST">
+                        Player name taken
+                    </alert>
+                </div>
+            </div>
+        </div>
+        </div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3 label-font-setup" for="setup-player-name">Player name:</label>
+            <div class="col-md-6">
+                <input id="setup-player-name" class="form-control" ng-minlength="2" ng-model="Setup.Player.name" type="text" name="setup_name_registration" required>
+                <ng-messages for="setUpForm.setup_name_registration.$error" style="color:red" role="alert">
+                    <ng-message when="minlength">Name too short!</ng-message >
+                    <ng-message when="required"></ng-message >
+                </ng-messages>
+                <label style="color:red" ng-show="Setup.Player.name == 'Player' || Setup.Player.name == 'player'">Default name&nbsp;</label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label label-font-setup col-md-3" for="setup-player-challenge">Challenge Question:</label>
+            <div class="col-md-6 setupChallenge">
+                <select class="form-control"
+                        ng-model="Setup.Player.idChallenge"
+                        ng-options="challenge.id as challenge.question for challenge in Setup.Player.challenges"
+                        id="setup-player-challenge">
+                    <!--<option value="">-- choose one --</option>-->
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3 label-font-setup" for="setup-player-secret">Secret:</label>
+            <div  class="col-md-6">
+                <input id="setup-player-secret" class="form-control" ng-minlength="8" ng-model="Setup.Player.secret" type="password" name="setup_secret_registration"
+                       tooltip="Enter the secret which is required for player authentication." required>
+            <ng-messages for="setUpForm.setup_secret_registration.$error" style="color:red" role="alert">
+                <ng-message when="minlength">Secret too short!</ng-message >
+                <ng-message when="required">Please enter the secret</ng-message >
+            </ng-messages>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label class="control-label col-md-3">&nbsp;</label>
+            <div class="col-md-6">
+                <input
+                    class="btn btn-success btn-md"
+                    type="button"
+                    value="Submit"
+                    ng-disabled="setUpForm.setup_secret_registration.$invalid || setUpForm.setup_name_registration.$invalid"
+                    ng-click="Setup.registerNewPlayer()">
+                <input
+                    class="btn btn-success btn-md col-md-offset-6"
+                    type="button"
+                    value="Back"
+                    ng-click="Setup.goBackPreviousScreen()">
+            </div>
+        </div>
+    </div>
+</div>
+
+

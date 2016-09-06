@@ -13,6 +13,7 @@
  * @property    datetime    modifyDate          date time round will end
  * @property    int         signInState         - flags state of sign-in for display of needed information
  * @property    array       challenges          - the secret questions to secure player user
+ * @property    boolean     tos               - terms of service agreement made by player
  * @property WordShuffle_Model_Mapper_Player Mapper
  *
  */
@@ -22,7 +23,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     const WORD_SHUFFLE = 1;
     const MAX_ROUNDS = 5;
     const MAX_SECONDS_PER_ROUND = 180;
-    const DEFAULT_NAME = '';
+    const DEFAULT_NAME = 'Player';
     const NEW_LOGIN_MSG = "Good news!  The user name is available, please pick your secret question to secure your new user!";
     const WELCOME_BACK_MSG = "Welcome back!  Please answer your secret question to start playing!";
     const LOGIN_CREATED = "Your new player is ready to go!  Configure your defaults and start playing!";
@@ -50,7 +51,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     {
         $this->SysMan->Logger->info('START WordShuffle_Model_Player.init()');
         // exclude instructions property from JSON array, frontend does not require
-        $this->excludeFromJSON(array('modifyDate','createDate', 'secret'));
+        $this->excludeFromJSON(array('modifyDate','createDate','secret'));
 
         // default createDate and modifyDate to now, this will be used during inserts and overwritten during updates
         $this->createDate = date('Y-m-d H:i:s');
@@ -197,6 +198,26 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         return $this->_roundsPerGame;
     }
 
+    private $_tos;
+    protected function setTos($value){
+        $this->SysMan->Logger->info('Start setTos is '.$value);
+        if($value == true) {
+            $value = 1;
+        }
+        else if($value == false) {
+            $value = 0;
+        }
+        $this->_tos = $value;
+        if($this->signInState < Common_Models_SysMan::SIGNED_IN) {
+            $this->SysMan->Session->tos = $this->_tos;
+        }
+    }
+    protected function getTos(){
+        $this->SysMan->Session->tos = $this->_tos ;
+        return $this->_tos;
+    }
+
+
     /** PUBLIC METHODS */
     /**
      * Find Player data based on model id or id parameter
@@ -213,7 +234,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         if($signedIn){
             parent::find($id);
         }
-
+        $this->SysMan->Logger->info('Player->find(), signInState = '.$this->signInState);
         return $this;
     }
 
@@ -231,6 +252,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
             // get user's challenge information
             case Common_Models_SysMan::NAME_PENDING:
                 $players = $this->Mapper->findAll();
+                $this->SysMan->Logger->info('Player details = '.$this->signInState);
                 if(count($players) == 0){
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
                     $this->msg = '';
@@ -299,9 +321,11 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
             default:
                 // todo: this should not happen,click session and revert back to Anonymous Play
         }
-
+        $this->SysMan->Logger->info('Player->login(), signInState = '.$this->signInState);
         return $success;
     }
+
+
 
     /**
      * Clears player session information
@@ -315,7 +339,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         $this->signInState = Common_Models_SysMan::ANONYMOUS_PLAY;
         $this->idChallenge = 0;
         $this->id = 0;
-
         Zend_Session::destroy(TRUE);
 
         return true;
@@ -393,4 +416,16 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
         return true;
     }
 
+    /**
+     * check if Player name exists in the database
+     * @public
+     * @param
+     * @return
+     */
+    public function playerNameExists()
+    {
+        if($this->Mapper->nameExists()) {
+            $this->msg = array('type' => self::MSG_DANGER, 'text' => self::PLAYER_NAME_EXIST);
+        }
+    }
 }

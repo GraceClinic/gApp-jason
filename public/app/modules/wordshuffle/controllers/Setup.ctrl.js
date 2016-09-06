@@ -14,7 +14,7 @@
      */
     function WordShuffle_Controllers_Setup($scope, $controller, $state, Game, Player, Message) {
         var self = this;
-
+        var _flag = false;
         /*************************************************
          * PROPERTY DECLARATIONS with GETTERS and SETTERS
          *************************************************/
@@ -30,6 +30,21 @@
         function setPlayer(){
             self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
         }
+
+        /**
+         * @property    WordShuffle_Controllers_Setup#Game
+         * @type    {WordShuffle_Models_Game}
+         * @public
+         **/
+        Object.defineProperty(self,'Game',{get: getGame, set: setGame, enumerable:true});
+        var _Game;
+        function getGame(){
+            return Game;
+        }
+        function setGame(value){
+            self.SysMan.Logger.entry('Game.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
         Object.defineProperty(self,'showSecret',{get: getShowSecret,set: setShowSecret});
         /**
          * @property    WordShuffle_Controllers_Setup#showSecret      - hide/show secret fields
@@ -59,7 +74,35 @@
         function setMinutesPerRound(value){
             self.Player.secondsPerRound = value*60;
         }
-        // todo: use ng_prop to create complete properties, otherwise create simply, uncontrolled properties off of self
+
+        /**
+         * @property    WordShuffle_Controllers_Setup#isTOSaccepted         - set/unset flag based on the TOS accepted
+         * @type    {boolean}
+         * @public
+         **/
+        Object.defineProperty(self,'isTOSaccepted',{get: getIsTOSaccepted, set: setIsTOSaccepted});
+        var _isTOSaccepted;
+        function getIsTOSaccepted(){
+            return _isTOSaccepted;
+        }
+        function setIsTOSaccepted(value){
+            _isTOSaccepted = value;
+        }
+
+        /**
+         * @property    WordShuffle_Controllers_Setup#isPlayerNameExists        - check if Player name exists an set/unset the flag
+         * @type    {boolean}
+         * @public
+         **/
+        Object.defineProperty(self,'isPlayerNameExists',{get: getIsPlayerNameExists, set: setIsPlayerNameExists});
+        var _isPlayerNameExists = false;
+        function getIsPlayerNameExists(){
+            return _isPlayerNameExists;
+        }
+        function setIsPlayerNameExists(value){
+            _isPlayerNameExists = value;
+        }
+
 
         /****************************
          * ACTION METHODS DEFINITION
@@ -71,13 +114,75 @@
          * @public
          */
         self.indexAction = function(){
-            // todo: define any parameters and then code action logic
-            self.Player.find();
-            if(Game.state == Game.IN_PROGRESS){
-                self.goToState('wordshuffle','play','play');
+            if(_flag == true) {
+                if (self.Player.id !== 0) {
+                    self.Player.logout()
+                        .then(
+                            function (response) {
+                                if (self.Player.signInState == self.SysMan.ANONYMOUS_PLAY) {
+                                    self.Player.name = '';
+                                }
+                            }
+                        );
+                }
+                else{
+                    self.Player.signInState = self.SysMan.ANONYMOUS_PLAY;
+                    self.Player.name = '';
+                    self.Player.tos=false;
+                }
+                _flag = false;
+            }
+            else {
+                var _promise = self.Player.find();
+                _promise.then(
+                    function (response) {
+                        if (self.Player.signInState == self.SysMan.ANONYMOUS_PLAY) {
+                            self.Player.name = '';
+                        }
+                    }
+                );
+                if (Game.state == Game.IN_PROGRESS) {
+                    self.goToState('wordshuffle', 'play', 'play');
+                }
             }
         };
 
+        /**
+         * @method   loginAction
+         * Takes user to login page
+         * @public
+         * @param    {}
+         */
+        self.loginAction = function(){
+            self.Player.login();
+        };
+        
+        /**
+         * @method   registrationAction
+         * Takes user to registration page
+         * @public
+         * @param    {}
+         */
+        self.registrationAction = function(){
+            var playerName = self.Player.name;
+            self.Player.login()
+                .then(
+                function (response) {
+                    for (var i = 0; i < self.Player.msg.length; i++) {
+                        if (self.Player.msg[i].text == self.Player.WELCOME_BACK_MSG) {
+                            self.Player.logout()
+                                .then(
+                                    function (response) {
+                                        self.Player.name = playerName;
+                                        self.Player.msg.push({type:"danger", text:self.Player.WELCOME_BACK_MSG});
+                                    }
+                                );
+                        }
+                    }
+                }
+            );
+        };
+        
         /****************************
          * PUBLIC METHODS DEFINITION
          ****************************/
@@ -89,30 +194,27 @@
          * @return   {bool}
          */
         self.playGame = function(){
-            if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
-                self.Player.login();
+            if(self.Player.signInState < self.SysMan.SIGNED_IN){
+                self.Player.signInState = self.SysMan.ANONYMOUS_PLAY;
             }
-            else if(self.Player.saveIsPending){
+            if(self.Player.signInState == self.SysMan.SIGNED_IN) {
+                self.isTOSaccepted = self.Player.tos;
+            }
                 self.Player.save();
-                self.Player.saveIsPending = false;
-                // routing to play controller / play action will start the game
                 Game.newGame = true;
                 self.goToState('wordshuffle','play','play');
-            }
-            else{
-                Game.newGame = true;
-                self.goToState('wordshuffle','play','play');
-            }
         };
+
         /**
          * Toggles display of secret fields when the Player is signed-in
          *
          * @method   toggleShowSecret
          * @public                      - todo: change scoping of method as appropriate, for protected methods, prefix with "_"
-         */
+         *
         self.toggleShowSecret = function(){
             self.showSecret = !self.showSecret;
-        };
+        };*/
+
         /**
          * Proxy Player.save() method.  Resets "showSecret" property before execution of save.
          *
@@ -120,9 +222,58 @@
          * @public                     - define scope
          */
         self.savePlayer = function(){
-            self.showSecret = false;
-            self.Player.save();
+            var _flagLoginFail = false;
+                var _promise = self.Player.save();
+                _promise.then(
+                    function (response) {
+                        for (var i = 0; i < self.Player.msg.length; i++) {
+                            if (self.Player.msg[i].text == self.Player.LOGIN_FAILURE) {
+                                _flagLoginFail = true;
+                                break;
+                            }
+                        }
+                        //If secret rejected, stay on login page
+                        if (_flagLoginFail) {
+                            self.isTOSaccepted = self.Player.tos;
+                            self.goToState('wordshuffle', 'setup', 'login');
+                        }
+                        return response;
+                    });
+                self.isTOSaccepted = self.Player.tos;
+                self.goToState('wordshuffle', 'setup', 'index');
+                return _promise;
         };
+
+        /**
+         * @method   registerNewPlayer
+         * submit new player details and save if valid
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {}
+         */
+        self.registerNewPlayer = function(){
+            var _playerExists = false;
+            var _setSecret = self.Player.secret;
+            var _promise = self.Player.nameExists();
+            _promise.then(
+                function (response) {
+                    for (var i = 0; i < self.Player.msg.length; i++) {
+                        if (self.Player.msg[i].text == self.Player.PLAYER_NAME_EXIST) {
+                            _playerExists = true;
+                            break;
+                        }
+                    }
+                    if(!_playerExists) {
+                        self.Player.id = 0;
+                        self.Player.secret = _setSecret;
+                        self.Player.signInState = self.SysMan.NEW_SIGN_IN;
+                        self.savePlayer();
+                    }
+                    return response;
+                });
+        };
+
 
         /**
          * Proxy Player.logout so controller can respond to successful logout.
@@ -152,7 +303,6 @@
                     }
                 });
             }
-
         };
 
 
@@ -165,6 +315,7 @@
          * @return   {}
          */
         self.goBackPreviousScreen = function(){
+            _flag = true;
             self.goToState('wordshuffle','setup','index');
         };
 
@@ -177,7 +328,6 @@
          * @return   {}
          */
         self.RegisterNewPlayer = function(){
-            self.Player.login();
             self.goToState('wordshuffle','setup','registration');
         };
 
@@ -190,24 +340,8 @@
          * @return   {}
          */
         self.PlayerLogin = function(){
-            self.Player.login();
             self.goToState('wordshuffle','setup','login');
         };
-
-        /**
-         * @method   submitPlayerDetails
-         *
-         *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
-         * @return   {}
-         */
-        self.submitPlayerDetails = function(){
-            self.Player.login();
-            self.goToState('wordshuffle','setup','index');
-            console.log("I am submitted");
-        };
-
 
         /******************
          * PROTECTED METHODS

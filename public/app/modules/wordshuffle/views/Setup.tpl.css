@@ -1,9 +1,6 @@
 .controller_setup.view_leftPanel{
-    text-align: center;
-    width: 20%;
-    float: left;
-    padding-top: 5px;
     overflow: hidden;
+    height: 680px;
 }
 .model_player_stats{
     padding-top: 2px;
@@ -51,14 +48,15 @@
 }
 .controller_setup.view_rightPanel{
     background-color: #fdffcd;
-    width: 80%;
-    padding-left: 1%;
-    float: left;
     box-sizing: border-box;
     border-left: 4px solid #536865;
     overflow: hidden;
+    height: 680px;
 }
 
+.col-center{
+    margin: 200px auto;
+}
 alert
 {
     font-size: 8pt;
@@ -91,6 +89,19 @@ alert
     margin-right: auto;
     padding: 0 0 0 0;
 }
+
+.setup_player_msg_registration{
+    width: 100%;
+    display: block;
+    font-size: 14pt;
+}
+
+.setup_player_msg_login{
+    width: 100%;
+    display: block;
+    font-size: 14pt;
+}
+
 .view_form_line_leftside
 {
     float: left;
@@ -130,4 +141,12 @@ alert
 .clickable:hover{
     cursor: pointer;
     opacity: 0.7;
+}
+
+.label-font-setup{
+    font-size: 18px;
+}
+.setupChallenge {
+    position: relative;
+    top: 1.2rem;
 }

@@ -21,7 +21,8 @@ class WordShuffle_Model_Mapper_Player extends WordShuffle_Model_Mapper_Abstract
         'secret'            => 'secret',
         'name'              => 'name',
         'createDate'        => 'createDate',
-        'modifyDate'        => 'modifyDate'
+        'modifyDate'        => 'modifyDate',
+        'tos'               => 'tos'
     );
 
     protected $_findAllBy = array(
@@ -102,7 +103,7 @@ class WordShuffle_Model_Mapper_Player extends WordShuffle_Model_Mapper_Abstract
      */
     public function nameExists(){
         $where = $this->_db->quoteInto('name = ?',$this->_model->name);
-        $players = $this->findAll($where);
+        $players = $this->findAll();
         return count($players);
     }
 
