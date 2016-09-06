@@ -23,7 +23,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
     const WORD_SHUFFLE = 1;
     const MAX_ROUNDS = 5;
     const MAX_SECONDS_PER_ROUND = 180;
-    const DEFAULT_NAME = '';
+    const DEFAULT_NAME = 'Player';
     const NEW_LOGIN_MSG = "Good news!  The user name is available, please pick your secret question to secure your new user!";
     const WELCOME_BACK_MSG = "Welcome back!  Please answer your secret question to start playing!";
     const LOGIN_CREATED = "Your new player is ready to go!  Configure your defaults and start playing!";

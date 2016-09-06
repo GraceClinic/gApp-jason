@@ -343,60 +343,6 @@
             self.goToState('wordshuffle','setup','login');
         };
 
-
-        /**
-         * @method   goBackPreviousScreen
-         *
-         *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
-         * @return   {}
-         */
-        self.goBackPreviousScreen = function(){
-            self.goToState('wordshuffle','setup','index');
-        };
-
-        /**
-         * @method   RegisterNewPlayer
-         *
-         *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
-         * @return   {}
-         */
-        self.RegisterNewPlayer = function(){
-            self.Player.login();
-            self.goToState('wordshuffle','setup','registration');
-        };
-
-        /**
-         * @method   PlayerLogin
-         *
-         *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
-         * @return   {}
-         */
-        self.PlayerLogin = function(){
-            self.Player.login();
-            self.goToState('wordshuffle','setup','login');
-        };
-
-        /**
-         * @method   submitPlayerDetails
-         *
-         *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
-         * @return   {}
-         */
-        self.submitPlayerDetails = function(){
-            self.Player.login();
-            self.goToState('wordshuffle','setup','index');
-            console.log("I am submitted");
-        };
-
-
         /******************
          * PROTECTED METHODS
          ******************/
