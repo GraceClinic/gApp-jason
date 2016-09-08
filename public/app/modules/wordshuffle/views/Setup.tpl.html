@@ -1,24 +1,76 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Setup.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Setup as Setup">
-    <div class="controller_setup view_leftPanel">
-        <div class="model_player_stats table_view">
-            <div class="model_player_stats header_view">Your Stats</div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundHigh">Round High:</div><div class="model_player_stats right roundHigh">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundAvg">Round Avg:</div><div class="model_player_stats right roundAvg">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left avgWord">Avg Pts per Word: </div><div class="model_player_stats right avgWord">0</div>
-            </div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left longestWord">Longest Word: </div><div class="model_player_stats right longestWord">0</div>
-            </div>
-            <div class="model_player_stats footer"></div>
-        </div>
-    </div>
-    <div class="controller_setup view_rightPanel">
-        <div ui-view></div>
-    </div>
+
+            <ng-form class="form-horizontal" name="setUpForm">
+                <div class="row">
+                    <div class="controller_setup view_leftPanel col-md-4">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11 col-center" ui-view></div>
+                    </div>
+                    <div class="controller_setup view_rightPanel col-md-8">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9 col-center">
+                        <div class="row">
+                            <div class="form-group">
+                                    <label class="control-label col-md-4 label-font-setup" for="setup-game-minutesPerRound">Time per round (minutes):</label>
+                                    <!--                <input type="text" name="Timer">-->
+                            <div class="col-md-2">
+                                <select class="form-control" id="setup-game-minutesPerRound" ng-model="Setup.minutesPerRound" name="minutesPerRound">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                                <i class="fa fa-info-circle col-md-1" tooltip="Round duration" tooltip-placement="bottom"></i>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                    <label class="control-label col-md-4 label-font-setup">Rounds per game:</label>
+                                    <!--                <input type="text" name="Rounds">-->
+                                <div class="col-md-2">
+                                    <select class="form-control" id="setup-game-totalRounds" ng-model="Setup.Player.roundsPerGame" name="roundsPerGame">
+                                        <option value=1>1</option>
+                                        <option value=2>2</option>
+                                        <option value=3>3</option>
+                                        <option value=4>4</option>
+                                        <option value=5>5</option>
+                                    </select>
+                                </div>
+                                <i class="fa fa-info-circle col-md-1" tooltip="Number of rounds within an entire game" tooltip-placement="bottom"></i>
+
+                            </div>
+                        </div>
+                        <div class="row" ng-hide="Setup.Player.signInState == Setup.SysMan.SIGNED_IN && Setup.Player.tos && Setup.isTOSaccepted">
+                            <div class="form-group">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-7">
+                                    <div class="checkbox" >
+                                        <label><input name="checkTandC" ng-model="Setup.Player.tos" type="checkbox" ng-checked="Setup.Player.tos" required>
+                                            <strong>I accept the terms and conditions of play.</strong></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-7">
+                                        <label style="color:red" ng-hide="Setup.Player.tos">Please accept to play</label>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="row">
+                            <div class="form-group" >
+                                <!--<input id="Play" type="submit" value="Play">-->
+                                <label class="control-label col-md-4">&nbsp;</label>
+                                <div class="col-md-2">
+                                <input id="Setup-playGame" ng-disabled ="!Setup.Player.tos" type="button" value="Play" class="btn btn-success btn-md" ng-click="Setup.playGame()">&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-form>
 </div>

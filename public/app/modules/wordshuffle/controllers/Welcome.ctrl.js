@@ -97,24 +97,6 @@
             }
         };
 
-        /**
-         * @method   pagesRetrieved
-         *
-         *
-         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-         * @param    {}                 - todo: document each parameter
-         * @return   {boolean}
-         */
-        self.pagesRetrieved = function(){
-            // todo: code method
-            if (self.Instructions.Pages.length > 0) {
-                return false;
-            }
-            return true;
-        };
-
-
-
         // Extend ActionController superclass as allowed for by AngularJS.
         // This must execute after definitions of all controller properties, setters, getters, and methods
         $controller('App_Common_Abstracts_ActionController',{$scope: $scope, self: self});
