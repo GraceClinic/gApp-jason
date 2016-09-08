@@ -59,6 +59,7 @@
         function setMinutesPerRound(value){
             self.Player.secondsPerRound = value*60;
         }
+        
         // todo: use ng_prop to create complete properties, otherwise create simply, uncontrolled properties off of self
 
         /****************************
@@ -71,12 +72,93 @@
          * @public
          */
         self.indexAction = function(){
-            // todo: define any parameters and then code action logic
-            self.Player.find();
+            if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
+                var _promise = self.Player.find();
+                _promise.then(
+                    function(response) {
+                        if (self.Player.signInState !== self.SysMan.SIGNED_IN) {
+                            Player.name = "";
+                        }
+                    },function (reason) {
+                        console.log("sorry your find failed - reason", reason);
+                    }
+                );
+            }
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }
         };
+        
+        /**
+         * @method   loginAction
+         * this is the loginAction for you
+         *
+         * @public
+         * @return   {}
+         */
+        self.loginAction = function(){
+            if (self.Player.signInState == false || self.Player.name.length <= 1) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
+            else if (self.Player.signInState === self.SysMan.NAME_PENDING_LOGIN) {
+                // NAME_PENDING changed to NAME_PENDING_LOGIN on hit on login on index
+                self.Player.login();
+            }
+            else if (self.Player.signInState === self.SysMan.SECRET_PENDING) {
+                //inside your login template, you verify for the secret, if successful, change state to SIGNED_IN
+                var _promise = self.Player.relay("login");
+                _promise.then(
+                    function(response) {
+                        if (self.Player.signInState === self.SysMan.SIGNED_IN) {
+                            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                        }
+                    }
+                )
+            }
+        };
+
+        /**
+         * @method   registrationAction
+         * action for new user registrations
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {}
+         */
+        self.registrationAction = function(){
+            if (self.Player.signInState == false || self.Player.name.length <= 1) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
+            else if (self.Player.signInState === self.SysMan.NAME_PENDING_REGISTER) {
+                self.Player.login();
+            }
+            else if (self.Player.signInState === self.SysMan.NEW_SIGN_IN) {
+                var _promise = self.Player.login();
+                _promise.then(
+                    function(response) {
+                        if (self.Player.signInState === self.SysMan.SIGNED_IN) {
+                            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                        }
+                    }
+                )
+            }
+        };
+
+        
+
+        /**
+         * @method   editProfile
+         * this will enable you to edit the user profile of already registered users
+         *
+         * @public 
+         * @return   {void}
+         */
+        self.editProfileAction = function(){
+            if (self.Player.signInState == false || self.Player.name.length <= 1) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
+        };
+
 
         /****************************
          * PUBLIC METHODS DEFINITION
@@ -88,22 +170,48 @@
          * @public
          * @return   {bool}
          */
-        self.playGame = function(){
-            if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
-                self.Player.login();
-            }
-            else if(self.Player.saveIsPending){
-                self.Player.save();
-                self.Player.saveIsPending = false;
-                // routing to play controller / play action will start the game
-                Game.newGame = true;
-                self.goToState('wordshuffle','play','play');
-            }
-            else{
-                Game.newGame = true;
-                self.goToState('wordshuffle','play','play');
-            }
+        
+        /**
+         * @method   closeAlert
+         * close alert doalogue boxes
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected                  
+         * @param    {}                 - todo: document each parameter
+         * @return   {void}
+         */
+        self.closeAlert = function($event){
+            $($event.toElement.parentElement).css("display", "none");
         };
+
+        self.playGame = function(){
+            console.log("saveIsPending, signInState, SIGNED_IN", self.Player.saveIsPending, self.Player.signInState, self.SysMan.SIGNED_IN);
+            // if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
+            //     self.Player.login();
+            // }
+            // else if(self.Player.saveIsPending){
+            //     self.Player.save();
+            //     self.Player.saveIsPending = false;
+            //     // routing to play controller / play action will start the game
+            //     Game.newGame = true;
+            //     self.goToState('wordshuffle','play','play');
+            // }
+            // else{
+            //     Game.newGame = true;
+            //     self.goToState('wordshuffle','play','play');
+            // }
+            Game.newGame = true;
+            if (self.Player.signInState < self.SysMan.SIGNED_IN) {
+                self.Player.signInState = 0;
+                self.Player.relay("anonymousPlay");
+            }
+            self.goToState('wordshuffle','play','play');
+        };
+
+        self.goToEdit = function () {
+            self.Player.signInState = self.SysMan.SIGNED_IN_EDITING; // editing profile
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "editProfile"});
+        }
+
         /**
          * Toggles display of secret fields when the Player is signed-in
          *
@@ -154,6 +262,149 @@
             }
 
         };
+
+        /**
+         * @method   goToIndex
+         * sets signIn state to 0 an brings back to the index page
+         *
+         * @public
+         * @return   {void}
+         */
+        self.goToIndex = function(){
+            if (self.Player.signInState >= self.SysMan.SIGNED_IN) {
+                $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+            }
+            else {
+                self.Player.id = "";
+                var _promise = self.Player.relay("logout")
+                _promise.then(
+                    function(response) {
+                        $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                    }
+                );
+            }
+
+        };
+
+        /**
+         * @method   saveProfileChanges
+         * if the profile is edited, save it to the backend, but how to check? todo: find out!
+         *
+         * @public
+         * @return   {}
+         */
+        self.saveProfileChanges = function(){
+            // todo: code method
+            self.Player.save();
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+        };
+
+        
+        /**
+         * @method   registerUser
+         * checks userName name available or not
+         *
+         * @public
+         * @return   {boolean}
+         */
+        self.registerUser = function(){
+            //$scope doesn't get the form?? and shouldn't but how are they getting at : http://codepen.io/sevilayha/pen/xFcdI ??
+            //Player.name = self.tempUserName;
+            
+            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+                self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
+            }
+            self.Player.acceptedTOS = self.SysMan.ANONYMOUS_PLAY;
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "registration"});
+        };
+
+        /**
+         * @method   checkNameAvailable
+         * once you are inside registration action, it seems regisatrationAction() won't be called again and again
+         *
+         * @public
+         * @return   {}
+         */
+        self.checkNameAvailable = function(){
+            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+                self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
+                self.Player.login();
+            }
+        };
+
+
+        /**
+         * @method   loginUser
+         * calls methos login, sets actionState to login
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {void}
+         */
+            self.loginUser = function(){
+            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+                self.Player.signInState = self.SysMan.NAME_PENDING_LOGIN;
+            }
+            $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "login"});
+        };
+
+        /**
+         * @method   anonymousCheckbox
+         * activates the Play button, if the user is not logged In
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.anonymousCheckbox = function(){
+            return $('#anonymous-checkbox').is(":checked") || (self.Player.signInState >= self.SysMan.SIGNED_IN && self.Player.signInState <= self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED && self.Player.acceptedTOS);
+        };
+
+        /**
+         * @method   registerCheckbox
+         * accepting terms and conditions while registering
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.registerCheckbox = function(){
+            return $("#register-tos-checkbox").is(":checked");
+        };
+
+        /**
+         * @method   acceptedTOSValue
+         * this should handle the double checking in the checkbox in the setup.html, when registration checkbox is changed
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.acceptedTOSValue = function(){
+            return self.Player.acceptedTOS;
+        };
+
+        /**
+         * @method   checkLogin
+         * if login is successfull, send to the index page, or stay in the login page
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {}
+         */
+        self.checkLogin = function(){
+            var _promise = self.Player.login();
+            _promise.then(
+                function(response) {
+                    if (self.Player.signInState === self.SysMan.SIGNED_IN) {
+                        $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
+                    }
+                }
+            )
+        };
+
+
+
 
         /******************
          * PROTECTED METHODS
