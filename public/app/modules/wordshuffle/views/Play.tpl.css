@@ -141,16 +141,13 @@
 }
 #models-game-overlay > div {
     width: 60%;
-    border-radius: 10px;
-    border: 2px solid;
-    border-color: #178615;
     padding: 20px 5%;
     box-sizing: border-box;
-    background-color: #cfe0cf;
     height: auto;
     display: table;
     z-index: 1;
-    float: left;
+    margin-top: 50px;
+    margin-left: 300px;
     text-align:center;
     color: green;
 }
@@ -214,4 +211,12 @@
     background-color: white;
     border-radius: 4px;
     padding: 1px 4px 1px 4px;
+}
+
+.modal-backdrop{
+    display: none;
+}
+
+.model .fade{
+    display: none;
 }

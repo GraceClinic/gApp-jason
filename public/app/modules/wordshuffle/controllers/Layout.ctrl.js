@@ -5,7 +5,7 @@
      * @param    {App_Common_Models_SysMan}  SysMan  - reference to the SysMan singleton
      * @this        WordShuffle_Controllers_Layout
      */
-    function WordShuffle_Controllers_Layout(SysMan) {
+    function WordShuffle_Controllers_Layout(SysMan,$modal) {
         var self = this;		// required alias to address resolution to immediate scope
 
         /**
@@ -20,6 +20,23 @@
             return SysMan.state.controller == ctrl;
         };
 
+        /**
+         * @method   open
+         * invoke modal to configure game details
+         * @public
+         * @param    {}
+         * @return   {}
+         */
+        self.open = function(){
+            setTimeout(
+                function() {
+                    $modal.open({
+                        templateUrl: 'app/modules/wordshuffle/views/play/configModal.html',
+                        size: 'md'
+                    })
+                },50);
+        };
+
         /*******************
          * CONSTRUCTOR LOGIC
          *******************/
@@ -32,7 +49,8 @@
     WordShuffle_Controllers_Layout.prototype.constructor = WordShuffle_Controllers_Layout;
 
     WordShuffle_Controllers_Layout.$inject = [
-        'App_Common_Models_SysMan'
+        'App_Common_Models_SysMan',
+        '$modal'
     ];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Layout', WordShuffle_Controllers_Layout);

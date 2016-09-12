@@ -10,7 +10,7 @@
      * @param   {WordShuffle_Models_Player} Player      - singleton Player object, only one player across controllers
      * @this    WordShuffle_Controllers_Play
      */
-    function WordShuffle_Controllers_Play($scope, $controller, Game, Player) {
+    function WordShuffle_Controllers_Play($scope, $controller, Game, Player, $modal) {
         var self = this;
 
         var _blockFetch = false;    // flag to block additional request to the backend when changing states
@@ -41,6 +41,34 @@
         }
         function setPlayer(){
             self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
+        /**
+         * @property    WordShuffle_Controllers_Play#minutesPerRound    - calculate minutes per round
+         * @type    {int}
+         * @public
+         **/
+        Object.defineProperty(self,'minutesPerRound',{get: getMinutesPerRound, set: setMinutesPerRound});
+        function getMinutesPerRound(){
+            return self.Player.secondsPerRound/60;
+        }
+        function setMinutesPerRound(value){
+            self.Player.secondsPerRound = value*60;
+        }
+
+        /**
+         * @property    toggleConfigModal
+         * toggles as hide/show for the game detail configuration modal
+         * @type    {}
+         * @public
+         **/
+        Object.defineProperty(self,'toggleConfigModal',{get: getToggleConfigModal, set: setToggleConfigModal});
+        var _toggleConfigModal = true;
+        function getToggleConfigModal(){
+            return _toggleConfigModal;
+        }
+        function setToggleConfigModal(value){
+            _toggleConfigModal = value;
         }
 
         /****************************
@@ -133,6 +161,9 @@
         };
 
         self.start = function(){
+            self.toggleConfigModal = false;
+            $(".modal-backdrop").hide();
+            $(".modal.fade").hide();
             if(self.SysMan.state.action == 'index'){
                 self.Game.newGame = true;
                 self.goToState('wordshuffle','play','play');
@@ -148,6 +179,20 @@
                     type:   'INFO'
                 };
             }
+        };
+
+        /**
+         * @method   goToLoginPage
+         * Redirect user to login page
+         *
+         * @public
+         * @param    {}
+         * @return   {}
+         */
+        self.goToLoginPage = function(){
+            self.toggleConfigModal = false;
+            $(".modal.fade").hide();
+            self.goToState('wordshuffle','setup','index');
         };
 
         /******************
@@ -184,7 +229,8 @@
         '$scope',
         '$controller',
         'WordShuffle_Models_Game',
-        'WordShuffle_Models_Player'
+        'WordShuffle_Models_Player',
+        '$modal'
     ];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Play', WordShuffle_Controllers_Play);
