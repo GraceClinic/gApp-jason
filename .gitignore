@@ -72,5 +72,5 @@ crashlytics-build.properties
 
 # gApp ignores
 public/lib/
-dev/design input/specs/*.vsd
+/dev/design input/specs/*.vsd
 
