@@ -88,6 +88,56 @@
             Object.defineProperty(self,'saveIsPending',{get: getSaveIsPending});
 
             /**
+             * @property    acceptedTOS
+             * this is a check for letting a person play
+             *
+             * @type    {boolean}
+             * @public
+             **/
+            Object.defineProperty(self,'acceptedTOS',{get: getAcceptedTOS, set: setAcceptedTOS, enumerable:true});
+
+            
+            /**
+             * @method   authenticateUser
+             * authenticate the user if he/she is trying to change his/her profile configs
+             *
+             * @public
+             * @return   {boolean}
+             */
+            self.authenticateUser = function(){
+                var _promise = self.relay("login");
+                _promise.then(
+                    function(response) {
+                        if (parseInt(self.signInState) === self.SysMan.SIGNED_IN) {
+                            //console.log("secret validated, please write the next action");
+                        }
+                        else if (parseInt(self.signInState) === self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
+                            //console.log("entered wrong secret, not allowed");
+                        }
+                        else {
+                            //console.log("something else is wrong, signInState", self.signInState);
+                        }
+                    }
+                );
+
+            };
+
+            /**
+             * @method   editProfile
+             * action for editProfile
+             *
+             * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+             * @param    {}                 - todo: document each parameter
+             * @return   {boolean}
+             */
+            self.editProfile = function(){
+                // todo: code method
+                return true;
+            };
+
+            
+
+            /**
              * Submits request to login with Player name
              *
              * @method   login
@@ -95,14 +145,14 @@
              * @return   {boolean}
              */
             self.login = function(){
+                // login should not be called in anonymous state
+                var _promise = {}
                 if(self.signInState){
-                    // clear current messages
+                    //clear current messages
                     self.msg = [];
-                    // simply save the model and the backend will determine if a challenge is required
-                    self.relay('login');
+                    _promise = self.relay('login');
                 }
-
-                return true;
+                return _promise;
             };
 
             /**
@@ -134,12 +184,12 @@
                         self.msg = {"text":"Player logout successful!","type":'info'};
                         self.name = self.defaultName;
                         self.id = 0;
-
                         return response;
                     });
 
                 return _promise;
             };
+            
 
             /**
              * Validates player state and adjusts as necessary
@@ -164,7 +214,7 @@
                         }
                         break;
                     case self.SysMan.NEW_SIGN_IN:
-                        // step backwards in process if user changed name while pending New_Sign_In in progress
+                        //step backwards in process if user changed name while pending New_Sign_In in progress
                         if(_newName && !_nameIsDefault){
                             // if id not set and user changes name, request login
                             self.signInState = self.SysMan.NAME_PENDING;
@@ -182,6 +232,12 @@
                         break;
                     case self.SysMan.SIGNED_IN:
                         // do as you like, player name change will validate if it is available
+                        break;
+                    case self.SysMan.NAME_PENDING_REGISTER:
+                        //this state should only be checked in the backend, but after you have a keyUp event registered
+                        //on player name, if the requested user name for registration is already present. first keyup method is getting called and then setName,
+                        //and now as there is no case this state, it makes it anonymous.
+                        self.signInState = self.SysMan.NEW_SIGN_IN
                         break;
                     default:
                         // typically hit this state during first load from backend before all properties set
@@ -212,7 +268,6 @@
             function setName(value){
                 _newName = value !== '' && value !== _name;
                 _nameIsDefault = value == self.defaultName;
-
                 if(_newName){
                     // clear the secret entry
                     self.secret = '';
@@ -222,7 +277,6 @@
                     }
                 }
                 _name = value;
-
                 _validateState();
             }
             var _secret = '';
@@ -292,6 +346,15 @@
                 return _saveMe;
             }
 
+            var _acceptedTOS = false;
+            function getAcceptedTOS(){
+                return _acceptedTOS;
+            }
+            function setAcceptedTOS(value){
+                //_acceptedTOS = value ? 1 : 0;
+                _acceptedTOS = value;
+            }
+
             /*******************
              * CONSTRUCTOR LOGIC
              *******************/
@@ -321,7 +384,7 @@
          * @protected
          * @return   {boolean}
          */
-        WordShuffle_Models_Player.prototype._postFind = function(){
+        WordShuffle_Models_Player.prototype._postFind = function() {
             return true;
         };
 
@@ -348,7 +411,6 @@
                 // clear secret field
                 this.secret = '';
             }
-
             return true;
         };
 

@@ -135,6 +135,8 @@
                     // nothing
                 }
             }
+
+
             /**
              * @property    App_Common_Models_SysMan#Timer      - application wide timer
              * @type        App_Common_Models_Tools_Timer
@@ -306,9 +308,17 @@
          *****************************************/
         Object.defineProperty(App_Common_Models_SysMan.prototype,"ANONYMOUS_PLAY",{value: 0, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"NAME_PENDING",{value: 1, writable: false});
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"NAME_PENDING_REGISTER",{value: 2, writable: false});
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"NAME_PENDING_LOGIN",{value: 3, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"NEW_SIGN_IN",{value: 5, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"SECRET_PENDING",{value: 10, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"SIGNED_IN",{value: 20, writable: false});
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"ANONYMOUS_STATE",{value: 1, writable: false}); // todo: remove this
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"REGISTER_STATE",{value: 2, writable: false}); // todo: remove this
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"LOGIN_STATE",{value: 3, writable: false}); // todo: remove this
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"SIGNED_IN_EDITING",{value: 21, writable: false});
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"SIGNED_IN_EDIT_NOT_ALLOWED",{value: 22, writable: false});
+
 
         // return constructor for dependency injection and extension of class, prefix with "new" if it should be a singleton
         return new App_Common_Models_SysMan;
