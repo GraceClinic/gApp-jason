@@ -8,6 +8,7 @@
      * @param   {function}    $controller - angular controller service responsible for instantiating controllers
      * @param   {WordShuffle_Models_Game}   Game        - singleton Game object, only one game active per player
      * @param   {WordShuffle_Models_Player} Player      - singleton Player object, only one player across controllers
+     * @param   {WordShuffle_Models_Player_Stats} Player_Stats  - singleton Stats object, stats belongs to one single player
      * @this    WordShuffle_Controllers_Play
      */
     function WordShuffle_Controllers_Play($scope, $controller, Game, Player) {
@@ -43,6 +44,20 @@
             self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
         }
 
+        /**
+         * @property     WordShuffle_Controllers_Play#Stats                   - Stats object
+         * @type        WordShuffle_Models_Player_Stats
+         * @public
+         **/
+        Object.defineProperty(self,'Stats',{get: getStats, set: setStats});
+        function getStats(){
+            return self.Player.Stats;
+        }
+        function setStats(value){
+            self.SysMan.Logger.entry('Stats.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
+
         /****************************
          * ACTION METHODS DEFINITION
          ****************************/
@@ -74,6 +89,12 @@
                 // reset flag for next action
                 _blockFetch = false;
             }
+            /*self.Stats.find()
+                .then(
+                    function(response){
+                        console.log("Stats->find invoked");
+                        return response;
+                    });*/
         };
 
         /**
