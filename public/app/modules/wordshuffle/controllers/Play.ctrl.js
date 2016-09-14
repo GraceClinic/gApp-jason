@@ -89,12 +89,12 @@
                 // reset flag for next action
                 _blockFetch = false;
             }
-            /*self.Stats.find()
+            self.Stats.find()
                 .then(
                     function(response){
                         console.log("Stats->find invoked");
                         return response;
-                    });*/
+                    });
         };
 
         /**
