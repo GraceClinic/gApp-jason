@@ -18,15 +18,64 @@
                             ng-class="{active: Layout.isActive('setup')}"
                             >Setup</a>
                 </li>
-                <li class="Model Menu Item" >
+                <li class="Model Menu Item" wordshuffle-directives-popover-close-popover-close close-pop-func="Layout.popUp = false" open-pop-func="Layout.popUp = true">
                     <a
                             ui-sref='module.controller.action({module:"wordshuffle",controller:"play",action:"index"})'
                             ng-class="{active: Layout.isActive('play')}"
-                            >Play</a>
+                            popover-template="'popoverTemplate.html'" popover-placement="bottom"
+                            popover-toggle="Layout.popUp"
+                            ng-model="Layout.popUp"
+                            id = "popover-trigger-button"
+                            >Play
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
+    <script type="text/ng-template" id="popoverTemplate.html">
+        <div >
+            <div id="config-popover" class="row" align="center">Configure Here!</div>
+            <hr>
+            <div class="row">
+                <label for="time-per-round" class="col-xs-7">
+                    Time Per Round (minutes):
+                </label>
+                <div class="col-xs-5">
+                    <select name="minutesPerRound" class="form-control" id="time-per-round" ng-model="Layout.Player.secondsPerRound">
+                        <option value="60">1</option>
+                        <option value="120">2</option>
+                        <option value="180">3</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <label for="rounds-per-game" class="col-xs-7">
+                    Rounds Per Game:
+                </label>
+                <div class="col-xs-5">
+                    <select name="roundsPerGame" class="form-control" ng-model="Layout.Player.roundsPerGame" id="rounds-per-game">
+                        <option value=1>1</option>
+                        <option value=2>2</option>
+                        <option value=3>3</option>
+                        <option value=4>4</option>
+                        <option value=5>5</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row" id="pop-config-buttons">
+                <div class="col-xs-4">
+                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
+                        <button id="menu-register-popover" class="btn btn-primary close-popover">Register</button>
+                    </a>
+                </div>
+                <div class="col-xs-4 col-xs-offset-4">
+                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"play",action:"play"})'>
+                        <button id="menu-play-popover" class="btn btn-success close-popover" ng-click="Layout.Game.newGame = true">Play</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </script>
     <div id="WordShuffle_Controller" ui-view></div>
     <div id="FooterBar">
         <div id="copyright">Copyright 2015 by Grace Clinic Holdings LLC</div>

@@ -65,6 +65,19 @@
     text-decoration:underline;
     color:blue;
 }
+
+#pop-config-buttons {
+    margin-top: 2rem;
+}
+
+.popover.bottom>.arrow:after {
+    border-bottom-color: #d8f1ec;
+}
+
+/*#config-popover .popover.bottom {*/
+    /*background-color: #d8f1ec;*/
+/*}*/
+
 #FooterBar
 {
     width:100%;
