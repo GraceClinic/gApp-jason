@@ -38,6 +38,23 @@
         function setGame(value){
             self.SysMan.Logger.entry('Game.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
         }
+
+        /**
+         * @property    SysMan
+         * access sysman
+         *
+         * @type    {App_Common_Models_SysMan}
+         * @public
+         **/
+        Object.defineProperty(self,'SysMan',{get: getSysMan, set: setSysMan, enumerable:true});
+        var _SysMan;
+        function getSysMan(){
+            return SysMan;
+        }
+        function setSysMan(value){
+            self.SysMan.Logger.entry('Sysman.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
         
         /**
          * @property    popUp

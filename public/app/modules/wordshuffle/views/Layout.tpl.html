@@ -33,7 +33,7 @@
         </div>
     </div>
     <script type="text/ng-template" id="popoverTemplate.html">
-        <div >
+        <div id="setup-popover-bottom">
             <div id="config-popover" class="row" align="center">Configure Here!</div>
             <hr>
             <div class="row">
@@ -64,13 +64,13 @@
             </div>
             <div class="row" id="pop-config-buttons">
                 <div class="col-xs-4">
-                    <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
+                    <a ng-show="Layout.Player.signInState < Layout.SysMan.SIGNED_IN" ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
                         <button id="menu-register-popover" class="btn btn-primary close-popover">Register</button>
                     </a>
                 </div>
-                <div class="col-xs-4 col-xs-offset-4">
+                <div class="col-xs-6 col-xs-offset-2">
                     <a ui-sref='module.controller.action({module:"wordshuffle",controller:"play",action:"play"})'>
-                        <button id="menu-play-popover" class="btn btn-success close-popover" ng-click="Layout.Game.newGame = true">Play</button>
+                        <button id="menu-play-popover" class="btn btn-success close-popover" ng-click="Layout.Game.newGame = true">Play Game</button>
                     </a>
                 </div>
             </div>

@@ -69,14 +69,19 @@
 #pop-config-buttons {
     margin-top: 2rem;
 }
+ hr {
+     border-color: black; /*chrome and safari*/
+     background-color: black; /*firefox and opera*/
+     color: black; /*IE7+*/
+ }
 
 .popover.bottom>.arrow:after {
     border-bottom-color: #d8f1ec;
 }
 
-/*#config-popover .popover.bottom {*/
-    /*background-color: #d8f1ec;*/
-/*}*/
+.popover-inner {
+    background-color: #d8f1ec;
+}
 
 #FooterBar
 {
