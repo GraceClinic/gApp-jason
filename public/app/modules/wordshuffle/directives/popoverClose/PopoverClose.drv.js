@@ -20,7 +20,7 @@
          * @returns {wordshuffleDirectivesPopoverClosePopoverClose}
          */
         function wordshuffleDirectivesPopoverClosePopoverClose() {
-            Logger.entry('END ' + self.constructor.name + '.construct()', self.constructor.name);
+            Logger.entry('START ' + self.constructor.name + '.construct()', self.constructor.name);
 
 
             this.restrict = 'A';
@@ -39,8 +39,6 @@
             function link(scope, element, attributes) {
                 // proxy scope to self for consistency and use of templates for defining methods
                 var self = scope;
-                console.log("called inside link, elements are", element);
-                accessElement = element;
                 /**
                  * @method   clickHandler
                  * this should handle configuration button clicks
