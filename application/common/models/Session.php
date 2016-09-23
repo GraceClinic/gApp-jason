@@ -27,7 +27,7 @@
  * @property    int     points          - game points
  * @property    array   scoreBoard      - array of scores for the current game
  * @property    int     round           - current game round
- * @property    boolean         tos      -terms of service agreement by player
+ * @property    int         acceptedTOS        determines login, registration or anonymous play
  */
 class Common_Models_Session
 {
@@ -106,7 +106,7 @@ class Common_Models_Session
             'idGame:       ' . $this->idGame . PHP_EOL .
             'signInState:     ' . $this->signInState . PHP_EOL .
             'Msg:          ' . $this->msg . PHP_EOL.
-            'tos:          ' .$this->tos . PHP_EOL;
+            'acceptedTOS    ' . $this->acceptedTOS . PHP_EOL;
     }
 
     protected function setIdPlayer($x)
@@ -225,7 +225,10 @@ class Common_Models_Session
         return self::$Session->gameState;
     }
     protected function setSignInState($state){
+//        if($state !== $this->_oldSignInState){
+            $this->_oldSignInState = self::$Session->signInState;
             self::$Session->signInState = (int) $state;
+//        }
     }
     protected function getSignInState(){
         return (int) self::$Session->signInState;
@@ -273,13 +276,14 @@ class Common_Models_Session
         return $msg;
     }
 
-    protected function setTos($value){
-        self::$Session->tos = (bool) $value;
-        return $this;
+    private $_acceptedTOS = 0;
+    protected function setacceptedTOS($value){
+        self::$Session->acceptedTOS = $value;
     }
-    protected function getTos(){
-        return self::$Session->tos;
+    protected function getacceptedTOS(){
+        return self::$Session->acceptedTOS;
     }
+
 
     /**
      * @param int   $i  - round index
@@ -309,7 +313,7 @@ class Common_Models_Session
             'Squares'=>  $sqLetters,
             'Rounds'=>  $this->Rounds,
             'Msg'=> $this->msg,
-            'tos'=> $this->tos
+            'acceptedTOS' => $this->acceptedTOS
         );
 
         return $ret;
@@ -365,7 +369,7 @@ class Common_Models_Session
             self::$Session->gameEnd = null;
             self::$Session->gameState = null;
             self::$Session->scoreBoard = Array();
-            self::$Session->tos = false;
+            self::$Session->acceptedTOS = 0;
         }
 
         return self::$Session;
