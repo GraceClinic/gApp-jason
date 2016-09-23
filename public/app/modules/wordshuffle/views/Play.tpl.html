@@ -3,10 +3,10 @@
 <div ng-controller="WordShuffle_Controllers_Play as Play">
     <div class="controller_play view_leftPanel">
         <div class="model_player_stats table_view" ng-show="Play.Player.signInState == Play.SysMan.SIGNED_IN">
-            <div class="model_player_stats view_row">
+            <div class="model_player_stats view_row form-group stats-header">
                 <div class="model_player_stats view_left">Your Stats for Round Lasting</div>
                 <div class="model_player_stats right">
-                    <select id="Play-Stats-roundDuration" ng-model="Play.roundDuration" name="roundDurationStats">
+                    <select class="form-control" id="Play-Stats-roundDuration" ng-model="Play.roundDuration" name="roundDurationStats">
                         <option value=1>1 minute</option>
                         <option value=2>2 minutes</option>
                         <option value=3>3 minutes</option>
@@ -34,9 +34,10 @@
             </div>
             <div class="model_player_stats footer"></div>
         </div>
-        <div ng-show="Play.Player.signInState != Play.SysMan.SIGNED_IN"><span>NO STATS FOR YOU! Please login/register to start saving your stats.<br>
-        <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'
-           ng-class="{active: Layout.isActive('setup')}">Click here</a> </span></div>
+        <div class="model_player_stats" ng-show="Play.Player.signInState != Play.SysMan.SIGNED_IN"><span>NO STATS FOR YOU!<br> Please login/register to start saving your stats.<br>
+            <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'
+               ng-class="{active: Layout.isActive('setup')}">Register now</a> </span>
+        </div>
     </div>
     <div class="controller_play view_rightPanel">
         <div ui-view></div>

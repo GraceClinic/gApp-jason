@@ -16,8 +16,12 @@
 /* player stats side panel styles */
 .model_player_stats{
     padding-top: 2px;
-    font-size: 10pt;
+    font-size: 11pt;
+    font-family: cursive;
+    font-weight: bold;
+    /* font-style: initial; */
     overflow: hidden;
+    color: midnightblue;
 }
 .model_player_stats.view_row{
     float:left;
@@ -27,12 +31,12 @@
     vertical-align: bottom;
 }
 .model_player_stats.view_left{
-    width: 65%;
+    width: 55%;
     text-align: right;
     float: left;
 }
 .model_player_stats.right{
-    width: 30%;
+    width: 40%;
     padding-left: 5%;
     text-align: left;
     float: left;
@@ -214,4 +218,8 @@
     background-color: white;
     border-radius: 4px;
     padding: 1px 4px 1px 4px;
+}
+.stats-header{
+    border-bottom: solid 1px;
+    padding: 1rem 0;
 }
