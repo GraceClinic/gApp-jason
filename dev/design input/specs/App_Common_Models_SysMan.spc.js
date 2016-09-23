@@ -22,6 +22,9 @@
  * @constant NEW_SIGN_IN        {int}   Flags user login state as new registration; value is 5
  * @constant SECRET_PENDING     {int}   Flags user login state as user name identified, awaiting secret; value is 10
  * @constant SIGNED_IN          {int}   Flags user login state as authenticated; value is 20
+ * @constant ANONYMOUS_STATE    {int}   Flags user if playing anonymously
+ * @constant REGISTER_STATE     {int}   Flags user if user is registering
+ * @constant LOGIN_STATE        {int}   Flags user if user is logging in
  **/
 
 /**

@@ -86,12 +86,56 @@
              * @public
              **/
             Object.defineProperty(self,'saveIsPending',{get: getSaveIsPending});
+
             /**
-             * @property    WordShuffle_Models_Player#tos           -  terms of service agreement by player
-             * @type        boolean
+             * @property    acceptedTOS
+             * this is a check for letting a person play
+             *
+             * @type    {boolean}
              * @public
              **/
-            Object.defineProperty(self,'tos',{get: getTos, set: setTos});
+            Object.defineProperty(self,'acceptedTOS',{get: getAcceptedTOS, set: setAcceptedTOS, enumerable:true});
+
+            
+            /**
+             * @method   authenticateUser
+             * authenticate the user if he/she is trying to change his/her profile configs
+             *
+             * @public
+             * @return   {boolean}
+             */
+            self.authenticateUser = function(){
+                var _promise = self.relay("login");
+                _promise.then(
+                    function(response) {
+                        if (parseInt(self.signInState) === self.SysMan.SIGNED_IN) {
+                            //console.log("secret validated, please write the next action");
+                        }
+                        else if (parseInt(self.signInState) === self.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) {
+                            //console.log("entered wrong secret, not allowed");
+                        }
+                        else {
+                            //console.log("something else is wrong, signInState", self.signInState);
+                        }
+                    }
+                );
+
+            };
+
+            /**
+             * @method   editProfile
+             * action for editProfile
+             *
+             * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+             * @param    {}                 - todo: document each parameter
+             * @return   {boolean}
+             */
+            self.editProfile = function(){
+                // todo: code method
+                return true;
+            };
+
+            
 
             /**
              * Submits request to login with Player name
@@ -101,15 +145,12 @@
              * @return   {boolean}
              */
             self.login = function(){
+                // login should not be called in anonymous state
+                var _promise = {}
                 if(self.signInState){
-                    // clear current messages
+                    //clear current messages
                     self.msg = [];
-                    // simply save the model and the backend will determine if a challenge is required
-                   var _promise = self.relay('login');
-                    _promise.then(
-                        function (response) {
-                            return response;
-                        });
+                    _promise = self.relay('login');
                 }
                 return _promise;
             };
@@ -143,30 +184,12 @@
                         self.msg = {"text":"Player logout successful!","type":'info'};
                         self.name = self.defaultName;
                         self.id = 0;
-                        self.tos = false;
                         return response;
                     });
 
                 return _promise;
             };
-
-            /**
-             * @method   nameExists
-             * check if Player name exists in database
-             * @public                      - todo: scope as public or protected, prefix name with "_" for protected
-             * @param    {}                 - todo: document each parameter
-             * @return   {boolean}
-             */
-            self.nameExists = function(){
-                var _promise = self.relay('playerNameExists');
-                _promise.then(
-                    function (response) {
-                        console.log('Response data from nameExists method is ',response);
-                        return response;
-                    });
-                return _promise;
-            };
-
+            
 
             /**
              * Validates player state and adjusts as necessary
@@ -178,7 +201,7 @@
                 switch(self.signInState){
                     case self.SysMan.ANONYMOUS_PLAY:
                         // toggle state if user selected a new name
-                        if(!_nameIsDefault){
+                        if(_newName && !_nameIsDefault){
                             // if id not set and user changes name, request login
                             self.signInState = self.SysMan.NAME_PENDING;
                         }
@@ -191,7 +214,7 @@
                         }
                         break;
                     case self.SysMan.NEW_SIGN_IN:
-                        // step backwards in process if user changed name while pending New_Sign_In in progress
+                        //step backwards in process if user changed name while pending New_Sign_In in progress
                         if(_newName && !_nameIsDefault){
                             // if id not set and user changes name, request login
                             self.signInState = self.SysMan.NAME_PENDING;
@@ -209,6 +232,12 @@
                         break;
                     case self.SysMan.SIGNED_IN:
                         // do as you like, player name change will validate if it is available
+                        break;
+                    case self.SysMan.NAME_PENDING_REGISTER:
+                        //this state should only be checked in the backend, but after you have a keyUp event registered
+                        //on player name, if the requested user name for registration is already present. first keyup method is getting called and then setName,
+                        //and now as there is no case this state, it makes it anonymous.
+                        self.signInState = self.SysMan.NEW_SIGN_IN
                         break;
                     default:
                         // typically hit this state during first load from backend before all properties set
@@ -239,7 +268,6 @@
             function setName(value){
                 _newName = value !== '' && value !== _name;
                 _nameIsDefault = value == self.defaultName;
-
                 if(_newName){
                     // clear the secret entry
                     self.secret = '';
@@ -249,7 +277,6 @@
                     }
                 }
                 _name = value;
-
                 _validateState();
             }
             var _secret = '';
@@ -319,12 +346,13 @@
                 return _saveMe;
             }
 
-            var _tos = 0;
-            function getTos(){
-                return _tos;
+            var _acceptedTOS = false;
+            function getAcceptedTOS(){
+                return _acceptedTOS;
             }
-            function setTos(value){
-                _tos = value;
+            function setAcceptedTOS(value){
+                //_acceptedTOS = value ? 1 : 0;
+                _acceptedTOS = value;
             }
 
             /*******************
@@ -356,7 +384,7 @@
          * @protected
          * @return   {boolean}
          */
-        WordShuffle_Models_Player.prototype._postFind = function(){
+        WordShuffle_Models_Player.prototype._postFind = function() {
             return true;
         };
 
@@ -368,12 +396,7 @@
             //    console.log('player.save');
             //    Model.prototype.save.call(this);
             //}
-            var _promise = Model.prototype.save.call(this);
-            _promise.then(
-                function (response) {
-                    return response;
-                });
-            return _promise;
+            Model.prototype.save.call(this);
         };
 
         /**
@@ -388,7 +411,6 @@
                 // clear secret field
                 this.secret = '';
             }
-
             return true;
         };
 
@@ -418,13 +440,6 @@
             return true;
         };
 
-        /*****************************************
-         * PROTOTYPE CONSTANTS
-         *****************************************/
-        Object.defineProperty(WordShuffle_Models_Player.prototype,"NEW_LOGIN_MSG",{value: "Good news!  The user name is available, please pick your secret question to secure your new user!", writable: false});
-        Object.defineProperty(WordShuffle_Models_Player.prototype,"WELCOME_BACK_MSG",{value: "Welcome back!  Please answer your secret question to start playing!", writable: false});
-        Object.defineProperty(WordShuffle_Models_Player.prototype,"LOGIN_FAILURE",{value: "Secret rejected!  Please try again!", writable: false});
-        Object.defineProperty(WordShuffle_Models_Player.prototype,"PLAYER_NAME_EXIST",{value: "Your new name is already in use, please pick another", writable: false});
         // return constructor for dependency injection and extension of class, prefix with "new" if it should be a singleton
         return new WordShuffle_Models_Player;
     }

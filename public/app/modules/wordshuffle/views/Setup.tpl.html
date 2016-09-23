@@ -1,35 +1,51 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Setup.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Setup as Setup">
+    <div class="controller_setup col-sm-4" id="setup-view-left-panel">
+        <div id="action-container">
+            <div ui-view>
 
-            <ng-form class="form-horizontal" name="setUpForm">
-                <div class="row">
-                    <div class="controller_setup view_leftPanel col-md-4">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-11 col-center" ui-view></div>
-                    </div>
-                    <div class="controller_setup view_rightPanel col-md-8">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-9 col-center">
-                        <div class="row">
-                            <div class="form-group">
-                                    <label class="control-label col-md-4 label-font-setup" for="setup-game-minutesPerRound">Time per round (minutes):</label>
-                                    <!--                <input type="text" name="Timer">-->
-                            <div class="col-md-2">
-                                <select class="form-control" id="setup-game-minutesPerRound" ng-model="Setup.minutesPerRound" name="minutesPerRound">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
+            </div>
+        </div>
+    </div>
+    <div class="controller_setup col-sm-8" id="setup-view-right-panel">
+        <div id="container-div">
+            <form id="setup-play-form" name="SetupForm">
+                <fieldset ng-disabled="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
+                    <div class="form-group row setup-config text-center">
+                        <div class="col-xs-6 col-xs-offset-3" id="anonymous-registered-message">
+                            <div class="logged-in-user" ng-show="Setup.Player.signInState >= Setup.SysMan.SIGNED_IN && Setup.Player.signInState <= Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
+                                <b>Welcome {{Setup.Player.name}}! Setup Game configurations and hit "Play"</b>
                             </div>
-                                <i class="fa fa-info-circle col-md-1" tooltip="Round duration" tooltip-placement="bottom"></i>
+                            <div class="anonymous-user" ng-show="(Setup.Player.signInState < Setup.SysMan.SIGNED_IN || Setup.Player.signInState > Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED) && Setup.Player.signInState !== Setup.SysMan.NEW_SIGN_IN">
+                                <b> &#8592 Register or Play Anonymously! &#8628 </b>
+                            </div>
+                            <div class="text-danger" ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN">
+                                Can't play anonymnously now, either finish registration or go back!
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="form-group">
-                                    <label class="control-label col-md-4 label-font-setup">Rounds per game:</label>
-                                    <!--                <input type="text" name="Rounds">-->
-                                <div class="col-md-2">
-                                    <select class="form-control" id="setup-game-totalRounds" ng-model="Setup.Player.roundsPerGame" name="roundsPerGame">
+                    </div>
+                    <div class="form-group row setup-config">
+                        <div class="col-xs-6 col-xs-offset-3">
+                            <div class="row">
+                                <label class="col-xs-9 col-form-label" for="time-per-round">Time Per Round (minutes):</label>
+                                <div class="col-xs-3">
+                                    <!--<input type="number" value="1" class="form-control" ng-model="Setup.minutesPerRound" id="time-per-round" min="2" max="3">-->
+                                    <select name="minutesPerRound" class="form-control" id="time-per-round" ng-model="Setup.minutesPerRound">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row setup-config">
+                        <div class="col-xs-6 col-xs-offset-3">
+                            <div class="row">
+                                <label class="col-xs-9 col-form-label" for="rounds-per-game">Rounds Per Game:</label>
+                                <div class="col-xs-3">
+                                    <!--<input type="number" value="3" class="form-control" ng-model="Setup.Player.roundsPerGame" id="rounds-per-game" min="3" max="5">-->
+                                    <select name="roundsPerGame" class="form-control" ng-model="Setup.Player.roundsPerGame" id="rounds-per-game">
                                         <option value=1>1</option>
                                         <option value=2>2</option>
                                         <option value=3>3</option>
@@ -37,40 +53,30 @@
                                         <option value=5>5</option>
                                     </select>
                                 </div>
-                                <i class="fa fa-info-circle col-md-1" tooltip="Number of rounds within an entire game" tooltip-placement="bottom"></i>
-
                             </div>
-                        </div>
-                        <div class="row" ng-hide="Setup.Player.signInState == Setup.SysMan.SIGNED_IN && Setup.Player.tos && Setup.isTOSaccepted">
-                            <div class="form-group">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-7">
-                                    <div class="checkbox" >
-                                        <label><input name="checkTandC" ng-model="Setup.Player.tos" type="checkbox" ng-checked="Setup.Player.tos" required>
-                                            <strong>I accept the terms and conditions of play.</strong></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-7">
-                                        <label style="color:red" ng-hide="Setup.Player.tos">Please accept to play</label>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="row">
-                            <div class="form-group" >
-                                <!--<input id="Play" type="submit" value="Play">-->
-                                <label class="control-label col-md-4">&nbsp;</label>
-                                <div class="col-md-2">
-                                <input id="Setup-playGame" ng-disabled ="!Setup.Player.tos" type="button" value="Play" class="btn btn-success btn-md" ng-click="Setup.playGame()">&nbsp;
-                                </div>
-                            </div>
-                        </div>
                         </div>
                     </div>
-                </div>
-            </ng-form>
+                    <div class="form-group row" ng-hide="Setup.Player.signInState >= Setup.SysMan.SIGNED_IN && Setup.Player.signInState <= Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
+                        <div class="col-xs-6 col-xs-offset-3">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" ng-model="Setup.Player.acceptedTOS" id="anonymous-checkbox" type="checkbox" ng-checked="Setup.Player.acceptedTOS"> I accept the terms and conditions of play.
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-xs-6 col-xs-offset-3">
+                            <!--<button ng-disabled="Setup.Player.actionState != 1" ng-click="Setup.playGame()" type="submit" class="btn btn-primary">Play</button>-->
+                            <button ng-click="Setup.playGame()" ng-disabled="!Setup.anonymousCheckbox()" type="submit" class="btn btn-primary">Play</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
 </div>

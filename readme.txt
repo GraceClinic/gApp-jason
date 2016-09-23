@@ -1,3 +1,3 @@
-Branch created for Amit's use to execute assignments.
+Branch created for completion of training assignments.
 
-This branch is only for use by Amit to isolate his assignment.  No not use if you are not Amit!
+This branch is only for trainee's use.  If you are not trainee, do not use!
