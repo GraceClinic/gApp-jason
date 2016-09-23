@@ -23,6 +23,7 @@
  * @property    array       scoreBoard      - array of word scores
  * @property    boolean     newGame         - flags new game event
  * @property    boolean     newRound        - flags new round event
+ * @property    string      longestWord     - longest word made by a player
  */
 class WordShuffle_Model_Game extends Common_Abstracts_Model
 {
@@ -49,7 +50,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
      * @param array $data
      */
     public function __construct($data = null){
-        $_remove = array('round','start','end','points','idPlayer','roundAvg','scoreBoard','state');
+        $_remove = array('round','start','end','points','idPlayer','roundAvg','scoreBoard','state','longestWord');
 
         if($data != null){
             if(is_integer($data) && (int)$data !== 0){
@@ -409,6 +410,14 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             $diff = 0;
         }
         return (int) $diff;
+    }
+
+    private $_longestWord = null;
+    protected function setLongestWord($value){
+        $this->_longestWord = (string) $value;
+    }
+    protected function getLongestWord(){
+        return $this->_longestWord;
     }
 
 
@@ -806,10 +815,37 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             }
 
             if($gameEnded){
+                if($this->SysMan->Session->signInState == Common_Models_SysMan::SIGNED_IN) {
+                    $this->_findLongestWord();
+                    $wordCount = $this->SysMan->Session->Rounds[$this->round - 1]['wordCount'];
+                    $computeArgs = (Object)Array(
+                        "roundDuration" => $this->secondsPerRound,
+                        "points" => $this->Rounds[$this->round - 1]->points,
+                        "longestWord" => $this->longestWord,
+                        "wordCount" => $wordCount
+                    );
+                    $statsObj = new WordShuffle_Model_Player_Stats();
+                    $this->SysMan->Logger->info('seconds per round ' . $this->secondsPerRound . ' round points ' . $this->Rounds[$this->round - 1]->points . ' word count ' . $wordCount);
+                    $success = $statsObj->compute($computeArgs);
+                }
                 $this->state = self::COMPLETED;
                 $this->end = date('Y-m-d H:i:s');
             }elseif($roundEnded){
                 $this->SysMan->Logger->info('Game->_processState determines round ended during state '.$this->state,$this->className);
+                // Compute stats at the end of each round and before saving round information to database
+                if($this->SysMan->Session->signInState == Common_Models_SysMan::SIGNED_IN) {
+                    $this->_findLongestWord();
+                    $wordCount = $this->SysMan->Session->Rounds[$this->round - 1]['wordCount'];
+                    $computeArgs = (Object)Array(
+                        "roundDuration" => $this->secondsPerRound,
+                        "points" => $this->Rounds[$this->round - 1]->points,
+                        "longestWord" => $this->longestWord,
+                        "wordCount" => $wordCount
+                    );
+                    $statsObj = new WordShuffle_Model_Player_Stats();
+                    $this->SysMan->Logger->info('seconds per round ' . $this->secondsPerRound . ' round points ' . $this->Rounds[$this->round - 1]->points . ' word count ' . $wordCount);
+                    $success = $statsObj->compute($computeArgs);
+                }
                 // save current round to DB
                 $this->Rounds[$this->round-1]->save();
                 $this->newRound = true;
@@ -836,5 +872,22 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
         $this->SysMan->Logger->info('END Game->_processState new state = '.$this->state,$this->className);
 
     }
+
+    /**
+     * To find the longest Word
+     * @private
+     * @param
+     */
+    private function _findLongestWord()
+    {
+            foreach ($this->scoreBoard as $score){
+                if($this->longestWord == null)
+                    $this->longestWord = $score['word'];
+                else if(strlen($score['word']) > strlen($this->longestWord)){
+                    $this->longestWord = $score['word'];
+                }
+            }
+    }
+
 
 }

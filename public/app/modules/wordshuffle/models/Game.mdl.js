@@ -8,9 +8,10 @@
      * @param   {function(new:WordShuffle_Models_Game_Round)}      Round       - Round object that create the game
      * @param   {function(new:WordShuffle_Models_Game_Square)}      Square      - game square object constructor
      * @param   {function(new:WordShuffle_Models_Game_Clock)}    Clock      - game clock constructor
+     * @param   {WordShuffle_Models_Player_Stats}                Stats      - object for player stats
      * @returns {WordShuffle_Models_Game}
      */
-    function Game_Factory(Model,Round,Square,Clock) {
+    function Game_Factory(Model,Round,Square,Clock,Stats) {
 
         /**
          * WordShuffle game
@@ -129,6 +130,18 @@
              * @public
              **/
             Object.defineProperty(self,'timeRemaining',{get: getTimeRemaining,set: setTimeRemaining,enumerable:true});
+            /**
+             * @property    {WordShuffle_Models_Game#stats              - object for Stats model
+             * @type        {WordShuffle_Models_Player_Stats}
+             * @public
+             **/
+            Object.defineProperty(self,'stats',{get: getStats, set: setStats});
+            /**
+             * @property    WordShuffle_Models_Game#longestWord          - longest word made by player
+             * @type        string
+             * @public
+             **/
+            Object.defineProperty(self,'longestWord',{get: getLongestWord, set: setLongestWord});
 
             /*****************************************
              * Public Methods declaration / definition
@@ -143,7 +156,13 @@
             self.clockExpired = function(){
                 if(self.state != self.COMPLETED || self.state != self.ABANDONED){
                     // execute save, backend will toggle game state as appropriate
-                    self.save();
+                    var _promise = self.save();
+                    _promise.then(
+                        function (response) {
+                                Stats.find();
+                            return response;
+                        }
+                    );
                 }
             };
             /**
@@ -412,6 +431,20 @@
             function setTimeRemaining(value){
                 _timeRemaining = value;
             }
+            function getStats(){
+                return Stats;
+            }
+            function setStats(value){
+
+            }
+            var _longestWord;
+            function getLongestWord(){
+                return _longestWord;
+            }
+            function setLongestWord(value){
+                _longestWord = value;
+            }
+
 
             // watch for key presses
             jQuery(document).on('keypress',function(e){
@@ -615,7 +648,8 @@
         'App_Common_Abstracts_Model',
         'WordShuffle_Models_Game_Round',
         'WordShuffle_Models_Game_Square',
-        'WordShuffle_Models_Game_Clock'
+        'WordShuffle_Models_Game_Clock',
+        'WordShuffle_Models_Player_Stats'
     ];
 
     // register model with Angularjs application for dependency injection as required

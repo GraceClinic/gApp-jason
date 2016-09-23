@@ -76,6 +76,7 @@
                             _pageNum.push(i + 1);
                         }
                     }
+                    console.log("self.length ",self.length);
                     return _pageNum;
                 }
                 function setPageNum(){

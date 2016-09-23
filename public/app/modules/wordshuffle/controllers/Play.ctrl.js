@@ -8,9 +8,10 @@
      * @param   {function}    $controller - angular controller service responsible for instantiating controllers
      * @param   {WordShuffle_Models_Game}   Game        - singleton Game object, only one game active per player
      * @param   {WordShuffle_Models_Player} Player      - singleton Player object, only one player across controllers
+     * @param   {WordShuffle_Models_Player_Stats} Stats  - singleton Stats object, stats belongs to one single player
      * @this    WordShuffle_Controllers_Play
      */
-    function WordShuffle_Controllers_Play($scope, $controller, Game, Player) {
+    function WordShuffle_Controllers_Play($scope, $controller, Game, Player, Stats, $modal) {
         var self = this;
 
         var _blockFetch = false;    // flag to block additional request to the backend when changing states
@@ -41,6 +42,68 @@
         }
         function setPlayer(){
             self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
+        /**
+         * @property     WordShuffle_Controllers_Play#Stats                   - Stats object
+         * @type        WordShuffle_Models_Player_Stats
+         * @public
+         **/
+        Object.defineProperty(self,'Stats',{get: getStats, set: setStats});
+        function getStats(){
+            return Stats;
+        }
+        function setStats(){
+            self.SysMan.Logger.entry('Stats.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
+        /**
+         * @property    WordShuffle_Controllers_Play#roundDuration      - translate minutes to Stats->roundDuration
+         * @type        int
+         * @public
+         **/
+        Object.defineProperty(self,'roundDuration',{get: getRoundDuration,set: setRoundDuration});
+        function getRoundDuration(){
+            return self.Stats.roundDuration/60;
+        }
+        function setRoundDuration(value){
+            self.Stats.roundDuration = value * 60;
+            if(!_blockFetch) {
+                self.findStatsForPlayer();
+                _blockFetch = true;
+            }
+            else{
+                _blockFetch = false;
+            }
+        }
+
+
+        /**
+         * @property    WordShuffle_Controllers_Play#minutesPerRound    - calculate minutes per round
+         * @type    {int}
+         * @public
+         **/
+        Object.defineProperty(self,'minutesPerRound',{get: getMinutesPerRound, set: setMinutesPerRound});
+        function getMinutesPerRound(){
+            return self.Player.secondsPerRound/60;
+        }
+        function setMinutesPerRound(value){
+            self.Player.secondsPerRound = value*60;
+        }
+
+        /**
+         * @property    toggleConfigModal
+         * toggles as hide/show for the game detail configuration modal
+         * @type    {}
+         * @public
+         **/
+        Object.defineProperty(self,'toggleConfigModal',{get: getToggleConfigModal, set: setToggleConfigModal});
+        var _toggleConfigModal = true;
+        function getToggleConfigModal(){
+            return _toggleConfigModal;
+        }
+        function setToggleConfigModal(value){
+            _toggleConfigModal = value;
         }
 
         /****************************
@@ -74,6 +137,7 @@
                 // reset flag for next action
                 _blockFetch = false;
             }
+            self.findStatsForPlayer();
         };
 
         /**
@@ -133,6 +197,9 @@
         };
 
         self.start = function(){
+            self.toggleConfigModal = false;
+            $(".modal-backdrop").hide();
+            $(".modal.fade").hide();
             if(self.SysMan.state.action == 'index'){
                 self.Game.newGame = true;
                 self.goToState('wordshuffle','play','play');
@@ -148,6 +215,57 @@
                     type:   'INFO'
                 };
             }
+        };
+
+        /**
+         * @method   findStatsForPlayer             -- get Stats for logged in player
+         * @public
+         * @param    {}
+         * @return   {}
+         */
+        self.findStatsForPlayer = function(){
+            var _selectedRoundDuration = self.roundDuration;
+                var _promiseStats = Stats.find();
+                _promiseStats.then(
+                    function (response) {
+                        if (Stats.msg[0].text == 0) {
+                            self.resetStats();
+                        }
+                        self.roundDuration = _selectedRoundDuration;
+                        return response;
+                    }
+                );
+        };
+
+        /**
+         * @method   resetStats         - Reset Stats when there is no record found for a player against particular duration.
+         * @public
+         * @param    {}
+         * @return   {}
+         */
+        self.resetStats = function(){
+
+            self.Stats.roundHigh = 0;
+            self.Stats.roundAvg = 0;
+            self.Stats.totalRounds = 0;
+            self.Stats.avgPtsPerWord = 0;
+            self.Stats.avgWordCount = 0;
+            self.Stats.longestWord = 'No records!'
+        };
+
+
+        /**
+         * @method   goToLoginPage
+         * Redirect user to login page
+         *
+         * @public
+         * @param    {}
+         * @return   {}
+         */
+        self.goToLoginPage = function(){
+            self.toggleConfigModal = false;
+            $(".modal.fade").hide();
+            self.goToState('wordshuffle','setup','index');
         };
 
         /******************
@@ -184,7 +302,9 @@
         '$scope',
         '$controller',
         'WordShuffle_Models_Game',
-        'WordShuffle_Models_Player'
+        'WordShuffle_Models_Player',
+        'WordShuffle_Models_Player_Stats',
+        '$modal'
     ];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Play', WordShuffle_Controllers_Play);

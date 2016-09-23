@@ -48,6 +48,18 @@ class WordShuffle_Model_Mapper_Game extends WordShuffle_Model_Mapper_Abstract
         $word = $wordTable->fetchAll($where);
         return count($word);
     }
+
+    /**
+     * To find the longest word made by player against particular duration
+     * @public
+     * @param
+     * @return string
+     */
+    public function findLongestWord()
+    {
+        return "";
+    }
+
     /**
      * Saving a Game record requires saving all of the round objects.
      *

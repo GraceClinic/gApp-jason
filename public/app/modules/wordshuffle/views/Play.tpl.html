@@ -2,21 +2,41 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/directives/game/Square.drv.css">
 <div ng-controller="WordShuffle_Controllers_Play as Play">
     <div class="controller_play view_leftPanel">
-        <div class="model_player_stats table_view">
-            <div class="model_player_stats header_view">Your Stats</div>
-            <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundHigh">Round High:</div><div class="model_player_stats right roundHigh">0</div>
+        <div class="model_player_stats table_view" ng-show="Play.Player.signInState == Play.SysMan.SIGNED_IN">
+            <div class="model_player_stats view_row form-group stats-header">
+                <div class="model_player_stats view_left">Your Stats for Round Lasting</div>
+                <div class="model_player_stats right">
+                    <select class="form-control" id="Play-Stats-roundDuration" ng-model="Play.roundDuration" name="roundDurationStats">
+                        <option value=1>1 minute</option>
+                        <option value=2>2 minutes</option>
+                        <option value=3>3 minutes</option>
+                        <option value=0>--all--</option>
+                    </select>
+                </div>
             </div>
             <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left roundAvg">Round Avg:</div><div class="model_player_stats right roundAvg">0</div>
+                <div class="model_player_stats view_left roundHigh">Round High:</div><div class="model_player_stats right roundHigh">{{Play.Stats.roundHigh}}</div>
             </div>
             <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left avgWord">Avg Pts per Word: </div><div class="model_player_stats right avgWord">0</div>
+                <div class="model_player_stats view_left roundAvg">Round Avg:</div><div class="model_player_stats right roundAvg">{{Play.Stats.roundAvg}}</div>
             </div>
             <div class="model_player_stats view_row">
-                <div class="model_player_stats view_left longestWord">Longest Word: </div><div class="model_player_stats right longestWord">0</div>
+                <div class="model_player_stats view_left avgWord">Avg Pts per Word: </div><div class="model_player_stats right avgWord">{{Play.Stats.avgPtsPerWord}}</div>
+            </div>
+            <div class="model_player_stats view_row">
+                <div class="model_player_stats view_left avgWordCount">Average Word Count: </div><div class="model_player_stats right avgWordCount">{{Play.Stats.avgWordCount}}</div>
+            </div>
+            <div class="model_player_stats view_row">
+                <div class="model_player_stats view_left longestWord">Longest Word: </div><div class="model_player_stats right longestWord">{{Play.Stats.longestWord}}</div>
+            </div>
+            <div class="model_player_stats view_row">
+                <div class="model_player_stats view_left totalWords">Total Rounds: </div><div class="model_player_stats right totalWords">{{Play.Stats.totalRounds}}</div>
             </div>
             <div class="model_player_stats footer"></div>
+        </div>
+        <div class="model_player_stats" ng-show="Play.Player.signInState != Play.SysMan.SIGNED_IN"><span>NO STATS FOR YOU!<br> Please login/register to start saving your stats.<br>
+            <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'
+               ng-class="{active: Layout.isActive('setup')}">Register now</a> </span>
         </div>
     </div>
     <div class="controller_play view_rightPanel">
