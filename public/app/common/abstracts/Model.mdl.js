@@ -387,6 +387,7 @@
                         if('model' in response.data){
                             self.SysMan.Logger.entry('START ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
                             self.setFromArray(response.data.model);
+                            console.log("response obtained", response.data.model);
                             self.SysMan.Logger.entry('END ' + self.constructor.name + '.setFromArray() based on response data','App_Common_Abstracts_Model');
                         }
                         self.SysMan.Logger.entry('START ' + self.constructor.name + '._postDispatch()','App_Common_Abstracts_Model');
@@ -522,7 +523,8 @@
             if(noModel){
                 _request.data['noModel'] = true;
             }
-
+            accessRequest = _request;
+            console.log("arguments", accessRequest);
             self.SysMan.Logger.entry('START ' + self.constructor.name + '.relay() for method = '+method,'App_Common_Abstracts_Model');
 
             // record associated model status

@@ -10,7 +10,7 @@
      * @param   {WordShuffle_Models_Player} Player      - singleton Player object, only one player across controllers
      * @this    WordShuffle_Controllers_Play
      */
-    function WordShuffle_Controllers_Play($scope, $controller, Game, Player) {
+    function WordShuffle_Controllers_Play($scope, $controller, Game, Player, Stats) {
         var self = this;
 
         var _blockFetch = false;    // flag to block additional request to the backend when changing states
@@ -43,6 +43,22 @@
             self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
         }
 
+        /**
+         * @property    Stats
+         * WordShuffle_Models_Player_Stats
+         *
+         * @type    {object}
+         * @public
+         **/
+        Object.defineProperty(self,'Stats',{get: getStats, set: setStats});
+        function getStats(){
+            return Stats;
+        }
+        function setStats(value){
+            self.SysMan.Logger.entry('Stats.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
+
         /****************************
          * ACTION METHODS DEFINITION
          ****************************/
@@ -55,7 +71,18 @@
         self.indexAction = function(){
             // update the player and game information based on backend
             if(!_blockFetch){
-                Player.find();
+                Player.find()
+                    .then(
+                        function() {
+                            var statsResult = Stats.find();
+                        }
+                    );
+
+                //statsResult.then(
+                //     function(response) {
+                //         console.log("response obtained in play for stats", response);
+                //     }
+                // )
                 var _promise = Game.find();
 
                 if(_promise !== null){
@@ -83,7 +110,10 @@
          * @public
          */
         self.playAction = function(){
-
+            console.log("game state in play action , and newGame", self.Game.state, self.Game.newGame);
+            accessGame = self.Game;
+            Stats.find();
+            // you have set Game.newGame = true, in Setup.ctrl and then if you are already inside index action, you are setting newGame in Play.start()
             if(self.Game.newGame){
                 self.Game.roundsPerGame = self.Player.roundsPerGame;
                 self.Game.secondsPerRound = self.Player.secondsPerRound;
@@ -184,7 +214,8 @@
         '$scope',
         '$controller',
         'WordShuffle_Models_Game',
-        'WordShuffle_Models_Player'
+        'WordShuffle_Models_Player',
+        'WordShuffle_Models_Player_Stats'
     ];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Play', WordShuffle_Controllers_Play);

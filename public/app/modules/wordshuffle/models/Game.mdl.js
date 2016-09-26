@@ -10,7 +10,7 @@
      * @param   {function(new:WordShuffle_Models_Game_Clock)}    Clock      - game clock constructor
      * @returns {WordShuffle_Models_Game}
      */
-    function Game_Factory(Model,Round,Square,Clock) {
+    function Game_Factory(Model,Round,Square,Clock, Stats) {
 
         /**
          * WordShuffle game
@@ -24,6 +24,9 @@
         function WordShuffle_Models_Game(data) {
             // proxy the "this" keyword to avoid scope resolution issues
             var self = this;
+
+            _longestWord = "";
+            _longestWordLength = 0;
 
             /************************
              * Public Properties declarations
@@ -130,6 +133,25 @@
              **/
             Object.defineProperty(self,'timeRemaining',{get: getTimeRemaining,set: setTimeRemaining,enumerable:true});
 
+            /**
+             * @property    Stats
+             * access the constructed Stats, not needed to the frontEnd
+             *
+             * @type    {object}
+             * @public
+             **/
+            Object.defineProperty(self,'Stats',{get: getStats, set: setStats, enumerable:true});
+            var _Stats;
+            function getStats(){
+                return Stats;
+            }
+            function setStats(value){
+                //_Stats = value;
+                self.SysMan.Logger.entry("NOt allowed to set this propperty");
+            }
+
+
+
             /*****************************************
              * Public Methods declaration / definition
              *****************************************/
@@ -143,7 +165,13 @@
             self.clockExpired = function(){
                 if(self.state != self.COMPLETED || self.state != self.ABANDONED){
                     // execute save, backend will toggle game state as appropriate
-                    self.save();
+                    var _promise =  self.save();
+                    _promise.then(
+                        function() {
+                            Stats.selectedDuration = self.secondsPerRound;
+                            Stats.fetchStats();
+                        }
+                    )
                 }
             };
             /**
@@ -200,6 +228,8 @@
             /**********************************
              /* GETTERS AND SETTERS definitions
              /*********************************/
+            
+
             var _idPlayer = 0;
             function getIdPlayer(){
                 return _idPlayer;
@@ -413,6 +443,7 @@
                 _timeRemaining = value;
             }
 
+
             // watch for key presses
             jQuery(document).on('keypress',function(e){
                 // if ENTER key, submit word
@@ -554,7 +585,6 @@
         //noinspection
         WordShuffle_Models_Game.prototype._postSubmitWord = function(oResults){
             this.word = oResults.msg;
-
             // clear the current selected squares
             for(var i=0;i<this.wordSquares.length;i++){
                 this.wordSquares[i].isSelected = false;
@@ -571,10 +601,18 @@
             this.state = oResults.gameState;
             this.newRound = oResults.newRound;
 
+            if (this.scoreBoard[0].points >= _longestWordLength) {
+                _longestWordLength = this.scoreBoard[0].points;
+                _longestWord = this.scoreBoard[0].word;
+            }
+
+            console.log("scoreboard ",this.scoreBoard);
+
             // todo: determine if game save should occur at backend when SubmitWord ids a NewRound
             if(this.newRound){
                 var self = this;
                 var _promise = this.save();
+                console.log("display you this here", this);
                 // stop the clock so that it will not trigger Game.save after it elapses
                 self.Clock.stop();
                 this.newRound = false;
@@ -615,7 +653,8 @@
         'App_Common_Abstracts_Model',
         'WordShuffle_Models_Game_Round',
         'WordShuffle_Models_Game_Square',
-        'WordShuffle_Models_Game_Clock'
+        'WordShuffle_Models_Game_Clock',
+        'WordShuffle_Models_Player_Stats'
     ];
 
     // register model with Angularjs application for dependency injection as required

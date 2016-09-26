@@ -50,7 +50,6 @@ abstract class Common_Abstracts_Model
 
         // set mapperClassName per default naming convention
         $this->_mapperClassName = implode('_',$classArray).'_Mapper_'.$model;
-
         //Populate model if needed
         if(isset($data)) {
             // array passed, set model properties accordingly

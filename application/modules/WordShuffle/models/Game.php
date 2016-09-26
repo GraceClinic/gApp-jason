@@ -487,7 +487,7 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     public function submitWord(){
         $msg = 'Submit Failed!';
         $success = true;
-
+        $this->SysMan->Logger->info("state after submitting " . print_r($this->state, true));
         // only process game state if game is active
         if($this->state && $this->state != self::COMPLETED && $this->state != self::ABANDONED){
             // process game state to trigger state transition as appropriate
@@ -750,6 +750,29 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
 
     }
 
+
+    /**
+     * this is to find out the longest word in the given round
+     *
+     * @private
+     * @param               - todo: document all parameters
+     * @return string
+     */
+    private function _longestWord()
+    {
+        $_maxLengthWord = "";
+        $_maxLength = 0;
+        $this->SysMan->Logger->info("reached here");
+        foreach ($this->scoreBoard as $key=>$eachScore) {
+            if ($eachScore["points"] > $_maxLength) {
+                $_maxLength = $eachScore["points"];
+                $_maxLengthWord = $eachScore["word"];
+            }
+        }
+        return $_maxLengthWord;
+    }
+
+
     /**
      * Process current game state and advance to next state as appropriate
      *
@@ -758,8 +781,9 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
     private function _processState()
     {
         $this->SysMan->Logger->info('START Game->_processState; current state = '.$this->state,$this->className);
-
+        // if you are starting a fresh game after login, $this->state is "" which satisfies the 2nd condition.
         if($this->newGame && $this->state != self::IN_PROGRESS){
+            $this->SysMan->Logger->info("first if inside processState" . print_r($this->newGame, true) . "and" . print_r($this->state, true) . " nothing!");
             $this->id = 0;
             $this->SysMan->Session->idGame = 0;
             $this->SysMan->Session->round = 1;
@@ -806,9 +830,29 @@ class WordShuffle_Model_Game extends Common_Abstracts_Model
             }
 
             if($gameEnded){
+                $statsModel = new WordShuffle_Model_Player_Stats(array(
+                    'roundDuration' =>  $this->Rounds[$this->round - 1]->time
+                ));
+                $_computeArgs = (object)array(
+                    'roundDuration' => $this->Rounds[$this->round - 1]->time,
+                    'points'    =>  $this->Rounds[$this->round - 1]->points,
+                    'longestWord'   =>  $this->_longestWord(),
+                    'wordCount'     =>  $this->Rounds[$this->round - 1]->wordCount
+                );
+                $statsModel->compute($_computeArgs);
                 $this->state = self::COMPLETED;
                 $this->end = date('Y-m-d H:i:s');
             }elseif($roundEnded){
+                $statsModel = new WordShuffle_Model_Player_Stats(array(
+                    'roundDuration' =>  $this->Rounds[$this->round - 1]->time
+                ));
+                $_computeArgs = (object)array(
+                    'roundDuration' => $this->Rounds[$this->round - 1]->time,
+                    'points'    =>  $this->Rounds[$this->round - 1]->points,
+                    'longestWord'   =>  $this->_longestWord(),
+                    'wordCount'     =>  $this->Rounds[$this->round - 1]->wordCount
+                );
+                $statsModel->compute($_computeArgs);
                 $this->SysMan->Logger->info('Game->_processState determines round ended during state '.$this->state,$this->className);
                 // save current round to DB
                 $this->Rounds[$this->round-1]->save();
