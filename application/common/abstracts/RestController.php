@@ -53,7 +53,6 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
         $this->_className = get_class($this);
 
         $this->_SysMan->Logger->info('START '.$this->_className.'.init()','Common_Abstracts_RestController');
-
         //AngularJS POST encodes the data element as a JSON object.
         //Zend/PHP has trouble understanding that format without calling json_decode first.
         try {
@@ -76,6 +75,10 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
             $this->SERVER_ERROR = true;
             $this->ERROR_INFO = "Problem applying JSON post parameters";
         }
+
+        $this->_SysMan->Logger->info("parameterList  " . print_r($this->getRequest()->getParams(), true));
+
+
     }
 
     public function indexAction(){
@@ -139,7 +142,8 @@ abstract class Common_Abstracts_RestController extends Zend_Rest_Controller
         $this->_SysMan->Logger->info(
             'START '.$this->_className.'->postAction() for method '.$method.'; arguments ='.PHP_EOL.'{'.print_r($args,true).'}',
             'Common_Abstracts_RestController');
-        $this->_model = new $this->_modelClass($model);
+        $this->_model = count((array)$model) ? new $this->_modelClass($model) : new $this->_modelClass();
+        //$this->_model = new $this->_modelClass($model);
         $this->_SysMan->Logger->info('START '.$this->_modelClass.'->'.$method.'()','Common_Abstracts_RestController');
         $results = $this->_model->$method($args);
         $this->_SysMan->Logger->info('END '.$this->_modelClass.'->'.$method.'()','Common_Abstracts_RestController');
