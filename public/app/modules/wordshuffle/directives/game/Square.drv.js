@@ -122,7 +122,6 @@
                         self.square.DOM.outerHeight(_heightNew);
                         _updateFont(_heightNew);
                     }
-
                 }
 
                 function _updateFont(height) {
@@ -152,6 +151,9 @@
                             self.square.DOM.css('font-size','8px');
                     }
                 }
+                scope.$on('$destroy', function() {
+                    angular.element(window).off('resize',_resizeSquare);
+                })
 
             }
 

@@ -18,7 +18,7 @@
 
 .controller_setup#setup-view-left-panel {
     height: 88.3vh;
-    display: flex;
+    /*display: flex;*/
 }
 
 #container-div {
