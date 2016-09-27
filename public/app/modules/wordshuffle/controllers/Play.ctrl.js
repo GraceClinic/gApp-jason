@@ -11,7 +11,7 @@
      * @param   {WordShuffle_Models_Player_Stats} Stats  - singleton Stats object, stats belongs to one single player
      * @this    WordShuffle_Controllers_Play
      */
-    function WordShuffle_Controllers_Play($scope, $controller, Game, Player, Stats, $modal) {
+    function WordShuffle_Controllers_Play($scope, $controller, Game, Player, Stats) {
         var self = this;
 
         var _blockFetch = false;    // flag to block additional request to the backend when changing states
@@ -304,8 +304,7 @@
         '$controller',
         'WordShuffle_Models_Game',
         'WordShuffle_Models_Player',
-        'WordShuffle_Models_Player_Stats',
-        '$modal'
+        'WordShuffle_Models_Player_Stats'
     ];
 
     angular.module('App_WordShuffle').controller('WordShuffle_Controllers_Play', WordShuffle_Controllers_Play);
