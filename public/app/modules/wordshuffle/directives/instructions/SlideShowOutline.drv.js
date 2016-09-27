@@ -76,7 +76,6 @@
                             _pageNum.push(i + 1);
                         }
                     }
-                    console.log("self.length ",self.length);
                     return _pageNum;
                 }
                 function setPageNum(){
@@ -145,7 +144,6 @@
                  * @return   {}
                  */
                 self.selectedPage = function(index){
-                    console.log("Index is ",index);
                     $rootScope.$emit('slideShowStop', {stop: true});
                     $rootScope.$emit('slideShowPageSelected', {index: index});
                     self.selectedPageNum = index;

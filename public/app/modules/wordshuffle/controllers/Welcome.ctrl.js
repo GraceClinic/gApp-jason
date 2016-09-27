@@ -62,11 +62,16 @@
          */
         self.indexAction = function(){
             self.SysMan.Logger.entry('START indexAction','App_Common_Abstracts_ActionController');
+            console.log('status is ', self.Instructions.status);
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }
 
-            self.spinCog = true;
+            if(self.Instructions.status == self.Instructions.READY) {
+                self.spinCog = false;
+            }
+            else
+                self.spinCog = true;
             var _promise = self.Instructions.find()
                 .then(
                     function(response) {
