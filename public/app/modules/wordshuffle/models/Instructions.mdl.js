@@ -80,6 +80,7 @@
             }
             function setPages(pages){
                 // this should be an array of Page objects
+                _Pages  = [];
                 if (typeof pages === 'object'){
                     for(var key in pages){
                         if (pages.hasOwnProperty(key) && typeof pages[key] === 'object'){

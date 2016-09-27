@@ -66,7 +66,11 @@
                 self.goToState('wordshuffle','play','play');
             }
 
-            self.spinCog = true;
+            if(self.Instructions.status == self.Instructions.READY) {
+                self.spinCog = false;
+            }
+            else
+                self.spinCog = true;
             var _promise = self.Instructions.find()
                 .then(
                     function(response) {

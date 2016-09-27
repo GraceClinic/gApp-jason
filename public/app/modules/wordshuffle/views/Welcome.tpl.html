@@ -2,10 +2,12 @@
 <div ng-controller="WordShuffle_Controllers_Welcome as Welcome">
     <div class="controller_welcome view_leftPanel">
 
+        <div ng-hide="Welcome.Instructions.title == null">
         <wordshuffle-directives-instructions-slide-show-outline title ="Welcome.Instructions.title" length ="Welcome.Instructions.Pages.length" stop="true">
 
         </wordshuffle-directives-instructions-slide-show-outline>
 
+        </div>
         <div class="footer"></div>
     </div>
     <div class="controller_welcome view_rightPanel">
