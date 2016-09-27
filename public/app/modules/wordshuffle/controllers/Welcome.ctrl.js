@@ -62,7 +62,6 @@
          */
         self.indexAction = function(){
             self.SysMan.Logger.entry('START indexAction','App_Common_Abstracts_ActionController');
-            console.log('status is ', self.Instructions.status);
             if(Game.state == Game.IN_PROGRESS){
                 self.goToState('wordshuffle','play','play');
             }

@@ -34,7 +34,7 @@
                         templateUrl: 'app/modules/wordshuffle/views/play/configModal.html',
                         size: 'md'
                     })
-                },50);
+                },250);
         };
 
         /*******************
