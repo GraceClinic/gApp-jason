@@ -264,6 +264,7 @@
          */
         self.goToLoginPage = function(){
             self.toggleConfigModal = false;
+            $(".modal-backdrop").hide();
             $(".modal.fade").hide();
             self.goToState('wordshuffle','setup','index');
         };
