@@ -19,3 +19,7 @@ CREATE TABLE `wsstats` (
   KEY `fkStats2Player_idx` (`idPlayer`),
   CONSTRAINT `fkStats2Player` FOREIGN KEY (`idPlayer`) REFERENCES `player` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=latin1;
+
+UPDATE `gapp`.`page` SET `body`='app/assets/wordshuffle/instructions/page01.html' WHERE `id`='1';
+UPDATE `gapp`.`page` SET `body`='app/assets/wordshuffle/instructions/page02.html' WHERE `id`='2';
+UPDATE `gapp`.`page` SET `body`='app/assets/wordshuffle/instructions/page03.html' WHERE `id`='3';
