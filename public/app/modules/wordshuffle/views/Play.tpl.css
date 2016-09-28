@@ -51,15 +51,12 @@
 /* controller view panel styles */
 .controller_play.view_leftPanel{
     text-align: center;
-    width: 20%;
-    float: left;
     padding-top: 5px;
     overflow: hidden;
 }
 .controller_play.view_rightPanel{
     background-color: #fdffcd;
-    width: 80%;
-    float: left;
+    padding-left: 0;
     box-sizing: border-box;
     border-left: 4px solid #536865;
     overflow: hidden;
@@ -137,9 +134,11 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    padding: 20px 11px 20px 11px;
+    /*padding: 20px 11px 20px 11px;*/
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     background-color: rgba(128,128,128,0.5);
     z-index: 100;
 }

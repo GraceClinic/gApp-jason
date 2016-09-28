@@ -13,7 +13,7 @@
 .controller_setup#setup-view-right-panel {
     height: 88.3vh;
     background-color: #fdffcd;
-    border-left: solid;
+    border-left: 4px solid #536865;
 }
 
 .controller_setup#setup-view-left-panel {

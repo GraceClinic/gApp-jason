@@ -272,6 +272,7 @@
          */
         self.goToIndex = function(){
             if (self.Player.signInState >= self.SysMan.SIGNED_IN) {
+                self.Player.signInState = self.SysMan.SIGNED_IN;
                 $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "index"});
             }
             else {
