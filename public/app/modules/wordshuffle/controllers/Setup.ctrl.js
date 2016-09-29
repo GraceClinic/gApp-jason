@@ -30,6 +30,24 @@
         function setPlayer(){
             self.SysMan.Logger.entry('Player.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
         }
+
+        /**
+         * @property    State
+         * access State
+         *
+         * @type    {}
+         * @public
+         **/
+        Object.defineProperty(self,'State',{get: getState, set: setState, enumerable:true});
+        var _State;
+        function getState(){
+            return $state;
+        }
+        function setState(value){
+            self.SysMan.Logger.entry('State.set() not allowed!',self.constructor.name,self.SysMan.Logger.TYPE.ERROR,self.SysMan.Logger.ERRNO.CTRL_ERROR);
+        }
+
+
         Object.defineProperty(self,'showSecret',{get: getShowSecret,set: setShowSecret});
         /**
          * @property    WordShuffle_Controllers_Setup#showSecret      - hide/show secret fields
@@ -80,7 +98,7 @@
                             Player.name = "";
                         }
                     },function (reason) {
-                        console.log("sorry your find failed - reason", reason);
+
                     }
                 );
             }
@@ -180,11 +198,10 @@
          * @return   {void}
          */
         self.closeAlert = function($event){
-            $($event.toElement.parentElement).css("display", "none");
+            $($event.target.parentElement).remove();
         };
 
         self.playGame = function(){
-            console.log("saveIsPending, signInState, SIGNED_IN", self.Player.saveIsPending, self.Player.signInState, self.SysMan.SIGNED_IN);
             // if(self.Player.saveIsPending && self.Player.signInState < self.SysMan.SIGNED_IN){
             //     self.Player.login();
             // }
@@ -327,11 +344,24 @@
          * @return   {}
          */
         self.checkNameAvailable = function(){
-            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+            if (self.Player.signInState === self.SysMan.NAME_PENDING || self.Player.signInState === self.SysMan.NAME_NOT_AVAILABLE) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_REGISTER;
                 self.Player.login();
             }
         };
+
+        /**
+         * @method   invalidName
+         * check to see if the entered userName is valid or not, returns true if name is invalid
+         *
+         * @public                      - todo: scope as public or protected, prefix name with "_" for protected
+         * @param    {}                 - todo: document each parameter
+         * @return   {boolean}
+         */
+        self.invalidName = function(){
+            return self.Player.name.length < 2 || !(/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.test(self.Player.name));
+        };
+
 
 
         /**
@@ -343,7 +373,7 @@
          * @return   {void}
          */
             self.loginUser = function(){
-            if (self.Player.signInState === self.SysMan.NAME_PENDING) {
+            if (self.Player.signInState === self.SysMan.NAME_PENDING || self.Player.signInState === self.SysMan.NAME_NOT_AVAILABLE) {
                 self.Player.signInState = self.SysMan.NAME_PENDING_LOGIN;
             }
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "login"});

@@ -13,3 +13,8 @@
     position: relative;
     top: 9rem;
 }
+
+
+#user-available {
+    min-height: 2rem;
+}

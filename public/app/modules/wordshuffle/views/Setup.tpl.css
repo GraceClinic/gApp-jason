@@ -18,7 +18,9 @@
 
 .controller_setup#setup-view-left-panel {
     height: 88.3vh;
-    /*display: flex;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #container-div {
@@ -28,8 +30,7 @@
 }
 
 .controller_setup #action-container {
-    /*display: table-cell;*/
-    /*vertical-align: middle;*/
+    /*flex-shrink: 0;*/
     max-height: 88.3vh;
     overflow-y: auto;
     overflow-x: hidden;
@@ -89,6 +90,9 @@ div.alert-msg-div {
     padding: 0;
 }
 
+.log-reg-elements {
+    min-width: 34em;
+}
 
 /*index.css appended here*/
 alert

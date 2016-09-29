@@ -239,6 +239,9 @@
                         //and now as there is no case this state, it makes it anonymous.
                         self.signInState = self.SysMan.NEW_SIGN_IN
                         break;
+                    case self.SysMan.NAME_NOT_AVAILABLE:
+                        //do nothing, let it be same
+                        break;
                     default:
                         // typically hit this state during first load from backend before all properties set
                         self.signInState = self.SysMan.ANONYMOUS_PLAY;

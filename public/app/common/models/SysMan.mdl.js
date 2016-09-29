@@ -310,6 +310,7 @@
         Object.defineProperty(App_Common_Models_SysMan.prototype,"NAME_PENDING",{value: 1, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"NAME_PENDING_REGISTER",{value: 2, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"NAME_PENDING_LOGIN",{value: 3, writable: false});
+        Object.defineProperty(App_Common_Models_SysMan.prototype,"NAME_NOT_AVAILABLE",{value: 4, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"NEW_SIGN_IN",{value: 5, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"SECRET_PENDING",{value: 10, writable: false});
         Object.defineProperty(App_Common_Models_SysMan.prototype,"SIGNED_IN",{value: 20, writable: false});

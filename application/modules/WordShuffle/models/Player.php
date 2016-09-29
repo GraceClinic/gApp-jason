@@ -274,9 +274,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
             case Common_Models_SysMan::NAME_PENDING_REGISTER:
                 $players = $this->Mapper->findAll();
                 if (count($players) == 0) {
-                    // toremove:
                     $this->signInState = Common_Models_Sysman::NEW_SIGN_IN;
-                    $this->SysMan->Logger->info('inside 0 players case = '.$this->signInState);
                     $this->msg = '';
                     $this->msg = array('type'=>self::MSG_SUCCESS, 'text'=>self::NEW_LOGIN_MSG);
                     $success = true;
@@ -284,7 +282,7 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
                 else if (count($players) == 1) {
                     $this->msg = "";
                     $this->msg = array('type'=>self::MSG_WARNING, 'text'=>self::ALREADY_REGISTERED_MSG);
-                    $this->signInState = Common_Models_SysMan::NAME_PENDING;
+                    $this->signInState = Common_Models_SysMan::NAME_NOT_AVAILABLE;
                     $success = false;
                 }
                 else {

@@ -44,6 +44,7 @@ final class Common_Models_SysMan
     const NAME_PENDING = 1;
     const NAME_PENDING_REGISTER = 2;
     const NAME_PENDING_LOGIN = 3;
+    const NAME_NOT_AVAILABLE = 4;
     const NEW_SIGN_IN = 5;
     const SECRET_PENDING = 10;
     const SIGNED_IN = 20;
