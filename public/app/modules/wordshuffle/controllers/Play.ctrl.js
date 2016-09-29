@@ -95,7 +95,7 @@
         /**
          * @property    toggleConfigModal
          * toggles as hide/show for the game detail configuration modal
-         * @type    {}
+         * @type    {boolean}
          * @public
          **/
         Object.defineProperty(self,'toggleConfigModal',{get: getToggleConfigModal, set: setToggleConfigModal});
@@ -199,9 +199,14 @@
                     self.goToState('wordshuffle','play','index');
                 })
             }
-
         };
 
+        /**
+         * start new game
+         *
+         * @method   quit
+         * @public
+         */
         self.start = function(){
             self.toggleConfigModal = false;
             $(".modal-backdrop").hide();
@@ -226,8 +231,6 @@
         /**
          * @method   findStatsForPlayer             -- get Stats for logged in player
          * @public
-         * @param    {}
-         * @return   {}
          */
         self.findStatsForPlayer = function(){
             var _selectedRoundDuration = self.roundDuration;
@@ -246,8 +249,6 @@
         /**
          * @method   resetStats         - Reset Stats when there is no record found for a player against particular duration.
          * @public
-         * @param    {}
-         * @return   {}
          */
         self.resetStats = function(){
 
@@ -261,12 +262,8 @@
 
 
         /**
-         * @method   goToLoginPage
-         * Redirect user to login page
-         *
+         * @method   goToLoginPage      - Redirect user to login page
          * @public
-         * @param    {}
-         * @return   {}
          */
         self.goToLoginPage = function(){
             self.toggleConfigModal = false;

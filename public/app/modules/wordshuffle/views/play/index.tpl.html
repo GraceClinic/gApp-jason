@@ -14,8 +14,10 @@
                     OK
                 </button>
             </div>
-            <button id="models-game-quit" type="button" class="btn btn-warning btn-small" ng-click="Play.quit()">Quit</button>
+            <div>
             <span id="models-game-clock">{{Play.Game.Clock.minutes}}:{{Play.Game.Clock.seconds}}</span>
+                <button type="button" class="btn btn-warning btn-small models-game-quit-button" ng-click="Play.quit()">Quit</button>
+            </div>
         </div>
         <div class="models-game-row"
             ng-repeat="gameRow in Play.Game.Squares"

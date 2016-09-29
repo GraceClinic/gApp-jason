@@ -75,8 +75,8 @@
     border-color: blue;
     border-radius: 3px;
     margin-bottom: 5px;
-    padding: 3px 3px 3px 3px;
-    float: right;
+    padding: 3px 3px 4px 3px;
+    float: inherit;
     box-sizing: content-box;
 }
 .models-game-quit-button {

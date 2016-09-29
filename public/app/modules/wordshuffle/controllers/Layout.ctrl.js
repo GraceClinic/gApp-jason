@@ -3,6 +3,8 @@
      * Services the general look/feel of the WordShuffle module
      *
      * @param    {App_Common_Models_SysMan}  SysMan  - reference to the SysMan singleton
+     * @param    {WordShuffle_Models_Game}  Game     - instance of WordShuffle_Models_Game class
+     * @param    {$modal}  $modal                    - instance of $modal
      * @this        WordShuffle_Controllers_Layout
      */
     function WordShuffle_Controllers_Layout(SysMan,Game,$modal) {
@@ -21,11 +23,8 @@
         };
 
         /**
-         * @method   open
-         * invoke modal to configure game details
+         * @method   open               - invoke modal to configure game details
          * @public
-         * @param    {}
-         * @return   {}
          */
         self.open = function(){
             if(Game.state == Game.IN_PROGRESS) {
