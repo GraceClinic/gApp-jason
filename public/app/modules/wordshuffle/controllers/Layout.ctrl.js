@@ -5,7 +5,7 @@
      * @param    {App_Common_Models_SysMan}  SysMan  - reference to the SysMan singleton
      * @this        WordShuffle_Controllers_Layout
      */
-    function WordShuffle_Controllers_Layout(SysMan,$modal) {
+    function WordShuffle_Controllers_Layout(SysMan,Game,$modal) {
         var self = this;		// required alias to address resolution to immediate scope
 
         /**
@@ -28,13 +28,19 @@
          * @return   {}
          */
         self.open = function(){
-            setTimeout(
-                function() {
-                    $modal.open({
-                        templateUrl: 'app/modules/wordshuffle/views/play/configModal.html',
-                        size: 'md'
-                    })
-                },250);
+            if(Game.state == Game.IN_PROGRESS) {
+                $(".modal-backdrop").hide();
+                $(".modal.fade").hide();
+            }
+            else {
+                setTimeout(
+                    function () {
+                        $modal.open({
+                            templateUrl: 'app/modules/wordshuffle/views/play/configModal.html',
+                            size: 'md'
+                        })
+                    }, 250);
+            }
         };
 
         /*******************
@@ -50,6 +56,7 @@
 
     WordShuffle_Controllers_Layout.$inject = [
         'App_Common_Models_SysMan',
+        'WordShuffle_Models_Game',
         '$modal'
     ];
 

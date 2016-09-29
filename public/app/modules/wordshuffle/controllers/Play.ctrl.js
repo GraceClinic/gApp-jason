@@ -15,6 +15,7 @@
         var self = this;
 
         var _blockFetch = false;    // flag to block additional request to the backend when changing states
+        var _blockFetchModal = false; // flag to stop reloading index page when modal disappears
 
         /*************************************************
          * PROPERTY DECLARATIONS with GETTERS and SETTERS
@@ -117,7 +118,11 @@
          */
         self.indexAction = function(){
             // update the player and game information based on backend
-            if(!_blockFetch){
+            if(Game.state == Game.IN_PROGRESS){
+                _blockFetchModal = false;
+                self.goToState('wordshuffle','play','play');
+            }
+            else if(!_blockFetch){
                 Player.find();
                 var _promise = Game.find();
 
@@ -125,17 +130,15 @@
                     _promise.then(function(){
                         if(typeof Game.state == 'undefined' || Game.state == Game.COMPLETED){
                             self.msg = 'You do not have an active game!  Click "Play" if you wish to use your current settings to start a new one.'
-                        }else{
-                            if(Game.state == Game.IN_PROGRESS){
-                                self.goToState('wordshuffle','play','play');
-                            }
                         }
                     });
                 }
+                _blockFetchModal = true;
             }
             else{
                 // reset flag for next action
                 _blockFetch = false;
+                _blockFetchModal = true;
             }
             self.findStatsForPlayer();
         };
@@ -155,25 +158,27 @@
                 self.Game.state = self.Game.IN_PROGRESS;
                 self.Game.save();
                 self.Game.newGame = false;
+                _blockFetchModal = true;
             }
             else if(self.Game.state == null || self.Game.state == self.Game.ABANDONED || self.Game.state == self.Game.COMPLETED){
                 self.goToState('wordshuffle','play','index');
             }
-            else{
-                var _promise = Game.find();
-                self.SysMan.msg = {
-                    text:   'Please finish your active game!',
-                    type:   'INFO'
-                };
-                if(_promise !== null){
-                    _promise.then(function() {
-                        // update clock
-                        var _atTime = new Date((Date.now() - (self.Game.secondsPerRound - self.Game.timeRemaining) * 1000));
-                        self.Game.Clock.start(_atTime);
-                        self.Game.Clock.now = self.Game.timeRemaining;
-                    });
+            else {
+                if (!_blockFetchModal) {
+                    var _promise = Game.find();
+                    self.SysMan.msg = {
+                        text: 'Please finish your active game!',
+                        type: 'INFO'
+                    };
+                    if (_promise !== null) {
+                        _promise.then(function () {
+                            // update clock
+                            var _atTime = new Date((Date.now() - (self.Game.secondsPerRound - self.Game.timeRemaining) * 1000));
+                            self.Game.Clock.start(_atTime);
+                            self.Game.Clock.now = self.Game.timeRemaining;
+                        });
+                    }
                 }
-
             }
         };
         /****************************
@@ -190,6 +195,7 @@
 
             if(_promise != null){
                 _promise.then(function(){
+                    self.Game.state = self.Game.ABANDONED;
                     self.goToState('wordshuffle','play','index');
                 })
             }
