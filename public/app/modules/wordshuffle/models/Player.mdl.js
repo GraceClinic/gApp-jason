@@ -279,7 +279,10 @@
                         _saveMe = true;
                     }
                 }
-                _name = value;
+                if(value == self.defaultName)
+                    _name = '';
+                else
+                    _name = value;
                 _validateState();
             }
             var _secret = '';
