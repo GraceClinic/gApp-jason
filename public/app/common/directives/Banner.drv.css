@@ -2,8 +2,7 @@
 .app-common-directives-banner.banner-shell
 {
     position: relative;
-    z-index:          100;
-    margin-top: 3px;
+    z-index: 100;
 }
 /* Styling for all Banner elements styling */
 .app-common-directives-banner.banner-anchor
@@ -11,6 +10,7 @@
     font:             normal 14px bold;
     font-family:      Helvetica, Arial, sans-serif;
     width:            90%;
+    margin-top:       0.3%;
     margin-left:      5%;
     margin-right:     5%;
     border-radius:    20px;

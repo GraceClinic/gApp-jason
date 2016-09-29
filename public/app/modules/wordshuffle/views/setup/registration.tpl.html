@@ -25,8 +25,8 @@
                         <div id="user-available">
                             <span ng-show="Setup.Player.signInState === Setup.SysMan.NAME_NOT_AVAILABLE" class="text-danger">username not available</span>
                             <span ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN" class="text-success">username available</span>
-                            <span ng-show="Setup.invalidName()" class="text-danger bg-danger">Invalid name</span>
                             <span ng-show="Setup.isDefaultName()" class="text-danger bg-danger">Default name</span>
+                            <span ng-show="Setup.invalidName()" class="text-danger bg-danger" title="length should atleast be 2, and allowed characters: digits, alphabets, spaces, hyphens and underscores">Invalid Name.</span>
                         </div>
                     </div>
                 </div>
