@@ -1,22 +1,9 @@
-<style>
-    .active {
-        background-color: #F1C40F;
-    }
-
-    .pageList {
-        border-radius: 25px;
-        border: 2px solid #73AD21;
-        padding-top: 20px;
-        width: 200px;
-        height: 200px;
-        margin-top: 20px;
-    }
-</style>
-<div>
-    <div align="center">
+<link rel="stylesheet" href="/app/modules/wordshuffle/directives/instructions/SlideShowOutline.drv.css">
+<div class="pageList">
+    <div class="slide_show_outline_header" align="center">
         <table>
             <tr>
-                <th style="padding-right: 40px">
+                <th class="title">
                     <img ng-src={{SlideShowOutlineCtrl.imgToggle}} alt="Expand image" height="20" width="20"  ng-model="SlideShowOutlineCtrl.collapsed" ng-click="SlideShowOutlineCtrl.toggleOutline()">
                 </th>
                 <th>
@@ -27,7 +14,7 @@
     </div>
 
     <div align="center">
-        <div class="pageList"  ng-show="SlideShowOutlineCtrl.collapsed" >
+        <div  ng-show="SlideShowOutlineCtrl.collapsed" >
             <div>
                 <li style="list-style-type: none" ng-repeat = "x in SlideShowOutlineCtrl.pageNum" >
                 <a ng-click = "SlideShowOutlineCtrl.selectedPage(x)" ng-class="{active : SlideShowOutlineCtrl.isSelected(x)}">Page {{x}}</a><br><br>

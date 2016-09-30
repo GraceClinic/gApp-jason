@@ -54,3 +54,29 @@ button#howToPlay.contentCollapsed {
 button#howToPlay.contentUnCollapsed {
     background-color: #F08080;
 }
+
+.active {
+    background-color: #F1C40F;
+}
+
+.pageList {
+    margin-left: 100px;
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 20px 10px 10px 10px;
+    width: 250px;
+    height: auto;
+    margin-top: 10px;
+    background-color:#fdffcd;
+}
+
+.title{
+    padding-right: 15px;
+    text-align: center;
+}
+
+.slide_show_outline_header {
+    border-bottom: solid green;
+    padding-bottom: 1rem;
+    margin: 0px 20px 10px;
+}
