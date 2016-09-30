@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/directives/instructions/SlideShowOutline.drv.css">
 <div class="pageList">
-    <div class="slide_show_outline_header" align="center">
+    <div align="center">
         <table>
             <tr>
                 <th class="title">
@@ -13,8 +13,8 @@
         </table>
     </div>
 
-    <div align="center">
-        <div  ng-show="SlideShowOutlineCtrl.collapsed" >
+    <div align="center" >
+        <div  ng-show="SlideShowOutlineCtrl.collapsed" class="slide_show_outline_body">
             <div>
                 <li style="list-style-type: none" ng-repeat = "x in SlideShowOutlineCtrl.pageNum" >
                 <a ng-click = "SlideShowOutlineCtrl.selectedPage(x)" ng-class="{active : SlideShowOutlineCtrl.isSelected(x)}">Page {{x}}</a><br><br>

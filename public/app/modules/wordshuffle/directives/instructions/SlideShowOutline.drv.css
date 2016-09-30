@@ -75,8 +75,8 @@ button#howToPlay.contentUnCollapsed {
     text-align: center;
 }
 
-.slide_show_outline_header {
-    border-bottom: solid green;
-    padding-bottom: 1rem;
-    margin: 0px 20px 10px;
+.slide_show_outline_body{
+    margin: 10px 20px 10px;
+    padding-top: 1rem;
+    border-top: solid green;
 }
