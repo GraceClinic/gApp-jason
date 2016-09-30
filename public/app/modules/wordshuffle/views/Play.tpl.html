@@ -2,7 +2,8 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/directives/game/Square.drv.css">
 <div ng-controller="WordShuffle_Controllers_Play as Play" class="row">
     <div class="controller_play view_leftPanel col-xs-3">
-        <div class="model_player_stats table_view" ng-show="Play.Player.signInState == Play.SysMan.SIGNED_IN">
+        <div class="stats_container">
+            <div class="model_player_stats table_view" ng-show="Play.Player.signInState == Play.SysMan.SIGNED_IN">
             <div class="model_player_stats view_row form-group stats-header">
                 <div class="model_player_stats view_left">Your Stats for Round Lasting</div>
                 <div class="model_player_stats right">
@@ -34,7 +35,8 @@
             </div>
             <div class="model_player_stats footer"></div>
         </div>
-        <div class="model_player_stats" ng-show="Play.Player.signInState != Play.SysMan.SIGNED_IN"><span>NO STATS FOR YOU!<br> Please login/register to start saving your stats.<br>
+        </div>
+        <div class="model_player_stats stats_container" ng-show="Play.Player.signInState != Play.SysMan.SIGNED_IN"><span>NO STATS FOR YOU!<br> Please login/register to start saving your stats.<br>
             <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'
                ng-class="{active: Layout.isActive('setup')}">Register now</a> </span>
         </div>

@@ -22,6 +22,7 @@
     /* font-style: initial; */
     overflow: hidden;
     color: midnightblue;
+    margin-top: 4px;
 }
 .model_player_stats.view_row{
     float:left;
@@ -226,4 +227,7 @@
 
 .model .fade{
     display: none;
+}
+.stats_container{
+padding-top: 15px;
 }
