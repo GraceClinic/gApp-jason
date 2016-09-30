@@ -2,7 +2,7 @@
 <!--{{Setup.Player.signInState}} this is the signIn State-->
 
 <div class="row alert-container-div" align="center" ng-show="Setup.Player.signInState === Setup.SysMan.ANONYMOUS_PLAY && Setup.Player.msg.length !== 0">
-    <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+    <div class="alert-msg-div col-sm-8 col-sm-offset-2">
         <p ng-repeat="pmsg in Setup.Player.msg track by $index">
             {{pmsg.text}}
         </p>
@@ -14,7 +14,7 @@
     <div class="row" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN">
 
         <div class="row alert-container-div" align="center" ng-show="Setup.Player.msg.length > 0">
-            <div class="alert-msg-div col-xs-8 col-xs-offset-2">
+            <div class="alert-msg-div col-sm-8 col-sm-offset-2">
                 <p ng-repeat="pmsg in Setup.Player.msg track by $index">
                     {{pmsg.text}}
                 </p>
@@ -23,15 +23,15 @@
         </div>
 
         <div class="row log-reg-elements">
-            <div class="col-xs-4 col-xs-offset-2">
+            <div class="col-sm-4 col-sm-offset-2">
                 <b>{{Setup.Player.name}}</b> Logged In!
             </div>
-            <div class="col-xs-6">
+            <div class="col-sm-6">
                 <div class="row">
-                    <div class="col-xs-6" align="right">
+                    <div class="col-sm-6" align="right">
                         <button type="button" id="edit-profile" class="btn btn-primary" ng-click="Setup.goToEdit()">Edit Profile</button>
                     </div>
-                    <div class="col-xs-6" align="left">
+                    <div class="col-sm-6" align="left">
                         <button type="button" id="logout-button" class="btn btn-primary" ng-click="Setup.playerLogout()">Logout</button>
                     </div>
                 </div>
@@ -41,11 +41,11 @@
     </div>
 </div>
 <div ng-show="Setup.Player.signInState != Setup.SysMan.SIGNED_IN" class="row">
-    <div class="setup-display-message col-xs-8 col-xs-offset-2">
+    <div class="setup-display-message col-sm-8 col-sm-offset-2">
         You are playing anonymously, create a Player name to enhance your game experience with statistics and head to head play. If you already have a player name, enter it now to login!
     </div>
-    <div class="col-xs-2"></div>
-    <div class="col-xs-8 col-xs-offset-2 zero-padding">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8 col-sm-offset-2 zero-padding">
         <form id="login-register-form" name="loginRegisterForm">
             <div class="form-group row" ng-class="{'has-error': loginRegisterForm.username.$invalid && !loginRegisterForm.username.$pristine}">
                 <div class="col-sm-12">

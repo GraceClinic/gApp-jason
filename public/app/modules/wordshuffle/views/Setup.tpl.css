@@ -18,9 +18,10 @@
 
 .controller_setup#setup-view-left-panel {
     height: 88.3vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*justify-content: center;*/
+    position: relative;
 }
 
 #container-div {
@@ -30,11 +31,16 @@
 }
 
 .controller_setup #action-container {
-    /*flex-shrink: 0;*/
+    //flex-shrink: 0;
     max-height: 88.3vh;
     overflow-y: auto;
     overflow-x: hidden;
     margin: auto;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 0%;
+    transform: translate(-0%, -50%);
 
 }
 
@@ -91,7 +97,7 @@ div.alert-msg-div {
 }
 
 .log-reg-elements {
-    min-width: 34em;
+    /*min-width: 34em;*/
 }
 
 /*index.css appended here*/

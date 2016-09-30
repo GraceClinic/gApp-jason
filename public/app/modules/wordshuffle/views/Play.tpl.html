@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Play.tpl.css">
 <link rel="stylesheet" href="/app/modules/wordshuffle/directives/game/Square.drv.css">
 <div ng-controller="WordShuffle_Controllers_Play as Play" class="row">
-    <div class="controller_play view_leftPanel col-xs-3">
+    <div class="controller_play view_leftPanel col-md-3">
         <div class="stats_container">
             <div class="model_player_stats table_view" ng-show="Play.Player.signInState == Play.SysMan.SIGNED_IN">
             <div class="model_player_stats view_row form-group stats-header">
@@ -41,7 +41,7 @@
                ng-class="{active: Layout.isActive('setup')}">Register now</a> </span>
         </div>
     </div>
-    <div class="controller_play view_rightPanel col-xs-9">
+    <div class="controller_play view_rightPanel col-md-9">
         <div ui-view></div>
     </div>
     <script type="text/ng-template" id="app/modules/wordshuffle/views/play/configModal.html">

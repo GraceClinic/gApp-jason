@@ -100,10 +100,10 @@
                         }
                         if(Date.now() > _expiresAt){
                             if(self.msg.length == 1){
-                                // fade last message
-                                _opacity = Number(element.css('opacity'));
+                                //fade last message
+                                _opacity = Number($(element.children()[0]).css('opacity'));
                                 _opacity = Math.round((_opacity - _fade)*100)/100;
-                                element.css('opacity',_opacity);
+                                $(element.children()[0]).css('opacity',_opacity);
                                 if(_opacity <= _fade){
                                     element.hide();
                                     $interval.cancel(_intervalId);

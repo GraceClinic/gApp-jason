@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/app/modules/wordshuffle/views/Welcome.tpl.css">
 <div ng-controller="WordShuffle_Controllers_Welcome as Welcome" class="row">
-    <div class="controller_welcome view_leftPanel col-xs-3">
+    <div class="controller_welcome view_leftPanel col-md-3">
 
         <div ng-hide="Welcome.Instructions.title == null">
         <wordshuffle-directives-instructions-slide-show-outline title ="Welcome.Instructions.title" length ="Welcome.Instructions.Pages.length" stop="true">
@@ -10,7 +10,7 @@
         </div>
         <div class="footer"></div>
     </div>
-    <div class="controller_welcome view_rightPanel col-xs-9">
+    <div class="controller_welcome view_rightPanel col-md-9">
         <app-common-directives-banner msg="Welcome.msg" expires="5000">
         </app-common-directives-banner>
         <div ui-view></div>
