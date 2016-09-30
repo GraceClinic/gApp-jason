@@ -180,6 +180,7 @@
                     }
                 }
             }
+            self.findStatsForPlayer();
         };
         /****************************
          * PUBLIC METHODS DEFINITION

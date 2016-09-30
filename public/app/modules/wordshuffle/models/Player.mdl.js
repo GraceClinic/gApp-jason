@@ -279,9 +279,6 @@
                         _saveMe = true;
                     }
                 }
-                if(value == self.defaultName)
-                    _name = '';
-                else
                     _name = value;
                 _validateState();
             }

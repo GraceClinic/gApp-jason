@@ -25,7 +25,8 @@
                         <div id="user-available">
                             <span ng-show="Setup.Player.signInState === Setup.SysMan.NAME_NOT_AVAILABLE" class="text-danger">username not available</span>
                             <span ng-show="Setup.Player.signInState === Setup.SysMan.NEW_SIGN_IN" class="text-success">username available</span>
-                            <span ng-show="Setup.invalidName()" class="text-danger bg-danger">Invalid Name.</span>
+                            <span ng-show="Setup.invalidName()" class="text-danger bg-danger">Invalid name</span>
+                            <span ng-show="Setup.isDefaultName()" class="text-danger bg-danger">Default name</span>
                         </div>
                     </div>
                 </div>
@@ -89,7 +90,10 @@
                             </div>
                             <div class="col-xs-7">
                                 <a ui-sref='module.controller.action({module:"wordshuffle",controller:"setup",action:"index"})'>
-                                    <button type="submit" class="btn btn-success" id="submit-register-button" ng-click="Setup.Player.save()" ng-disabled="!Setup.registerCheckbox() || registrationForm.$invalid || registrationForm.registerCQuestions.$error.required || !registrationForm.registerCQuestions.$dirty || Setup.Player.signInState == Setup.SysMan.NAME_NOT_AVAILABLE || Setup.invalidName()" title="click here to finish your registration">Finish Register</button>
+                                    <button type="submit" class="btn btn-success" id="submit-register-button" ng-click="Setup.Player.save()"
+                                            ng-disabled="!Setup.registerCheckbox() || registrationForm.$invalid || registrationForm.registerCQuestions.$error.required ||
+                                             !registrationForm.registerCQuestions.$dirty || Setup.Player.signInState == Setup.SysMan.NAME_NOT_AVAILABLE || Setup.invalidName() ||
+                                             Setup.isDefaultName()" title="click here to finish your registration">Finish Register</button>
                                 </a>
                             </div>
                         </div>

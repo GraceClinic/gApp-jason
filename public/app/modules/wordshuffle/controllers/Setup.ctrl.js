@@ -227,7 +227,7 @@
         self.goToEdit = function () {
             self.Player.signInState = self.SysMan.SIGNED_IN_EDITING; // editing profile
             $state.go('module.controller.action', {module: "wordshuffle", controller: "setup", action: "editProfile"});
-        }
+        };
 
         /**
          * Toggles display of secret fields when the Player is signed-in
@@ -338,7 +338,7 @@
 
         /**
          * @method   checkNameAvailable
-         * once you are inside registration action, it seems regisatrationAction() won't be called again and again
+         * once you are inside registration action, it seems registrationAction() won't be called again and again
          *
          * @public
          * @return   {}
@@ -359,14 +359,29 @@
          * @return   {boolean}
          */
         self.invalidName = function(){
-            return self.Player.name.length < 2 || !(/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.test(self.Player.name));
+                return self.Player.name.length < 2 || !(/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.test(self.Player.name));
         };
+
+        /**
+         * @method   isDefaultName          - validate if player name entered is default name
+         * @public
+         * @return   {boolean}
+         */
+        self.isDefaultName = function(){
+            if(self.Player.name == '' || self.Player.defaultName == '')
+                return false;
+           else if(self.Player.name == self.Player.defaultName)
+               return true;
+            else
+                return false;
+        };
+
 
 
 
         /**
          * @method   loginUser
-         * calls methos login, sets actionState to login
+         * calls method login, sets actionState to login
          *
          * @public                      - todo: scope as public or protected, prefix name with "_" for protected
          * @param    {}                 - todo: document each parameter

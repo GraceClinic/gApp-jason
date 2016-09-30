@@ -13,7 +13,7 @@
  * @property    datetime    modifyDate          date time round will end
  * @property    int         signInState         - flags state of sign-in for display of needed information
  * @property    array       challenges          - the secret questions to secure player user
- * @property    string      actionState
+ * @property    int         acceptedTOS        - terms of service
  * @property WordShuffle_Model_Mapper_Player Mapper
  *
  */
@@ -82,10 +82,6 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
 
     }
 
-    // todo: move property docblock to top of class
-    /**
-     * @property    int         acceptedTOS        - terms of service
-     */
     private $_acceptedTOS = 0;
     protected function setAcceptedTOS($value){
         $this->SysMan->Logger->info("this is the TOS value obtained" . $value);
@@ -103,7 +99,9 @@ class WordShuffle_Model_Player extends WordShuffle_Model_Abstract
 
     private $_name = null;
     protected function setName($x){
-        if($x !== null && $x !== '' && $this->SysMan->Session->playerName !== $x){
+        if($x == $this->defaultName)
+            $this->_name = '';
+        else if($x !== null && $x !== '' && $this->SysMan->Session->playerName !== $x){
             $this->_name = (string) $x;
             // for anonymous play, the session object maintains memory of changes, once logged in, changes written to session after save
             if($this->signInState < Common_Models_SysMan::SIGNED_IN){
