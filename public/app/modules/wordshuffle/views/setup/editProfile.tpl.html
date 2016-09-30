@@ -4,21 +4,21 @@
 <!--<div id="wrong-secret-alert" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">-->
     <!--<p>Alert!! You entered the wrong secret</p>-->
     <!--<div id="alert-buttons" align="center" class="row">-->
-        <!--<button class="col-md-6" type="button" ng-click="Setup.goToIndex()">go back</button>-->
-        <!--<button class="col-md-6" type="button" ng-click="Setup.goToEdit()">re-Enter</button>-->
+        <!--<button class="col-sm-6" type="button" ng-click="Setup.goToIndex()">go back</button>-->
+        <!--<button class="col-sm-6" type="button" ng-click="Setup.goToEdit()">re-Enter</button>-->
     <!--</div>-->
 <!--</div>-->
 
 
 <div class="row">
-    <div align="center" class="col-md-8 col-md-offset-2 alert-msg-div" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
-        <div class="col-md-12">
+    <div align="center" class="col-sm-8 col-sm-offset-2 alert-msg-div" ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDIT_NOT_ALLOWED">
+        <div class="col-sm-12">
             <p>Alert!! You entered the wrong secret</p>
         </div>
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-sm-6 col-sm-offset-3">
             <div class="row">
-                <button class="col-md-6 btn btn-danger" type="button" ng-click="Setup.goToIndex()">go back</button>
-                <button class="col-md-6 btn btn-primary" type="button" ng-click="Setup.goToEdit()">re-Enter</button>
+                <button class="col-sm-6 btn btn-danger" type="button" ng-click="Setup.goToIndex()">go back</button>
+                <button class="col-sm-6 btn btn-primary" type="button" ng-click="Setup.goToEdit()">re-Enter</button>
             </div>
         </div>
     </div>
@@ -28,32 +28,32 @@
 
 <form ng-show="Setup.Player.signInState === Setup.SysMan.SIGNED_IN_EDITING">
     <div class="form-group row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
             <div class="row">
-                <div class="col-md-5"><b>UserName: </b></div>
-                <div class="col-md-7" id="current-user"><b>{{Setup.Player.name}}</b></div>
+                <div class="col-sm-5"><b>UserName: </b></div>
+                <div class="col-sm-7" id="current-user"><b>{{Setup.Player.name}}</b></div>
             </div>
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
             <div class="row">
-                <label class="col-md-5" for="current-secret"><b>{{Setup.Player.challenge}}</b></label>
-                <div class="col-md-7">
+                <label class="col-sm-5" for="current-secret"><b>{{Setup.Player.challenge}}</b></label>
+                <div class="col-sm-7">
                     <input class="form-control" id="current-secret" type="password" placeholder="Secret here" ng-model="Setup.Player.secret">
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
             <div class="row">
-                <div class="col-md-7 col-md-offset-5">
+                <div class="col-sm-7 col-sm-offset-5">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                             <button type="button" class="go-back-button btn btn-primary" ng-click="Setup.goToIndex()">go Back</button>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                             <button type="button" class="btn btn-success" ng-click="Setup.Player.authenticateUser()">Authenticate</button>
                         </div>
                     </div>
@@ -64,46 +64,46 @@
 </form>
 <form ng-show="Setup.Player.signInState == Setup.SysMan.SIGNED_IN">
     <div class="form-group row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
             <div class="row">
-                <div class="col-md-5" ><b>User Name</b></div>
-                <div class="col-md-7">
+                <div class="col-sm-5" ><b>User Name</b></div>
+                <div class="col-sm-7">
                     <b>{{Setup.Player.name}}</b>
                 </div>
             </div>
         </div>
     </div>
     <div class="form-group row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
             <div class="row">
-                <div class="col-md-5"><b>Challenge Question</b></div>
-                <div class="col-md-7">
+                <div class="col-sm-5"><b>Challenge Question</b></div>
+                <div class="col-sm-7">
                     <b>{{Setup.Player.challenge}}</b>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-sm-5">
                     <label for="new-secret">Enter the new Secret</label>
                 </div>
-                <div class="col-md-7">
+                <div class="col-sm-7">
                     <input class="form-control" type="password" ng-model="Setup.Player.secret" id="new-secret" placeholder="new secret"/>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
             <div class="row">
-                <div id="save-changes" class="col-md-7 col-md-offset-5">
+                <div id="save-changes" class="col-sm-7 col-sm-offset-5">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                             <button type="button" class="go-back-button btn btn-primary" ng-click="Setup.goToIndex()">go Back</button>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-6">
                             <button class="btn btn-success" type="text" ng-click="Setup.saveProfileChanges()">save changes</button>
                         </div>
                     </div>
